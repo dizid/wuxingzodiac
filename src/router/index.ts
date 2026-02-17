@@ -49,6 +49,22 @@ export const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/compatibility/:slugA/:slugB',
+    name: 'compatibility-pair',
+    component: () => import('@/pages/CompatibilityPage.vue'),
+    beforeEnter: (to) => {
+      const slugA = to.params.slugA as string
+      const slugB = to.params.slugB as string
+      if (!VALID_SIGN_SLUGS.includes(slugA) || !VALID_SIGN_SLUGS.includes(slugB)) {
+        return { name: 'not-found', params: { pathMatch: to.path.split('/').slice(1) } }
+      }
+      // Canonical order: alphabetical
+      if (slugA > slugB) {
+        return { path: `/compatibility/${slugB}/${slugA}`, replace: true }
+      }
+    },
+  },
+  {
     path: '/compatibility',
     name: 'compatibility',
     component: () => import('@/pages/CompatibilityPage.vue'),

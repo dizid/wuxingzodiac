@@ -11,15 +11,51 @@ const post = ref<BlogPost | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
 
-const headData = computed(() => ({
-  title: post.value ? `${post.value.title} | Wu Xing Zodiac` : 'Blog Post | Wu Xing Zodiac',
-  meta: [
-    {
-      name: 'description',
-      content: post.value?.excerpt || 'Read this article on Wu Xing Zodiac blog.'
+const headData = computed(() => {
+  if (!post.value) {
+    return {
+      title: 'Blog Post | Wu Xing Zodiac',
+      meta: [{ name: 'description', content: 'Read this article on Wu Xing Zodiac blog.' }]
     }
-  ]
-}))
+  }
+
+  const title = `${post.value.title} | Wu Xing Zodiac`
+  const description = post.value.excerpt
+  const url = `https://wuxingzodiac.me/blog/${post.value.slug}`
+
+  return {
+    title,
+    meta: [
+      { name: 'description', content: description },
+      { property: 'og:title', content: title },
+      { property: 'og:description', content: description },
+      { property: 'og:url', content: url },
+      { property: 'og:type', content: 'article' },
+      { property: 'og:site_name', content: 'Wu Xing Zodiac' },
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: title },
+      { name: 'twitter:description', content: description },
+    ],
+    link: [
+      { rel: 'canonical', href: url },
+    ],
+    script: [
+      {
+        type: 'application/ld+json',
+        innerHTML: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: post.value.title,
+          description,
+          url,
+          datePublished: post.value.publishedAt,
+          author: { '@type': 'Person', name: post.value.authorName },
+          publisher: { '@type': 'Organization', name: 'Wu Xing Zodiac', url: 'https://wuxingzodiac.me' },
+        }),
+      },
+    ],
+  }
+})
 
 useHead(headData)
 

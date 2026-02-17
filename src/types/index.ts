@@ -146,6 +146,7 @@ export interface AnimalCompatibility {
 export type AffiliateCategory =
   | 'crystals' | 'career-books' | 'relationship-services'
   | 'astrology-books' | 'wellness' | 'jewelry'
+  | 'colors' | 'botanicals' | 'fitness' | 'element'
 
 export interface AffiliateProduct {
   id: string
@@ -155,6 +156,15 @@ export interface AffiliateProduct {
   program: 'amazon' | 'keen' | 'kasamba' | 'astro-charts'
   category: AffiliateCategory
   image?: string
+}
+
+// ============================================
+// SIGN SHOP (auto-generated per sign)
+// ============================================
+export interface ShopCategory {
+  title: string
+  icon: string
+  products: AffiliateProduct[]
 }
 
 // ============================================

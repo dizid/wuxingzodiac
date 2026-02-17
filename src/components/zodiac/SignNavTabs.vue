@@ -24,6 +24,7 @@ const tabs: Tab[] = [
   { key: 'famous', label: 'Famous' },
   { key: 'culture', label: 'Culture' },
   { key: 'horoscope', label: 'Horoscope' },
+  { key: 'shop', label: 'Shop' },
 ]
 
 const tabsContainer = ref<HTMLElement | null>(null)

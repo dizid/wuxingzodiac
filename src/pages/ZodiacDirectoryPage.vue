@@ -3,7 +3,14 @@ import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { signProfiles, getProfilesByElement } from '@/lib/sign-content/profiles'
 import { zodiacElements, zodiacAnimals } from '@/lib/zodiac-data'
+import { usePageSeo } from '@/composables/useSignSeo'
 import type { ZodiacElement, ZodiacAnimal } from '@/types'
+
+usePageSeo(
+  'All 60 Chinese Zodiac Signs',
+  'Browse all 60 Chinese zodiac sign combinations across Wood, Fire, Earth, Metal, and Water elements. Find personality traits, compatibility, and more for every sign.',
+  '/zodiac'
+)
 
 const selectedElement = ref<ZodiacElement | 'all'>('all')
 const selectedAnimal = ref<ZodiacAnimal | 'all'>('all')

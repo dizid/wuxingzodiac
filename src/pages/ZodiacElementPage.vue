@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watchEffect } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { getProfilesByElement } from '@/lib/sign-content/profiles'
 import { zodiacElements, zodiacAnimals } from '@/lib/zodiac-data'
+import { usePageSeo } from '@/composables/useSignSeo'
 import type { ZodiacElement } from '@/types'
 
 const route = useRoute()
@@ -85,6 +86,17 @@ const wuXingInfo: Record<ZodiacElement, WuXingInfo> = {
 }
 
 const elementInfo = computed(() => wuXingInfo[element.value])
+
+// SEO meta tags
+watchEffect(() => {
+  if (elementData.value) {
+    usePageSeo(
+      `${elementData.value.name} Element — 12 Chinese Zodiac Signs`,
+      `Explore all twelve Chinese zodiac animals with the ${elementData.value.name} element. Learn how ${elementData.value.name} energy shapes personality, compatibility, and destiny.`,
+      `/zodiac/element/${element.value}`
+    )
+  }
+})
 
 // Element emoji for the cycle display
 const elementEmoji: Record<ZodiacElement, string> = {

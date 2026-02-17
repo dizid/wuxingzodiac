@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watchEffect } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { getProfilesByAnimal } from '@/lib/sign-content/profiles'
 import { zodiacAnimals } from '@/lib/zodiac-data'
+import { usePageSeo } from '@/composables/useSignSeo'
 import type { ZodiacAnimal, ZodiacElement } from '@/types'
 
 const route = useRoute()
@@ -13,6 +14,17 @@ const animalData = computed(() => zodiacAnimals.find(a => a.animal === animal.va
 
 // Get all 5 element variants for this animal
 const variants = computed(() => getProfilesByAnimal(animal.value))
+
+// SEO meta tags
+watchEffect(() => {
+  if (animalData.value) {
+    usePageSeo(
+      `Year of the ${animalData.value.name} — All Five Element Variants`,
+      `Discover all five element variants of the Chinese zodiac ${animalData.value.name}: Wood, Fire, Earth, Metal, and Water. Compare personality traits, compatibility, and characteristics.`,
+      `/zodiac/animal/${animal.value}`
+    )
+  }
+})
 
 // Element emoji lookup
 const elementEmoji: Record<ZodiacElement, string> = {

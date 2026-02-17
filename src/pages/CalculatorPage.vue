@@ -3,7 +3,14 @@ import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { getZodiacFromBirthdate, getSignSlug, zodiacAnimals } from '@/lib/zodiac-data'
 import { getProfileBySlug } from '@/lib/sign-content/profiles'
+import { usePageSeo } from '@/composables/useSignSeo'
 import type { SignProfile } from '@/types'
+
+usePageSeo(
+  'Chinese Zodiac Calculator',
+  'Find your Chinese zodiac sign by entering your birth date. Discover your element and animal combination from the 60-year cycle.',
+  '/calculator'
+)
 
 const birthYear = ref<number | null>(null)
 const birthMonth = ref<number>(1)
@@ -144,12 +151,20 @@ function findSign() {
       <div class="text-ash-500 text-sm mb-6">
         Years: {{ result.years.filter(y => y >= 1924 && y <= 2043).join(', ') }}
       </div>
-      <RouterLink
-        :to="`/zodiac/${result.slug}`"
-        class="btn-element inline-block px-8 py-3 text-lg"
-      >
-        View Full Profile &rarr;
-      </RouterLink>
+      <div class="flex flex-wrap justify-center gap-4">
+        <RouterLink
+          :to="`/zodiac/${result.slug}`"
+          class="btn-element inline-block px-8 py-3 text-lg"
+        >
+          View Full Profile &rarr;
+        </RouterLink>
+        <RouterLink
+          :to="`/compatibility?sign=${result.slug}`"
+          class="inline-block px-8 py-3 text-lg border border-current rounded-lg text-ash-200 hover:text-ash-100 transition-colors"
+        >
+          Check Compatibility
+        </RouterLink>
+      </div>
     </div>
 
     <!-- No result fallback -->

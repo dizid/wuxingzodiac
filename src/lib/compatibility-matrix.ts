@@ -1066,3 +1066,33 @@ export function getChallengingMatches(animal: ZodiacAnimal, count: number = 3): 
     .sort((a, b) => animalCompatibility[animal][a].base - animalCompatibility[animal][b].base)
     .slice(0, count)
 }
+
+/**
+ * Get a human-readable description of how two elements interact
+ * according to the Wu Xing generative and destructive cycles.
+ */
+export function getElementInteractionDescription(
+  elementA: ZodiacElement,
+  elementB: ZodiacElement,
+  _modifier: number,
+): string {
+  const nameA = elementA.charAt(0).toUpperCase() + elementA.slice(1)
+  const nameB = elementB.charAt(0).toUpperCase() + elementB.slice(1)
+
+  if (elementA === elementB) {
+    return `Both signs share the ${nameA} element — deep understanding and natural resonance, though they may amplify each other's weaknesses.`
+  }
+  if (GENERATES[elementA] === elementB) {
+    return `${nameA} feeds ${nameB} in the generative cycle — a naturally supportive and nurturing dynamic.`
+  }
+  if (GENERATES[elementB] === elementA) {
+    return `${nameB} feeds ${nameA} in the generative cycle — ${nameA} draws strength and support from ${nameB}'s energy.`
+  }
+  if (DESTROYS[elementA] === elementB) {
+    return `${nameA} overcomes ${nameB} in the destructive cycle — a challenging dynamic that requires mutual awareness and compromise.`
+  }
+  if (DESTROYS[elementB] === elementA) {
+    return `${nameB} overcomes ${nameA} in the destructive cycle — ${nameA} may feel constrained, but this tension can drive growth.`
+  }
+  return `${nameA} and ${nameB} have no direct Wu Xing cycle connection — a neutral pairing where other factors dominate.`
+}

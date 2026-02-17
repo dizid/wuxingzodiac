@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useHead } from '@unhead/vue'
 import BlogCard from '@/components/blog/BlogCard.vue'
+import { usePageSeo } from '@/composables/useSignSeo'
 import type { BlogPost } from '@/types'
 
-useHead({
-  title: 'Blog | Wu Xing Zodiac',
-  meta: [
-    { name: 'description', content: 'Explore articles on Chinese astrology, zodiac insights, five elements wisdom, and the ancient art of Wu Xing.' }
-  ]
-})
+usePageSeo(
+  'Blog',
+  'Explore articles on Chinese astrology, zodiac insights, five elements wisdom, and the ancient art of Wu Xing.',
+  '/blog'
+)
 
 const posts = ref<BlogPost[]>([])
 const loading = ref(true)

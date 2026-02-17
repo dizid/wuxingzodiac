@@ -11,4 +11,13 @@ export const createApp = ViteSSG(
       return savedPosition || { top: 0 }
     },
   },
+  ({ router }) => {
+    // Reload on chunk load failure (stale cache after deploy)
+    router.onError((error, to) => {
+      if (error.message.includes('Failed to fetch dynamically imported module') ||
+          error.message.includes('Loading chunk')) {
+        window.location.href = to.fullPath
+      }
+    })
+  },
 )

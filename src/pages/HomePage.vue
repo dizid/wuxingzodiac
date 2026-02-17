@@ -2,6 +2,9 @@
 import { RouterLink } from 'vue-router'
 import { zodiacElements, zodiacAnimals } from '@/lib/zodiac-data'
 import NewsletterForm from '@/components/ui/NewsletterForm.vue'
+import { useHomeSeo } from '@/composables/useSignSeo'
+
+useHomeSeo()
 
 const elements = zodiacElements
 const animals = zodiacAnimals
@@ -26,6 +29,9 @@ const howItWorks = [
       <div class="flex flex-wrap justify-center gap-4">
         <RouterLink to="/calculator" class="btn-element text-lg px-8 py-3">
           Find Your Sign
+        </RouterLink>
+        <RouterLink to="/compatibility" class="text-lg px-8 py-3 border border-ash-500 text-ash-200 hover:border-ash-300 hover:text-ash-100 rounded-lg transition-all">
+          Check Compatibility
         </RouterLink>
         <RouterLink
           to="/zodiac"
@@ -84,6 +90,19 @@ const howItWorks = [
           </a>
         </div>
       </div>
+    </section>
+
+    <!-- Compatibility Section -->
+    <section class="px-4 py-16 text-center">
+      <h2 class="multi-element-text font-display text-3xl md:text-4xl font-bold mb-4">
+        Zodiac Compatibility
+      </h2>
+      <p class="text-ash-400 text-lg max-w-2xl mx-auto mb-8">
+        Discover how your Chinese zodiac sign pairs with others. Check compatibility scores powered by the Wu Xing five-element system.
+      </p>
+      <RouterLink to="/compatibility" class="btn-element text-lg px-8 py-3">
+        Check Compatibility
+      </RouterLink>
     </section>
 
     <!-- Animal Carousel -->

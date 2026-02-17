@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { getProfileBySlug } from '@/lib/sign-content/profiles'
 import { loadSignContent } from '@/lib/sign-content'
 import { useElementTheme } from '@/composables/useElementTheme'
+import { useSignSeo } from '@/composables/useSignSeo'
 import type { SignContent } from '@/types'
 
 // Section components
@@ -19,6 +20,7 @@ import SignFamous from '@/components/zodiac/SignFamous.vue'
 import SignCulture from '@/components/zodiac/SignCulture.vue'
 import SignHoroscope from '@/components/zodiac/SignHoroscope.vue'
 import MonetizationSlot from '@/components/zodiac/MonetizationSlot.vue'
+import SignShop from '@/components/zodiac/SignShop.vue'
 
 const route = useRoute()
 const slug = computed(() => route.params.slug as string)
@@ -50,6 +52,13 @@ onMounted(() => {
   loadContent(slug.value)
 })
 
+// SEO meta tags, OG, JSON-LD
+watchEffect(() => {
+  if (profile.value) {
+    useSignSeo(profile.value, content.value)
+  }
+})
+
 // Reload content when navigating between signs
 watch(slug, (newSlug) => {
   activeSection.value = 'personality'
@@ -68,6 +77,7 @@ const sectionTitle = computed(() => {
     famous: 'Famous People',
     culture: 'Culture & Mythology',
     horoscope: 'Horoscope',
+    shop: 'Curated for Your Sign',
   }
   return titles[activeSection.value] ?? ''
 })
@@ -128,6 +138,7 @@ const sectionTitle = computed(() => {
           <SignCompatibility
             v-if="activeSection === 'compatibility'"
             :compatibility="content.compatibility"
+            :slug="slug"
           />
           <SignCareer
             v-if="activeSection === 'career'"
@@ -160,6 +171,10 @@ const sectionTitle = computed(() => {
           <SignHoroscope
             v-if="activeSection === 'horoscope'"
             :horoscope="content.horoscope"
+          />
+          <SignShop
+            v-if="activeSection === 'shop'"
+            :content="content"
           />
         </template>
       </main>

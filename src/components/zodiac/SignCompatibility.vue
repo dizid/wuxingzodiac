@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router'
 
 defineProps<{
   compatibility: CompatibilitySection
+  slug: string
 }>()
 </script>
 
@@ -18,14 +19,15 @@ defineProps<{
     <div>
       <h3 class="element-text font-display text-xl font-semibold mb-4">Best Matches</h3>
       <div class="grid gap-3 sm:grid-cols-2">
-        <RouterLink
+        <div
           v-for="match in compatibility.bestMatches"
           :key="match.slug"
-          :to="`/zodiac/${match.slug}`"
-          class="glass rounded-xl p-4 block hover:element-glow transition-shadow duration-300"
+          class="glass rounded-xl p-4 hover:element-glow transition-shadow duration-300"
         >
           <div class="flex items-center justify-between mb-2">
-            <h4 class="text-[var(--el-accent)] font-semibold">{{ match.name }}</h4>
+            <RouterLink :to="`/zodiac/${match.slug}`" class="text-[var(--el-accent)] font-semibold hover:underline">
+              {{ match.name }}
+            </RouterLink>
             <span class="text-sm font-bold text-[var(--el-accent)]">{{ match.score }}%</span>
           </div>
           <!-- Score bar -->
@@ -35,8 +37,14 @@ defineProps<{
               :style="{ width: `${match.score}%` }"
             />
           </div>
-          <p class="text-ash-400 text-sm leading-relaxed">{{ match.summary }}</p>
-        </RouterLink>
+          <p class="text-ash-400 text-sm leading-relaxed mb-2">{{ match.summary }}</p>
+          <RouterLink
+            :to="`/compatibility/${[slug, match.slug].sort().join('/')}`"
+            class="text-sm text-ash-400 hover:text-ash-200 underline"
+          >
+            See full report &rarr;
+          </RouterLink>
+        </div>
       </div>
     </div>
 
@@ -44,14 +52,15 @@ defineProps<{
     <div>
       <h3 class="font-display text-xl font-semibold mb-4 text-ash-200">Challenging Matches</h3>
       <div class="grid gap-3 sm:grid-cols-2">
-        <RouterLink
+        <div
           v-for="match in compatibility.challengingMatches"
           :key="match.slug"
-          :to="`/zodiac/${match.slug}`"
-          class="glass rounded-xl p-4 block hover:bg-ash-800/50 transition-colors duration-300"
+          class="glass rounded-xl p-4 hover:bg-ash-800/50 transition-colors duration-300"
         >
           <div class="flex items-center justify-between mb-2">
-            <h4 class="text-ash-200 font-semibold">{{ match.name }}</h4>
+            <RouterLink :to="`/zodiac/${match.slug}`" class="text-ash-200 font-semibold hover:underline">
+              {{ match.name }}
+            </RouterLink>
             <span class="text-sm font-bold text-ash-400">{{ match.score }}%</span>
           </div>
           <!-- Score bar -->
@@ -61,8 +70,14 @@ defineProps<{
               :style="{ width: `${match.score}%` }"
             />
           </div>
-          <p class="text-ash-400 text-sm leading-relaxed">{{ match.summary }}</p>
-        </RouterLink>
+          <p class="text-ash-400 text-sm leading-relaxed mb-2">{{ match.summary }}</p>
+          <RouterLink
+            :to="`/compatibility/${[slug, match.slug].sort().join('/')}`"
+            class="text-sm text-ash-400 hover:text-ash-200 underline"
+          >
+            See full report &rarr;
+          </RouterLink>
+        </div>
       </div>
     </div>
 
