@@ -11,10 +11,13 @@ const props = withDefaults(defineProps<{
 const { trackNewsletterSignup } = useAnalytics()
 
 const email = ref('')
+const honeypot = ref('')
 const submitted = ref(false)
+const submitting = ref(false)
+const successMsg = ref('')
 const errorMsg = ref('')
 
-function handleSubmit(event: Event) {
+async function handleSubmit() {
   errorMsg.value = ''
 
   if (!email.value.trim()) {
@@ -22,21 +25,33 @@ function handleSubmit(event: Event) {
     return
   }
 
-  const form = event.target as HTMLFormElement
-  const formData = new FormData(form)
+  submitting.value = true
 
-  fetch('/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams(formData as unknown as Record<string, string>).toString(),
-  })
-    .then(() => {
-      submitted.value = true
-      trackNewsletterSignup(props.sourcePage)
+  try {
+    const res = await fetch('/api/newsletter/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: email.value.trim(),
+        honeypot: honeypot.value,
+      }),
     })
-    .catch(() => {
-      errorMsg.value = 'Something went wrong. Please try again.'
-    })
+
+    const data = await res.json()
+
+    if (!res.ok) {
+      errorMsg.value = data.error || 'Something went wrong. Please try again.'
+      return
+    }
+
+    submitted.value = true
+    successMsg.value = data.message || "You're in! Watch your inbox."
+    trackNewsletterSignup(props.sourcePage)
+  } catch {
+    errorMsg.value = 'Something went wrong. Please try again.'
+  } finally {
+    submitting.value = false
+  }
 }
 </script>
 
@@ -44,22 +59,15 @@ function handleSubmit(event: Event) {
   <div>
     <!-- Success state -->
     <div v-if="submitted" class="glass rounded-xl p-6 text-center">
-      <p class="text-ash-100 text-lg font-semibold">You're in!</p>
+      <p class="text-ash-100 text-lg font-semibold">{{ successMsg }}</p>
       <p class="text-ash-300 mt-2">Watch your inbox for zodiac insights.</p>
     </div>
 
     <!-- Form state -->
-    <form
-      v-else
-      name="newsletter"
-      method="POST"
-      data-netlify="true"
-      netlify-honeypot="bot-field"
-      @submit.prevent="handleSubmit"
-    >
-      <input type="hidden" name="form-name" value="newsletter" />
-      <p class="hidden">
-        <label>Don't fill this out: <input name="bot-field" /></label>
+    <form v-else @submit.prevent="handleSubmit">
+      <!-- Honeypot — hidden from humans, traps bots -->
+      <p class="hidden" aria-hidden="true">
+        <label>Don't fill this out: <input v-model="honeypot" name="hp" tabindex="-1" autocomplete="off" /></label>
       </p>
 
       <div class="flex flex-col sm:flex-row gap-3">
@@ -69,10 +77,15 @@ function handleSubmit(event: Event) {
           name="email"
           placeholder="Enter your email"
           required
-          class="flex-1 px-6 py-4 bg-ash-900/50 border border-ash-700 rounded-xl text-ash-100 placeholder-ash-500 focus:border-[var(--el-500)] focus:ring-2 focus:ring-[var(--el-500)]/20 outline-none transition-all"
+          :disabled="submitting"
+          class="flex-1 px-6 py-4 bg-ash-900/50 border border-ash-700 rounded-xl text-ash-100 placeholder-ash-500 focus:border-[var(--el-500)] focus:ring-2 focus:ring-[var(--el-500)]/20 outline-none transition-all disabled:opacity-50"
         />
-        <button type="submit" class="btn-element px-8 py-4 font-semibold">
-          Subscribe
+        <button
+          type="submit"
+          :disabled="submitting"
+          class="btn-element px-8 py-4 font-semibold disabled:opacity-50"
+        >
+          {{ submitting ? 'Subscribing...' : 'Subscribe' }}
         </button>
       </div>
 
