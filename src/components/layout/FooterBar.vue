@@ -132,6 +132,11 @@ const animalLinksCol2 = [
         <p class="text-sm text-ash-600">
           &copy; {{ currentYear }} Wu Xing Zodiac
         </p>
+        <div class="flex items-center gap-4">
+          <RouterLink to="/about" class="text-xs text-ash-600 hover:text-ash-400 transition-colors">About</RouterLink>
+          <RouterLink to="/privacy" class="text-xs text-ash-600 hover:text-ash-400 transition-colors">Privacy</RouterLink>
+          <RouterLink to="/terms" class="text-xs text-ash-600 hover:text-ash-400 transition-colors">Terms</RouterLink>
+        </div>
         <p class="text-xs text-ash-700">
           Chinese astrology information is for entertainment purposes only.
         </p>

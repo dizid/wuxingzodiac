@@ -5,6 +5,7 @@ import { computed } from 'vue'
 
 const props = defineProps<{
   profile: SignProfile
+  archetype?: { name: string; tagline: string }
 }>()
 
 const elementRef = computed(() => props.profile.element)
@@ -23,6 +24,11 @@ const { config } = useElementTheme(elementRef)
     <h1 class="element-text font-display text-5xl md:text-7xl font-bold mb-3">
       {{ profile.name }}
     </h1>
+
+    <!-- Archetype (V2 content) -->
+    <p v-if="archetype" class="text-lg md:text-xl font-display font-semibold text-[var(--el-accent)] mb-3 tracking-wide">
+      {{ archetype.name }}
+    </p>
 
     <!-- Chinese name -->
     <p class="text-3xl md:text-4xl text-ash-500 font-light mb-4 tracking-wider">

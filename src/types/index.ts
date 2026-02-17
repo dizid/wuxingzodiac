@@ -184,6 +184,46 @@ export interface BlogPost {
 }
 
 // ============================================
+// SIGN CONTENT V2 (Wuxing Master rewrite)
+// ============================================
+export interface SignContentV2 {
+  slug: string
+  profile: SignProfile
+  archetype: {
+    name: string     // e.g., 'The Resourceful Pioneer'
+    tagline: string  // e.g., 'The Resourceful Pioneer — Wood Rat'
+  }
+  atAGlance: AtAGlanceSection
+  personality: { body: string }      // ~300 words
+  shadow: { body: string }           // ~150 words
+  relationships: { body: string }    // ~150 words
+  elementBalance: { body: string }   // ~100 words
+  matches: MatchesSection
+}
+
+export interface AtAGlanceSection {
+  element: string       // e.g., 'Wood (Growth, Flexibility)'
+  energy: string        // 'Yin' or 'Yang'
+  archetype: string     // e.g., 'The Resourceful Pioneer'
+  coreStrength: string  // e.g., 'Strategic patience'
+  shadow: string        // e.g., 'Analysis paralysis'
+  bestMatch: string     // slug, e.g., 'water-dragon'
+  worstMatch: string    // slug, e.g., 'fire-horse'
+  luckyColor: string    // e.g., 'Forest green'
+}
+
+export interface MatchEntry {
+  slug: string    // e.g., 'water-dragon'
+  name: string    // e.g., 'Water Dragon'
+  reason: string  // 1-line reason
+}
+
+export interface MatchesSection {
+  best: MatchEntry[]   // exactly 3
+  worst: MatchEntry[]  // exactly 3
+}
+
+// ============================================
 // NAVIGATION
 // ============================================
 export interface NavItem {

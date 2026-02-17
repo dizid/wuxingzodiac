@@ -6,6 +6,9 @@
 - **Amazon Associates:** wuxing20-20
 https://buttondown.com/glaswerk/archive/welcome-to-wu-xing-zodiac-your-60-sign-journey/
 
+
+Stripe keys: stored in Netlify env vars (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_ID)
+
 ## GA4 Snippet (for index.html)
 
 ```html

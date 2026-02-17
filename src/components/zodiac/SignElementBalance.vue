@@ -1,0 +1,12 @@
+<script setup lang="ts">
+defineProps<{
+  data: { body: string }
+}>()
+</script>
+
+<template>
+  <section class="glass rounded-xl p-6 border-l-4 border-[var(--el-500)]">
+    <h2 class="element-text font-display text-2xl font-bold mb-4">Your Element in Balance</h2>
+    <p class="text-ash-200 leading-relaxed whitespace-pre-line">{{ data.body }}</p>
+  </section>
+</template>

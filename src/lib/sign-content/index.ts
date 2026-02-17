@@ -5,13 +5,14 @@
 // This loader imports them on demand so the main bundle stays small.
 // Uses import.meta.glob so Vite can properly bundle each file as a chunk.
 
-import type { SignContent } from '@/types'
+import type { SignContentV2 } from '@/types'
 
 // Vite resolves these at build time into lazy chunk imports
-const contentModules = import.meta.glob<{ default: SignContent }>([
+const contentModules = import.meta.glob<{ default: SignContentV2 }>([
   './*.ts',
   '!./index.ts',
   '!./profiles.ts',
+  '!./archetypes.ts',
 ])
 
 /**
@@ -21,7 +22,7 @@ const contentModules = import.meta.glob<{ default: SignContent }>([
  * Usage:
  *   const content = await loadSignContent('fire-horse')
  */
-export async function loadSignContent(slug: string): Promise<SignContent> {
+export async function loadSignContent(slug: string): Promise<SignContentV2> {
   const loader = contentModules[`./${slug}.ts`]
   if (!loader) {
     throw new Error(`Unknown sign slug: ${slug}`)

@@ -85,6 +85,36 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/BlogPostPage.vue'),
   },
   {
+    path: '/result/:sign',
+    name: 'result',
+    component: () => import('@/pages/ResultPage.vue'),
+    beforeEnter: (to) => {
+      if (!VALID_SIGN_SLUGS.includes(to.params.sign as string)) {
+        return { name: 'not-found', params: { pathMatch: to.path.split('/').slice(1) } }
+      }
+    },
+  },
+  {
+    path: '/report/download',
+    name: 'report-download',
+    component: () => import('@/pages/ReportDownloadPage.vue'),
+  },
+  {
+    path: '/about',
+    name: 'about',
+    component: () => import('@/pages/AboutPage.vue'),
+  },
+  {
+    path: '/privacy',
+    name: 'privacy',
+    component: () => import('@/pages/PrivacyPage.vue'),
+  },
+  {
+    path: '/terms',
+    name: 'terms',
+    component: () => import('@/pages/TermsPage.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     component: () => import('@/pages/NotFoundPage.vue'),

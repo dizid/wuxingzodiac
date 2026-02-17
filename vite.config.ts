@@ -20,8 +20,8 @@ export default defineConfig({
   },
   ssgOptions: {
     includedRoutes(paths) {
-      // Start with auto-discovered static routes
-      const allPaths = [...paths]
+      // Start with auto-discovered static routes, excluding dynamic/template routes
+      const allPaths = paths.filter(p => !p.includes(':'))
 
       // 60 sign pages
       for (const element of ELEMENTS) {
@@ -38,6 +38,13 @@ export default defineConfig({
       // 5 element pages
       for (const element of ELEMENTS) {
         allPaths.push(`/zodiac/element/${element}`)
+      }
+
+      // 60 result pages
+      for (const element of ELEMENTS) {
+        for (const animal of ANIMALS) {
+          allPaths.push(`/result/${element}-${animal}`)
+        }
       }
 
       // 1,830 compatibility pair pages (60 choose 2 + 60 same-sign pairs)

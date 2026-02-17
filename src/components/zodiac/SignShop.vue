@@ -3,10 +3,10 @@ import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { generateShopProducts } from '@/lib/sign-shop'
 import { getAffiliateUrl } from '@/lib/affiliate-config'
 import { useAnalytics } from '@/composables/useAnalytics'
-import type { SignContent } from '@/types'
+import type { SignContentV2 } from '@/types'
 
 const props = defineProps<{
-  content: SignContent
+  content: SignContentV2
 }>()
 
 const { trackAffiliateClick, trackAffiliateImpression } = useAnalytics()
