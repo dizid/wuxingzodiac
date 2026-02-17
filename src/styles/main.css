@@ -1,0 +1,376 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* ============================================
+   WU XING ZODIAC DESIGN SYSTEM
+   Five Element Palettes + Glass Morphism
+   Tailwind CSS 4 (@theme syntax)
+   ============================================ */
+
+@theme {
+  /* === Wood Element === */
+  --color-wood-50: #f0fdf4;
+  --color-wood-100: #dcfce7;
+  --color-wood-200: #bbf7d0;
+  --color-wood-300: #86efac;
+  --color-wood-400: #4ade80;
+  --color-wood-500: #22c55e;
+  --color-wood-600: #16a34a;
+  --color-wood-700: #15803d;
+  --color-wood-800: #166534;
+  --color-wood-900: #14532d;
+  --color-wood-950: #052e16;
+
+  /* === Fire Element === */
+  --color-fire-50: #fff7ed;
+  --color-fire-100: #ffedd5;
+  --color-fire-200: #fed7aa;
+  --color-fire-300: #fdba74;
+  --color-fire-400: #fb923c;
+  --color-fire-500: #f97316;
+  --color-fire-600: #ea580c;
+  --color-fire-700: #c2410c;
+  --color-fire-800: #9a3412;
+  --color-fire-900: #7c2d12;
+  --color-fire-950: #431407;
+
+  /* === Earth Element === */
+  --color-earth-50: #fffbeb;
+  --color-earth-100: #fef3c7;
+  --color-earth-200: #fde68a;
+  --color-earth-300: #fcd34d;
+  --color-earth-400: #fbbf24;
+  --color-earth-500: #f59e0b;
+  --color-earth-600: #d97706;
+  --color-earth-700: #b45309;
+  --color-earth-800: #92400e;
+  --color-earth-900: #78350f;
+  --color-earth-950: #451a03;
+
+  /* === Metal Element === */
+  --color-metal-50: #f8fafc;
+  --color-metal-100: #f1f5f9;
+  --color-metal-200: #e2e8f0;
+  --color-metal-300: #cbd5e1;
+  --color-metal-400: #94a3b8;
+  --color-metal-500: #64748b;
+  --color-metal-600: #475569;
+  --color-metal-700: #334155;
+  --color-metal-800: #1e293b;
+  --color-metal-900: #0f172a;
+  --color-metal-950: #020617;
+
+  /* === Water Element === */
+  --color-water-50: #eff6ff;
+  --color-water-100: #dbeafe;
+  --color-water-200: #bfdbfe;
+  --color-water-300: #93c5fd;
+  --color-water-400: #60a5fa;
+  --color-water-500: #3b82f6;
+  --color-water-600: #2563eb;
+  --color-water-700: #1d4ed8;
+  --color-water-800: #1e40af;
+  --color-water-900: #1e3a8a;
+  --color-water-950: #172554;
+
+  /* === Shared Dark Base === */
+  --color-ash-50: #fafafa;
+  --color-ash-100: #f5f5f5;
+  --color-ash-200: #e5e5e5;
+  --color-ash-300: #d4d4d4;
+  --color-ash-400: #a3a3a3;
+  --color-ash-500: #737373;
+  --color-ash-600: #525252;
+  --color-ash-700: #404040;
+  --color-ash-800: #262626;
+  --color-ash-900: #171717;
+  --color-ash-950: #0a0a0a;
+
+  /* === Typography === */
+  --font-display: 'Cinzel', serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+/* ============================================
+   CSS CUSTOM PROPERTIES FOR ACTIVE ELEMENT
+   Set by useElementTheme composable via data-element attribute
+   ============================================ */
+
+:root {
+  /* Default: neutral (no element active) */
+  --el-primary: #94a3b8;
+  --el-accent: #e2e8f0;
+  --el-50: #f8fafc;
+  --el-100: #f1f5f9;
+  --el-200: #e2e8f0;
+  --el-300: #cbd5e1;
+  --el-400: #94a3b8;
+  --el-500: #64748b;
+  --el-600: #475569;
+  --el-700: #334155;
+  --el-800: #1e293b;
+  --el-900: #0f172a;
+  --el-950: #020617;
+  --el-glow-rgb: 148, 163, 184;
+}
+
+[data-element="wood"] {
+  --el-primary: #22c55e;
+  --el-accent: #86efac;
+  --el-50: #f0fdf4;
+  --el-100: #dcfce7;
+  --el-200: #bbf7d0;
+  --el-300: #86efac;
+  --el-400: #4ade80;
+  --el-500: #22c55e;
+  --el-600: #16a34a;
+  --el-700: #15803d;
+  --el-800: #166534;
+  --el-900: #14532d;
+  --el-950: #052e16;
+  --el-glow-rgb: 34, 197, 94;
+}
+
+[data-element="fire"] {
+  --el-primary: #f97316;
+  --el-accent: #fbbf24;
+  --el-50: #fff7ed;
+  --el-100: #ffedd5;
+  --el-200: #fed7aa;
+  --el-300: #fdba74;
+  --el-400: #fb923c;
+  --el-500: #f97316;
+  --el-600: #ea580c;
+  --el-700: #c2410c;
+  --el-800: #9a3412;
+  --el-900: #7c2d12;
+  --el-950: #431407;
+  --el-glow-rgb: 249, 115, 22;
+}
+
+[data-element="earth"] {
+  --el-primary: #d97706;
+  --el-accent: #fbbf24;
+  --el-50: #fffbeb;
+  --el-100: #fef3c7;
+  --el-200: #fde68a;
+  --el-300: #fcd34d;
+  --el-400: #fbbf24;
+  --el-500: #f59e0b;
+  --el-600: #d97706;
+  --el-700: #b45309;
+  --el-800: #92400e;
+  --el-900: #78350f;
+  --el-950: #451a03;
+  --el-glow-rgb: 217, 119, 6;
+}
+
+[data-element="metal"] {
+  --el-primary: #94a3b8;
+  --el-accent: #e2e8f0;
+  --el-50: #f8fafc;
+  --el-100: #f1f5f9;
+  --el-200: #e2e8f0;
+  --el-300: #cbd5e1;
+  --el-400: #94a3b8;
+  --el-500: #64748b;
+  --el-600: #475569;
+  --el-700: #334155;
+  --el-800: #1e293b;
+  --el-900: #0f172a;
+  --el-950: #020617;
+  --el-glow-rgb: 148, 163, 184;
+}
+
+[data-element="water"] {
+  --el-primary: #3b82f6;
+  --el-accent: #93c5fd;
+  --el-50: #eff6ff;
+  --el-100: #dbeafe;
+  --el-200: #bfdbfe;
+  --el-300: #93c5fd;
+  --el-400: #60a5fa;
+  --el-500: #3b82f6;
+  --el-600: #2563eb;
+  --el-700: #1d4ed8;
+  --el-800: #1e40af;
+  --el-900: #1e3a8a;
+  --el-950: #172554;
+  --el-glow-rgb: 59, 130, 246;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-ash-950);
+  color: var(--color-ash-100);
+  overflow-x: hidden;
+}
+
+/* ============================================
+   ELEMENT-AWARE TEXT EFFECT
+   ============================================ */
+
+.element-text {
+  background: linear-gradient(
+    135deg,
+    var(--el-500),
+    var(--el-accent),
+    var(--el-600),
+    var(--el-accent)
+  );
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: element-shimmer 3s ease infinite;
+}
+
+@keyframes element-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ============================================
+   GLASS MORPHISM
+   ============================================ */
+
+.glass {
+  background: rgba(23, 23, 23, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(var(--el-glow-rgb), 0.15);
+}
+
+.glass-strong {
+  background: rgba(23, 23, 23, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(var(--el-glow-rgb), 0.2);
+}
+
+/* ============================================
+   ELEMENT-AWARE GLOW EFFECTS
+   ============================================ */
+
+.element-glow {
+  box-shadow:
+    0 0 15px rgba(var(--el-glow-rgb), 0.3),
+    0 0 30px rgba(var(--el-glow-rgb), 0.15),
+    0 0 60px rgba(var(--el-glow-rgb), 0.05);
+}
+
+.element-glow-strong {
+  box-shadow:
+    0 0 20px rgba(var(--el-glow-rgb), 0.5),
+    0 0 40px rgba(var(--el-glow-rgb), 0.25),
+    0 0 80px rgba(var(--el-glow-rgb), 0.1);
+}
+
+/* ============================================
+   ELEMENT-AWARE BUTTON
+   ============================================ */
+
+.btn-element {
+  background: linear-gradient(135deg, var(--el-600), var(--el-500));
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-element::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.btn-element:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 20px rgba(var(--el-glow-rgb), 0.5),
+    0 0 40px rgba(var(--el-glow-rgb), 0.25);
+}
+
+.btn-element:hover::before {
+  left: 100%;
+}
+
+/* ============================================
+   HOMEPAGE: MULTI-ELEMENT GRADIENT
+   ============================================ */
+
+.multi-element-text {
+  background: linear-gradient(
+    135deg,
+    #22c55e,
+    #f97316,
+    #d97706,
+    #94a3b8,
+    #3b82f6
+  );
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: multi-element-flow 8s ease infinite;
+}
+
+@keyframes multi-element-flow {
+  0% { background-position: 0% 50%; }
+  25% { background-position: 50% 0%; }
+  50% { background-position: 100% 50%; }
+  75% { background-position: 50% 100%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ============================================
+   ELEMENT BACKGROUND GRADIENT
+   ============================================ */
+
+.gradient-element-bg {
+  background: radial-gradient(
+    ellipse at bottom,
+    rgba(var(--el-glow-rgb), 0.15) 0%,
+    transparent 60%
+  );
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--color-ash-950); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--el-700), var(--el-900));
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--el-600); }
+
+/* ============================================
+   PAGE TRANSITIONS
+   ============================================ */
+
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.page-enter-from { opacity: 0; transform: translateY(10px); }
+.page-leave-to { opacity: 0; transform: translateY(-10px); }
