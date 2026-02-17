@@ -18,6 +18,7 @@ import SignLucky from '@/components/zodiac/SignLucky.vue'
 import SignFamous from '@/components/zodiac/SignFamous.vue'
 import SignCulture from '@/components/zodiac/SignCulture.vue'
 import SignHoroscope from '@/components/zodiac/SignHoroscope.vue'
+import MonetizationSlot from '@/components/zodiac/MonetizationSlot.vue'
 
 const route = useRoute()
 const slug = computed(() => route.params.slug as string)
@@ -132,18 +133,22 @@ const sectionTitle = computed(() => {
             v-if="activeSection === 'career'"
             :career="content.career"
           />
+          <MonetizationSlot v-if="activeSection === 'career'" section="career" />
           <SignLove
             v-if="activeSection === 'love'"
             :love="content.love"
           />
+          <MonetizationSlot v-if="activeSection === 'love'" section="love" />
           <SignHealth
             v-if="activeSection === 'health'"
             :health="content.health"
           />
+          <MonetizationSlot v-if="activeSection === 'health'" section="health" />
           <SignLucky
             v-if="activeSection === 'lucky'"
             :lucky="content.lucky"
           />
+          <MonetizationSlot v-if="activeSection === 'lucky'" section="lucky" />
           <SignFamous
             v-if="activeSection === 'famous'"
             :famous="content.famous"

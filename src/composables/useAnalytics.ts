@@ -50,6 +50,11 @@ export function useAnalytics() {
       trackEvent('cross_link_click', { from_slug: fromSlug, to_slug: toSlug, link_type: linkType })
     },
 
+    /** Track when a user reads a blog post */
+    trackBlogRead: (slug: string, title: string) => {
+      trackEvent('blog_read', { slug, title })
+    },
+
     /** Generic event tracker for custom events */
     trackEvent,
   }

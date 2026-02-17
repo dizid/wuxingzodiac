@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { zodiacElements, zodiacAnimals } from '@/lib/zodiac-data'
+import NewsletterForm from '@/components/ui/NewsletterForm.vue'
 
 const elements = zodiacElements
 const animals = zodiacAnimals
@@ -101,6 +102,19 @@ const howItWorks = [
           <div class="font-display font-bold text-ash-100">{{ a.name }}</div>
           <div class="text-ash-500 text-sm">{{ a.chinese }}</div>
         </RouterLink>
+      </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="px-4 py-12 max-w-4xl mx-auto">
+      <div class="glass rounded-2xl p-8 md:p-12 text-center">
+        <h2 class="multi-element-text font-display text-3xl md:text-4xl font-bold mb-4">
+          Stay in the Loop
+        </h2>
+        <p class="text-ash-300 text-lg mb-8 max-w-2xl mx-auto">
+          Get zodiac insights, compatibility tips, and 2026 Fire Horse updates delivered to your inbox.
+        </p>
+        <NewsletterForm />
       </div>
     </section>
 

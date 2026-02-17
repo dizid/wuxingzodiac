@@ -353,6 +353,79 @@ body {
 }
 
 /* ============================================
+   BLOG PROSE STYLING
+   ============================================ */
+
+.prose-zodiac {
+  color: var(--color-ash-200);
+}
+
+.prose-zodiac h1,
+.prose-zodiac h2,
+.prose-zodiac h3,
+.prose-zodiac h4 {
+  font-family: var(--font-display);
+  color: var(--color-ash-100);
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.prose-zodiac h2 { font-size: 2rem; }
+.prose-zodiac h3 { font-size: 1.5rem; }
+
+.prose-zodiac p {
+  margin-bottom: 1.25rem;
+  line-height: 1.8;
+}
+
+.prose-zodiac a {
+  color: var(--el-accent, var(--color-ash-300));
+  text-decoration: underline;
+}
+
+.prose-zodiac a:hover {
+  color: var(--el-primary, var(--color-ash-100));
+}
+
+.prose-zodiac ul,
+.prose-zodiac ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.prose-zodiac li { margin-bottom: 0.5rem; }
+
+.prose-zodiac blockquote {
+  border-left: 4px solid var(--el-primary, var(--color-ash-500));
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: var(--color-ash-300);
+}
+
+.prose-zodiac code {
+  background: var(--color-ash-900);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--color-ash-200);
+}
+
+.prose-zodiac pre {
+  background: var(--color-ash-900);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.prose-zodiac img {
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+}
+
+/* ============================================
    SCROLLBAR
    ============================================ */
 
