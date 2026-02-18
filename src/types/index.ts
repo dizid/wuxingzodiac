@@ -224,6 +224,70 @@ export interface MatchesSection {
 }
 
 // ============================================
+// VISUAL DATA (pentagon chart, power levels)
+// ============================================
+export interface ElementPercentages {
+  wood: number
+  fire: number
+  earth: number
+  metal: number
+  water: number
+}
+
+export interface TraitScores {
+  strategy: number
+  compassion: number
+  resilience: number
+  ambition: number
+  sociability: number
+  creativity: number
+}
+
+export interface SignVisualData {
+  elementPercentages: ElementPercentages
+  traitScores: TraitScores
+}
+
+// ============================================
+// ENHANCED COMPATIBILITY SYSTEM
+// ============================================
+export interface EnhancedCompatibilityResult extends CompatibilityResult {
+  chemistry: number        // 0-100, animal relationship
+  support: number          // 0-100, element generating/same
+  friction: number         // 0-100, element overcoming/destroying
+  matchLabel: string       // e.g., 'Soulmate Energy', 'Toxic but Addictive'
+  matchCategory: MatchCategory
+  frictionPoints: FrictionPoint[]
+  remedy: RemedyAdvice | null
+}
+
+export type MatchCategory =
+  | 'soulmate' | 'power-couple' | 'slow-burn'
+  | 'explosive' | 'toxic-addictive' | 'oil-and-water'
+  | 'best-friends' | 'steady' | 'neutral'
+
+export interface FrictionPoint {
+  category: 'communication' | 'values' | 'lifestyle' | 'emotional' | 'growth'
+  intensity: 'spark' | 'friction' | 'clash'
+  description: string
+}
+
+export interface RemedyAdvice {
+  bridgingElement: ZodiacElement
+  description: string
+}
+
+// ============================================
+// WU XING CYCLE RELATIONSHIPS
+// ============================================
+export interface WuXingRelationship {
+  generates: ZodiacElement
+  generatedBy: ZodiacElement
+  overcomes: ZodiacElement
+  overcomedBy: ZodiacElement
+}
+
+// ============================================
 // NAVIGATION
 // ============================================
 export interface NavItem {

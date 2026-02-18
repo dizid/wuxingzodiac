@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { getProfileBySlug } from '@/lib/sign-content/profiles'
 import { loadSignContent } from '@/lib/sign-content'
+import { getVisualData } from '@/lib/sign-visual-data'
 import { useElementTheme } from '@/composables/useElementTheme'
 import { useSignSeoReactive } from '@/composables/useSignSeo'
 import type { SignContentV2 } from '@/types'
@@ -10,20 +11,29 @@ import type { SignContentV2 } from '@/types'
 // Section components
 import SignHero from '@/components/zodiac/SignHero.vue'
 import SignAtAGlance from '@/components/zodiac/SignAtAGlance.vue'
+import ElementPentagonChart from '@/components/zodiac/ElementPentagonChart.vue'
 import SignPersonalityV2 from '@/components/zodiac/SignPersonalityV2.vue'
+import SignPowerLevels from '@/components/zodiac/SignPowerLevels.vue'
 import SignShadow from '@/components/zodiac/SignShadow.vue'
+import MonetizationSlot from '@/components/zodiac/MonetizationSlot.vue'
 import SignRelationships from '@/components/zodiac/SignRelationships.vue'
 import SignElementBalance from '@/components/zodiac/SignElementBalance.vue'
+import WuXingCycleDiagram from '@/components/zodiac/WuXingCycleDiagram.vue'
 import SignMatchesV2 from '@/components/zodiac/SignMatchesV2.vue'
-import MonetizationSlot from '@/components/zodiac/MonetizationSlot.vue'
+import SignSiblingNav from '@/components/zodiac/SignSiblingNav.vue'
 import SignShop from '@/components/zodiac/SignShop.vue'
+import PageCTA from '@/components/ui/PageCTA.vue'
 
 const route = useRoute()
+const router = useRouter()
 const slug = computed(() => route.params.slug as string)
 const profile = computed(() => getProfileBySlug(slug.value))
 const content = ref<SignContentV2 | null>(null)
 const loading = ref(true)
 const error = ref(false)
+
+// Visual data (element percentages + trait scores)
+const visualData = computed(() => getVisualData(slug.value))
 
 // Set element theme via composable (applies data-element to document root)
 const elementRef = computed(() => profile.value?.element ?? null)
@@ -54,6 +64,11 @@ useSignSeoReactive(profile, content)
 watch(slug, (newSlug) => {
   loadContent(newSlug)
 })
+
+// Navigate to element page from Wu Xing diagram
+function goToElement(element: string) {
+  router.push(`/zodiac/element/${element}`)
+}
 </script>
 
 <template>
@@ -61,7 +76,7 @@ watch(slug, (newSlug) => {
     class="min-h-screen"
     :data-element="profile?.element"
   >
-    <!-- Hero -->
+    <!-- Hero (with badge embedded inside) -->
     <SignHero v-if="profile" :profile="profile" :archetype="content?.archetype" />
 
     <!-- Not found state -->
@@ -95,16 +110,55 @@ watch(slug, (newSlug) => {
           </button>
         </div>
 
-        <!-- V2 single-scroll layout -->
+        <!-- V2 single-scroll layout with visual data -->
         <template v-else-if="content">
           <SignAtAGlance :data="content.atAGlance" />
+
+          <!-- Element Pentagon Chart -->
+          <ElementPentagonChart
+            v-if="visualData"
+            :percentages="visualData.elementPercentages"
+            :element="profile.element"
+            size="md"
+          />
+
           <SignPersonalityV2 :data="content.personality" />
+
+          <!-- Power Level Progress Bars -->
+          <SignPowerLevels
+            v-if="visualData"
+            :traits="visualData.traitScores"
+          />
+
           <SignShadow :data="content.shadow" />
           <MonetizationSlot section="personality" />
           <SignRelationships :data="content.relationships" />
+
+          <!-- Element Balance + Wu Xing Cycle Diagram -->
           <SignElementBalance :data="content.elementBalance" />
+          <WuXingCycleDiagram
+            :active-element="profile.element"
+            :interactive="true"
+            size="md"
+            @navigate="goToElement"
+          />
+
           <SignMatchesV2 :matches="content.matches" :slug="slug" />
+
+          <!-- Sibling Navigation (same animal/element) -->
+          <SignSiblingNav
+            :element="profile.element"
+            :animal="profile.animal"
+            :current-slug="slug"
+          />
+
           <SignShop :content="content" />
+
+          <!-- CTA Funnel -->
+          <PageCTA
+            :primary="{ label: 'Check Your Compatibility', to: '/compatibility' }"
+            :secondary="{ label: 'Find Your Sign', to: '/calculator' }"
+          />
         </template>
       </main>
     </template>

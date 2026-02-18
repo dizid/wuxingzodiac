@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import { getZodiacFromBirthdate, getSignSlug, zodiacAnimals } from '@/lib/zodiac-data'
+import { getZodiacFromBirthdate, getSignSlug } from '@/lib/zodiac-data'
 import { getProfileBySlug } from '@/lib/sign-content/profiles'
+import { getVisualData } from '@/lib/sign-visual-data'
 import { usePageSeo } from '@/composables/useSignSeo'
+import ElementPentagonChart from '@/components/zodiac/ElementPentagonChart.vue'
+import SignBadge from '@/components/zodiac/SignBadge.vue'
 import type { SignProfile } from '@/types'
 
 usePageSeo(
@@ -56,10 +59,11 @@ function clampDay() {
   }
 }
 
-// Animal emoji lookup
-const animalEmoji: Record<string, string> = Object.fromEntries(
-  zodiacAnimals.map(a => [a.animal, a.emoji])
-)
+// Visual data for the result sign
+const resultVisualData = computed(() => {
+  if (!result.value) return undefined
+  return getVisualData(result.value.slug)
+})
 
 function findSign() {
   if (!birthYear.value) return
@@ -138,19 +142,34 @@ function findSign() {
     <div
       v-if="result"
       :data-element="result.element"
-      class="glass element-glow rounded-2xl p-8 text-center"
+      class="space-y-6"
     >
-      <div class="text-6xl mb-4">
-        {{ animalEmoji[result.animal] }}
+      <!-- Main Result Card -->
+      <div class="glass element-glow rounded-2xl p-8 text-center">
+        <!-- Badge -->
+        <div class="flex justify-center mb-4">
+          <SignBadge :profile="result" :downloadable="true" />
+        </div>
+
+        <h2 class="element-text font-display text-3xl md:text-4xl font-bold mb-2">
+          You are a {{ result.name }}!
+        </h2>
+        <div class="text-ash-400 text-lg mb-1">{{ result.chineseName }}</div>
+        <div class="text-ash-300 italic mb-4">{{ result.tagline }}</div>
+        <div class="text-ash-500 text-sm mb-6">
+          Years: {{ result.years.filter(y => y >= 1924 && y <= 2043).join(', ') }}
+        </div>
       </div>
-      <h2 class="element-text font-display text-3xl md:text-4xl font-bold mb-2">
-        You are a {{ result.name }}!
-      </h2>
-      <div class="text-ash-400 text-lg mb-1">{{ result.chineseName }}</div>
-      <div class="text-ash-300 italic mb-4">{{ result.tagline }}</div>
-      <div class="text-ash-500 text-sm mb-6">
-        Years: {{ result.years.filter(y => y >= 1924 && y <= 2043).join(', ') }}
-      </div>
+
+      <!-- Element Pentagon Chart -->
+      <ElementPentagonChart
+        v-if="resultVisualData"
+        :percentages="resultVisualData.elementPercentages"
+        :element="result.element"
+        size="sm"
+      />
+
+      <!-- CTAs -->
       <div class="flex flex-wrap justify-center gap-4">
         <RouterLink
           :to="`/zodiac/${result.slug}`"

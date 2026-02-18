@@ -3,16 +3,17 @@ import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
 import CompatibilityPicker from '@/components/compatibility/CompatibilityPicker.vue'
 import CompatibilityResults from '@/components/compatibility/CompatibilityResults.vue'
+import PageCTA from '@/components/ui/PageCTA.vue'
 import { getProfileBySlug } from '@/lib/sign-content/profiles'
 import {
-  getCompatibilityScore,
+  getEnhancedCompatibility,
   getElementModifier,
   getElementInteractionDescription,
 } from '@/lib/compatibility-matrix'
 import { useAnalytics } from '@/composables/useAnalytics'
 import { usePageSeo } from '@/composables/useSignSeo'
 import { useCompatibilitySeo } from '@/composables/useCompatibilitySeo'
-import type { SignProfile, CompatibilityResult } from '@/types'
+import type { SignProfile, EnhancedCompatibilityResult } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -38,9 +39,10 @@ const profileB = computed<SignProfile | undefined>(() => {
   return getProfileBySlug(route.params.slugB as string)
 })
 
-const result = computed<CompatibilityResult | undefined>(() => {
+// Enhanced compatibility result with three scores
+const result = computed<EnhancedCompatibilityResult | undefined>(() => {
   if (!profileA.value || !profileB.value) return undefined
-  return getCompatibilityScore(
+  return getEnhancedCompatibility(
     profileA.value.animal,
     profileA.value.element,
     profileB.value.animal,
@@ -84,9 +86,17 @@ function onPickerSubmit() {
   router.push(`/compatibility/${slugs[0]}/${slugs[1]}`)
 }
 
-// SEO
+// SEO — enhanced with match label and breakdown
 if (isPairMode.value && profileA.value && profileB.value && result.value) {
-  useCompatibilitySeo(profileA.value, profileB.value, result.value)
+  useCompatibilitySeo(profileA.value, profileB.value, result.value, {
+    matchLabel: result.value.matchLabel,
+    matchCategory: result.value.matchCategory,
+    breakdown: {
+      chemistry: result.value.chemistry,
+      support: result.value.support,
+      friction: result.value.friction,
+    },
+  })
 } else if (!isPairMode.value) {
   usePageSeo(
     'Chinese Zodiac Compatibility Checker',
@@ -116,6 +126,14 @@ const popularPairs = [
         :result="result"
         :element-interaction="elementInteraction"
       />
+
+      <!-- CTA Funnel -->
+      <div class="mt-8">
+        <PageCTA
+          :primary="{ label: `Explore ${profileA.name}`, to: `/zodiac/${profileA.slug}` }"
+          :secondary="{ label: 'Find Your Sign', to: '/calculator' }"
+        />
+      </div>
 
       <!-- Try Another Pair -->
       <div class="mt-12">

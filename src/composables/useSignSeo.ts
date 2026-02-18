@@ -5,6 +5,127 @@ import type { SignProfile, SignContentV2 } from '@/types'
 const SITE_NAME = 'Wu Xing Zodiac'
 const SITE_URL = 'https://wuxingzodiac.me'
 
+// Shared author/expert Person schema used across all sign pages
+const EDITORIAL_PERSON = {
+  '@type': 'Person',
+  name: 'Wu Xing Zodiac Editorial Team',
+  url: `${SITE_URL}/about`,
+  description:
+    'Expert team specializing in Chinese astrology, BaZi, and Wu Xing five-element theory',
+}
+
+/** Capitalize first letter. */
+function cap(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+/** Human-readable element label, e.g. "Fire" */
+function elementLabel(element: string): string {
+  return cap(element)
+}
+
+/**
+ * Build the three FAQ questions for a sign page.
+ * Uses content data when available for richer answers.
+ */
+function buildFaqEntities(
+  profile: SignProfile,
+  description: string,
+  content?: SignContentV2 | null,
+): object[] {
+  const elLabel = elementLabel(profile.element)
+
+  // Best-match answer: prefer content data, fall back to generic phrasing
+  const bestMatchName = content?.atAGlance?.bestMatch
+    ? cap(content.atAGlance.bestMatch.replace(/-/g, ' '))
+    : `signs with complementary elements`
+
+  const compatibilityAnswer = content?.atAGlance?.bestMatch
+    ? `${profile.name} is most compatible with ${bestMatchName} and other signs that provide balance and harmony through elemental affinity. The ${elLabel} element shapes how ${profile.name} connects romantically and in friendship.`
+    : `${profile.name} is most compatible with signs that provide elemental balance and harmonious animal relationships. Consult the full compatibility chart for detailed pairings.`
+
+  const elementAnswer = `${profile.name} belongs to the ${elLabel} element in the Wu Xing (Five Elements) system of Chinese astrology. ${elLabel} energy shapes the core character, motivations, and life path of this sign.`
+
+  return [
+    {
+      '@type': 'Question',
+      name: `What is the ${profile.name} personality?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: description,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `Who is ${profile.name} most compatible with?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: compatibilityAnswer,
+      },
+    },
+    {
+      '@type': 'Question',
+      name: `What element is ${profile.name}?`,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: elementAnswer,
+      },
+    },
+  ]
+}
+
+/**
+ * Build the full JSON-LD @graph array for a sign page.
+ */
+function buildSignGraph(
+  profile: SignProfile,
+  title: string,
+  description: string,
+  url: string,
+  image: string,
+  content?: SignContentV2 | null,
+): object[] {
+  return [
+    // Primary Article schema
+    {
+      '@type': 'Article',
+      headline: title,
+      description,
+      image,
+      url,
+      author: {
+        '@type': 'Person',
+        name: 'Wu Xing Zodiac Editorial Team',
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': url,
+      },
+    },
+    // Expert author / Person schema
+    EDITORIAL_PERSON,
+    // Breadcrumb navigation
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+        { '@type': 'ListItem', position: 2, name: 'Zodiac Signs', item: `${SITE_URL}/zodiac` },
+        { '@type': 'ListItem', position: 3, name: profile.name, item: url },
+      ],
+    },
+    // FAQ schema with 3 sign-specific questions
+    {
+      '@type': 'FAQPage',
+      mainEntity: buildFaqEntities(profile, description, content),
+    },
+  ]
+}
+
 /**
  * SEO for individual zodiac sign pages.
  * Sets meta tags, OG tags, Twitter card, canonical URL, and JSON-LD.
@@ -42,47 +163,7 @@ export function useSignSeo(profile: SignProfile, content?: SignContentV2 | null)
         type: 'application/ld+json',
         innerHTML: JSON.stringify({
           '@context': 'https://schema.org',
-          '@graph': [
-            {
-              '@type': 'Article',
-              headline: title,
-              description,
-              image,
-              url,
-              publisher: {
-                '@type': 'Organization',
-                name: SITE_NAME,
-                url: SITE_URL,
-              },
-              mainEntityOfPage: {
-                '@type': 'WebPage',
-                '@id': url,
-              },
-            },
-            {
-              '@type': 'BreadcrumbList',
-              itemListElement: [
-                {
-                  '@type': 'ListItem',
-                  position: 1,
-                  name: 'Home',
-                  item: SITE_URL,
-                },
-                {
-                  '@type': 'ListItem',
-                  position: 2,
-                  name: 'Zodiac Signs',
-                  item: `${SITE_URL}/zodiac`,
-                },
-                {
-                  '@type': 'ListItem',
-                  position: 3,
-                  name: profile.name,
-                  item: url,
-                },
-              ],
-            },
-          ],
+          '@graph': buildSignGraph(profile, title, description, url, image, content),
         }),
       },
     ],
@@ -115,9 +196,6 @@ export function usePageSeo(title: string, description: string, path: string) {
   })
 }
 
-/**
- * SEO specifically for the home page with WebSite schema + SearchAction.
- */
 /**
  * Reactive version of useSignSeo — call once in setup with refs.
  * useHead is invoked once and reactively updates when refs change.
@@ -160,32 +238,7 @@ export function useSignSeoReactive(
           type: 'application/ld+json',
           innerHTML: JSON.stringify({
             '@context': 'https://schema.org',
-            '@graph': [
-              {
-                '@type': 'Article',
-                headline: title,
-                description,
-                image,
-                url,
-                publisher: {
-                  '@type': 'Organization',
-                  name: SITE_NAME,
-                  url: SITE_URL,
-                },
-                mainEntityOfPage: {
-                  '@type': 'WebPage',
-                  '@id': url,
-                },
-              },
-              {
-                '@type': 'BreadcrumbList',
-                itemListElement: [
-                  { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-                  { '@type': 'ListItem', position: 2, name: 'Zodiac Signs', item: `${SITE_URL}/zodiac` },
-                  { '@type': 'ListItem', position: 3, name: profile.name, item: url },
-                ],
-              },
-            ],
+            '@graph': buildSignGraph(profile, title, description, url, image, content),
           }),
         },
       ],

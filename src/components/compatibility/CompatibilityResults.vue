@@ -2,12 +2,16 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import ShareButtons from '@/components/ui/ShareButtons.vue'
-import type { SignProfile, CompatibilityResult } from '@/types'
+import CompatibilityMatchLabel from '@/components/compatibility/CompatibilityMatchLabel.vue'
+import CompatibilityScoreGauges from '@/components/compatibility/CompatibilityScoreGauges.vue'
+import FrictionAnalysis from '@/components/compatibility/FrictionAnalysis.vue'
+import RemedySection from '@/components/compatibility/RemedySection.vue'
+import type { SignProfile, EnhancedCompatibilityResult } from '@/types'
 
 const props = defineProps<{
   profileA: SignProfile
   profileB: SignProfile
-  result: CompatibilityResult
+  result: EnhancedCompatibilityResult
   elementInteraction: {
     modifier: number
     type: 'harmonious' | 'challenging' | 'neutral'
@@ -16,32 +20,6 @@ const props = defineProps<{
 }>()
 
 const SITE_URL = 'https://wuxingzodiac.me'
-
-// Score-based color classes
-const scoreColor = computed(() => {
-  const s = props.result.score
-  if (s >= 80) return { gradient: 'from-green-500 to-emerald-400', text: 'text-green-400', bg: 'bg-green-500' }
-  if (s >= 60) return { gradient: 'from-lime-500 to-green-400', text: 'text-lime-400', bg: 'bg-lime-500' }
-  if (s >= 40) return { gradient: 'from-amber-500 to-yellow-400', text: 'text-amber-400', bg: 'bg-amber-500' }
-  return { gradient: 'from-red-500 to-orange-400', text: 'text-red-400', bg: 'bg-red-500' }
-})
-
-const scoreLabel = computed(() => {
-  const s = props.result.score
-  if (s >= 80) return 'Excellent Match'
-  if (s >= 60) return 'Good Match'
-  if (s >= 40) return 'Moderate Match'
-  return 'Challenging Match'
-})
-
-// CSS conic-gradient progress for the score circle
-const scoreCircleStyle = computed(() => {
-  const pct = props.result.score / 100
-  const deg = pct * 360
-  return {
-    background: `conic-gradient(var(--score-color) ${deg}deg, rgba(38, 38, 38, 0.8) ${deg}deg)`,
-  }
-})
 
 // Element modifier display
 const modifierText = computed(() => {
@@ -63,11 +41,11 @@ const shareUrl = computed(() => {
 })
 
 const shareTitle = computed(() => {
-  return `${props.profileA.name} & ${props.profileB.name} Compatibility`
+  return `${props.profileA.name} & ${props.profileB.name}: ${props.result.matchLabel}`
 })
 
 const shareDescription = computed(() => {
-  return `${scoreLabel.value} — ${props.result.score}/100`
+  return `${props.result.matchLabel} — ${props.result.score}/100 | Chemistry ${props.result.chemistry}% | Support ${props.result.support}% | Friction ${props.result.friction}%`
 })
 </script>
 
@@ -81,40 +59,19 @@ const shareDescription = computed(() => {
       <p class="text-ash-400 text-lg">Chinese Zodiac Compatibility</p>
     </div>
 
-    <!-- Score Circle -->
-    <div class="flex justify-center">
-      <div
-        class="relative w-44 h-44 rounded-full p-1.5"
-        :style="[scoreCircleStyle, { '--score-color': scoreColor.bg.replace('bg-', 'var(--color-') + ')' }]"
-        :class="scoreColor.bg.replace('bg-', 'shadow-[0_0_30px_rgba(0,0,0,0.3)] ')"
-      >
-        <!-- Use inline style for conic-gradient since Tailwind can't do this dynamically -->
-        <div
-          class="absolute inset-0 rounded-full"
-          :style="{
-            background: `conic-gradient(${
-              result.score >= 80 ? '#22c55e' :
-              result.score >= 60 ? '#84cc16' :
-              result.score >= 40 ? '#f59e0b' :
-              '#ef4444'
-            } ${result.score * 3.6}deg, rgba(38, 38, 38, 0.8) ${result.score * 3.6}deg)`,
-          }"
-        />
-        <div class="absolute inset-2 rounded-full bg-ash-950 flex flex-col items-center justify-center">
-          <span class="text-5xl font-bold font-display" :class="scoreColor.text">
-            {{ result.score }}
-          </span>
-          <span class="text-ash-400 text-sm mt-1">out of 100</span>
-        </div>
-      </div>
-    </div>
+    <!-- Match Label (hero position — replaces old score circle) -->
+    <CompatibilityMatchLabel
+      :label="result.matchLabel"
+      :category="result.matchCategory"
+      :overall="result.score"
+    />
 
-    <!-- Score Label -->
-    <div class="text-center">
-      <span class="text-xl font-display font-semibold" :class="scoreColor.text">
-        {{ scoreLabel }}
-      </span>
-    </div>
+    <!-- Three-Score Gauges -->
+    <CompatibilityScoreGauges
+      :chemistry="result.chemistry"
+      :support="result.support"
+      :friction="result.friction"
+    />
 
     <!-- Summary -->
     <div class="glass rounded-2xl p-6">
@@ -132,8 +89,11 @@ const shareDescription = computed(() => {
       </div>
     </div>
 
+    <!-- Friction Analysis -->
+    <FrictionAnalysis :friction-points="result.frictionPoints" />
+
     <!-- Strengths -->
-    <div class="glass rounded-2xl p-6 border-green-900/30" style="border-color: rgba(34, 197, 94, 0.15);">
+    <div class="glass rounded-2xl p-6" style="border-color: rgba(34, 197, 94, 0.15);">
       <h2 class="font-display text-xl font-semibold text-green-400 mb-4">Strengths</h2>
       <ul class="space-y-2">
         <li v-for="(strength, i) in result.strengths" :key="i" class="flex items-start gap-3">
@@ -161,6 +121,9 @@ const shareDescription = computed(() => {
         </li>
       </ul>
     </div>
+
+    <!-- Remedy Section (conditional — only shows for high-friction pairs) -->
+    <RemedySection :remedy="result.remedy" />
 
     <!-- Sign Links -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

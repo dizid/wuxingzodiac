@@ -1,4 +1,5 @@
 import type { Context } from "@netlify/functions"
+import 'dotenv/config'
 
 export default async (req: Request, _context: Context) => {
   if (req.method !== 'POST') {

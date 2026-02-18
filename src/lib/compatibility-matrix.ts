@@ -8,7 +8,13 @@ import type {
   ZodiacElement,
   AnimalCompatibility,
   CompatibilityResult,
+  EnhancedCompatibilityResult,
+  FrictionPoint,
+  RemedyAdvice,
+  MatchCategory,
 } from '@/types'
+
+import { getBridgingElement, ELEMENT_LABELS, GENERATES, DESTROYS as WX_DESTROYS } from '@/lib/wuxing-cycles'
 
 // All 12 animals in order
 const ANIMALS: ZodiacAnimal[] = [
@@ -968,23 +974,10 @@ const animalCompatibility: Record<ZodiacAnimal, Record<ZodiacAnimal, AnimalCompa
 // ============================================
 // Generative cycle: Wood -> Fire -> Earth -> Metal -> Water -> Wood
 // Destructive cycle: Wood -> Earth -> Water -> Fire -> Metal -> Wood
+// Both GENERATES and DESTROYS are imported from wuxing-cycles.ts
 
-// Map each element to what it generates and what it destroys
-const GENERATES: Record<ZodiacElement, ZodiacElement> = {
-  wood: 'fire',
-  fire: 'earth',
-  earth: 'metal',
-  metal: 'water',
-  water: 'wood',
-}
-
-const DESTROYS: Record<ZodiacElement, ZodiacElement> = {
-  wood: 'earth',
-  fire: 'metal',
-  earth: 'water',
-  metal: 'wood',
-  water: 'fire',
-}
+// Local alias for DESTROYS (WX_DESTROYS imported to avoid name clash)
+const DESTROYS = WX_DESTROYS
 
 /**
  * Calculate the element interaction modifier between two elements.
@@ -1095,4 +1088,297 @@ export function getElementInteractionDescription(
     return `${nameB} overcomes ${nameA} in the destructive cycle — ${nameA} may feel constrained, but this tension can drive growth.`
   }
   return `${nameA} and ${nameB} have no direct Wu Xing cycle connection — a neutral pairing where other factors dominate.`
+}
+
+// ============================================
+// ENHANCED COMPATIBILITY ENGINE
+// New functions: chemistry, support, friction, labels, friction points, remedy
+// ============================================
+
+/**
+ * Returns the raw animal-to-animal chemistry score (0-100).
+ * Based purely on traditional zodiac pairings, ignoring element modifiers.
+ */
+export function getChemistryScore(animalA: ZodiacAnimal, animalB: ZodiacAnimal): number {
+  return animalCompatibility[animalA][animalB].base
+}
+
+/**
+ * Returns an element support score (0-100) based on Wu Xing generative relationships.
+ * High support = elements that naturally nourish each other.
+ */
+export function getSupportScore(elementA: ZodiacElement, elementB: ZodiacElement): number {
+  if (elementA === elementB) return 80
+  // A generates B — A supports B directly
+  if (GENERATES[elementA] === elementB) return 90
+  // B generates A — A receives support from B
+  if (GENERATES[elementB] === elementA) return 70
+  // Destructive relationship in either direction
+  if (DESTROYS[elementA] === elementB || DESTROYS[elementB] === elementA) return 30
+  // No direct Wu Xing relationship
+  return 50
+}
+
+/**
+ * Returns an element friction score (0-100) based on Wu Xing destructive relationships.
+ * High friction = elements that clash and undermine each other.
+ */
+export function getFrictionScore(elementA: ZodiacElement, elementB: ZodiacElement): number {
+  // A destroys B — direct conflict, A dominates
+  if (DESTROYS[elementA] === elementB) return 85
+  // B destroys A — reversed conflict, A is under pressure
+  if (DESTROYS[elementB] === elementA) return 70
+  // Same element — mild internal friction, but mostly harmony
+  if (elementA === elementB) return 40
+  // Generative relationship — very low friction
+  if (GENERATES[elementA] === elementB || GENERATES[elementB] === elementA) return 15
+  // No direct Wu Xing relationship
+  return 30
+}
+
+/**
+ * Derives a provocative match label from the three core compatibility scores.
+ * Returns both a human-readable label and a typed category.
+ */
+export function getMatchLabel(
+  chemistry: number,
+  support: number,
+  friction: number,
+): { label: string; category: MatchCategory } {
+  if (chemistry >= 80 && support >= 70 && friction < 40) {
+    return { label: 'Soulmate Energy', category: 'soulmate' }
+  }
+  if (chemistry >= 75 && support >= 60 && friction < 50) {
+    return { label: 'Power Couple', category: 'power-couple' }
+  }
+  if (chemistry >= 70 && friction >= 70) {
+    return { label: 'Explosive Chemistry', category: 'explosive' }
+  }
+  if (chemistry < 45 && friction >= 70) {
+    return { label: 'Toxic but Addictive', category: 'toxic-addictive' }
+  }
+  if (chemistry < 40 && support < 40 && friction < 40) {
+    return { label: 'Oil & Water', category: 'oil-and-water' }
+  }
+  if (chemistry >= 60 && support >= 55 && friction >= 40 && friction < 65) {
+    return { label: 'Slow Burn Romance', category: 'slow-burn' }
+  }
+  if (chemistry >= 65 && support >= 50 && friction < 50) {
+    return { label: 'Best Friends First', category: 'best-friends' }
+  }
+  if (chemistry >= 50 && support >= 50) {
+    return { label: 'Steady & Reliable', category: 'steady' }
+  }
+  return { label: 'Intriguing Mix', category: 'neutral' }
+}
+
+// ============================================
+// FRICTION POINT DESCRIPTIONS
+// Deterministic per animal pair + element combination.
+// Based on known zodiac traits — no randomness.
+// ============================================
+
+// Communication style descriptors per animal
+const COMMUNICATION_STYLE: Record<ZodiacAnimal, string> = {
+  rat: 'indirect and strategic',
+  ox: 'deliberate and reserved',
+  tiger: 'blunt and commanding',
+  rabbit: 'diplomatic and evasive',
+  dragon: 'bold and declarative',
+  snake: 'subtle and secretive',
+  horse: 'direct and spontaneous',
+  goat: 'gentle but vague',
+  monkey: 'clever and playful',
+  rooster: 'precise and critical',
+  dog: 'honest and earnest',
+  pig: 'warm and accommodating',
+}
+
+// Core value orientation per animal
+const VALUE_ORIENTATION: Record<ZodiacAnimal, string> = {
+  rat: 'security and strategic gain',
+  ox: 'tradition and steady progress',
+  tiger: 'freedom and bold achievement',
+  rabbit: 'harmony and quiet comfort',
+  dragon: 'power and recognition',
+  snake: 'wisdom and private mastery',
+  horse: 'adventure and independence',
+  goat: 'creativity and emotional safety',
+  monkey: 'novelty and intellectual play',
+  rooster: 'order, precision, and excellence',
+  dog: 'justice, loyalty, and honesty',
+  pig: 'generosity, pleasure, and connection',
+}
+
+// Element energy level descriptors (for lifestyle friction)
+const ELEMENT_ENERGY: Record<ZodiacElement, string> = {
+  wood: 'steady growth-oriented energy with a methodical pace',
+  fire: 'intense, fast-burning energy that craves stimulation',
+  earth: 'slow, grounding energy that prefers routine and stability',
+  metal: 'precise, controlled energy that demands structure',
+  water: 'flowing, adaptive energy that ebbs and surges unpredictably',
+}
+
+// Element emotional expression descriptors
+const ELEMENT_EMOTION: Record<ZodiacElement, string> = {
+  wood: 'expresses emotion through action and forward momentum',
+  fire: 'emotes freely, dramatically, and intensely',
+  earth: 'emotionally supportive but slow to open up',
+  metal: 'emotionally restrained, processing inwardly before sharing',
+  water: 'deeply feeling, intuitive, and sometimes overwhelming',
+}
+
+/**
+ * Analyzes friction points across 5 relationship categories.
+ * Returns deterministic descriptions based on animal traits and element interaction.
+ * No randomness — same inputs always produce the same output.
+ */
+export function analyzeFrictionPoints(
+  animalA: ZodiacAnimal,
+  elementA: ZodiacElement,
+  animalB: ZodiacAnimal,
+  elementB: ZodiacElement,
+): FrictionPoint[] {
+  const base = animalCompatibility[animalA][animalB].base
+  const isDestructive = DESTROYS[elementA] === elementB || DESTROYS[elementB] === elementA
+  const isGenerative = GENERATES[elementA] === elementB || GENERATES[elementB] === elementA
+  const isSameElement = elementA === elementB
+
+  // Helper: determine intensity from base score + element relationship
+  function intensityFor(adjustedBase: number): FrictionPoint['intensity'] {
+    const adjusted = isDestructive
+      ? adjustedBase - 10
+      : isGenerative
+        ? adjustedBase + 10
+        : adjustedBase
+    if (adjusted < 40) return 'clash'
+    if (adjusted <= 65) return 'friction'
+    return 'spark'
+  }
+
+  const labelA = animalA.charAt(0).toUpperCase() + animalA.slice(1)
+  const labelB = animalB.charAt(0).toUpperCase() + animalB.slice(1)
+  const elLabelA = ELEMENT_LABELS[elementA]
+  const elLabelB = ELEMENT_LABELS[elementB]
+
+  const commIntensity = intensityFor(base)
+  const valIntensity = intensityFor(base - 5) // values slightly harder to bridge
+  const lifeIntensity = intensityFor(isSameElement ? base + 15 : base)
+  const emotIntensity = intensityFor(isDestructive ? base - 15 : base)
+  const growthIntensity = intensityFor(isGenerative ? base + 20 : isDestructive ? base - 20 : base)
+
+  return [
+    {
+      category: 'communication',
+      intensity: commIntensity,
+      description: `${labelA} communicates in a ${COMMUNICATION_STYLE[animalA]} way, while ${labelB} tends to be ${COMMUNICATION_STYLE[animalB]}. ${
+        commIntensity === 'spark'
+          ? 'These contrasting styles create lively, engaging exchanges that keep conversation fresh.'
+          : commIntensity === 'friction'
+            ? 'Misreadings are common — one partner may feel unheard while the other feels micromanaged.'
+            : 'Without deliberate effort, conversations can devolve into talking past each other or silent standoffs.'
+      }`,
+    },
+    {
+      category: 'values',
+      intensity: valIntensity,
+      description: `${labelA} is fundamentally driven by ${VALUE_ORIENTATION[animalA]}, while ${labelB} is oriented toward ${VALUE_ORIENTATION[animalB]}. ${
+        valIntensity === 'spark'
+          ? 'These different motivations complement each other, creating a relationship where both partners grow in new directions.'
+          : valIntensity === 'friction'
+            ? 'Disagreements about priorities are frequent — what feels essential to one may seem trivial to the other.'
+            : 'Core value conflicts run deep here. Without shared goals, this pairing risks constant low-grade resentment.'
+      }`,
+    },
+    {
+      category: 'lifestyle',
+      intensity: lifeIntensity,
+      description: `${elLabelA} brings ${ELEMENT_ENERGY[elementA]}, while ${elLabelB} carries ${ELEMENT_ENERGY[elementB]}. ${
+        lifeIntensity === 'spark'
+          ? 'Day-to-day rhythms align well — these two can share a home and a routine without friction.'
+          : lifeIntensity === 'friction'
+            ? 'One partner may feel dragged along or left behind in terms of pace and priorities.'
+            : 'Lifestyle incompatibility is one of the biggest hurdles here. Negotiating shared space and time requires real compromise.'
+      }`,
+    },
+    {
+      category: 'emotional',
+      intensity: emotIntensity,
+      description: `Emotionally, ${elLabelA} ${ELEMENT_EMOTION[elementA]}, while ${elLabelB} ${ELEMENT_EMOTION[elementB]}. ${
+        emotIntensity === 'spark'
+          ? 'Emotional attunement comes naturally — these two tend to meet each other where they are.'
+          : emotIntensity === 'friction'
+            ? 'One partner\'s emotional style can feel smothering or cold to the other, depending on timing.'
+            : 'Emotional connection requires significant work. The risk of feeling chronically misunderstood is real.'
+      }`,
+    },
+    {
+      category: 'growth',
+      intensity: growthIntensity,
+      description: `${
+        growthIntensity === 'spark'
+          ? `This pairing actively accelerates personal growth. The tension between ${labelA} and ${labelB} becomes a crucible — both partners evolve faster together than apart.`
+          : growthIntensity === 'friction'
+            ? `Growth is possible here but requires intention. ${labelA} and ${labelB} can challenge each other productively if they resist the pull toward comfort or conflict avoidance.`
+            : `This combination risks stagnation or mutual regression. Without external input and honest reflection, ${labelA} and ${labelB} may reinforce each other's blind spots rather than illuminating them.`
+      }`,
+    },
+  ]
+}
+
+/**
+ * Returns bridging element advice for high-friction element pairings.
+ * Only returns a result when the elements have a destructive relationship.
+ * Uses the Wu Xing bridging element to suggest a mediating energy.
+ */
+export function getRemedyAdvice(
+  elementA: ZodiacElement,
+  elementB: ZodiacElement,
+): RemedyAdvice | null {
+  const friction = getFrictionScore(elementA, elementB)
+  if (friction < 60) return null
+
+  const bridge = getBridgingElement(elementA, elementB)
+  if (bridge === null) return null
+
+  const nameA = ELEMENT_LABELS[elementA]
+  const nameB = ELEMENT_LABELS[elementB]
+  const nameBridge = ELEMENT_LABELS[bridge]
+
+  return {
+    bridgingElement: bridge,
+    description: `Bring more ${nameBridge} energy into your shared space — ${nameBridge} naturally mediates between ${nameA} and ${nameB} in the Wu Xing cycle. Incorporate ${nameBridge} through shared activities, your home environment, or intentional rituals that invoke this element's qualities. When tension rises, returning to ${nameBridge} energy together can dissolve the friction that ${nameA} and ${nameB} generate between them.`,
+  }
+}
+
+/**
+ * Master compatibility function combining all enhanced metrics.
+ * Overall score weights: chemistry 50%, support 30%, inverted friction 20%.
+ */
+export function getEnhancedCompatibility(
+  animalA: ZodiacAnimal,
+  elementA: ZodiacElement,
+  animalB: ZodiacAnimal,
+  elementB: ZodiacElement,
+): EnhancedCompatibilityResult {
+  const base = getCompatibilityScore(animalA, elementA, animalB, elementB)
+  const chemistry = getChemistryScore(animalA, animalB)
+  const support = getSupportScore(elementA, elementB)
+  const friction = getFrictionScore(elementA, elementB)
+  const overall = Math.round(chemistry * 0.5 + support * 0.3 + (100 - friction) * 0.2)
+  const { label, category } = getMatchLabel(chemistry, support, friction)
+  const frictionPoints = analyzeFrictionPoints(animalA, elementA, animalB, elementB)
+  const remedy = getRemedyAdvice(elementA, elementB)
+
+  return {
+    ...base,
+    score: overall,
+    chemistry,
+    support,
+    friction,
+    matchLabel: label,
+    matchCategory: category,
+    frictionPoints,
+    remedy,
+  }
 }

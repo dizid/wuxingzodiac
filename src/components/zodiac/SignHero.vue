@@ -2,6 +2,7 @@
 import type { SignProfile } from '@/types'
 import { useElementTheme } from '@/composables/useElementTheme'
 import { computed } from 'vue'
+import SignBadge from '@/components/zodiac/SignBadge.vue'
 
 const props = defineProps<{
   profile: SignProfile
@@ -34,6 +35,11 @@ const { config } = useElementTheme(elementRef)
     <p class="text-3xl md:text-4xl text-ash-500 font-light mb-4 tracking-wider">
       {{ profile.chineseName }}
     </p>
+
+    <!-- Identity Badge -->
+    <div class="flex justify-center mb-6">
+      <SignBadge :profile="profile" :archetype="archetype" :downloadable="true" />
+    </div>
 
     <!-- Tagline -->
     <p class="text-lg md:text-xl text-ash-300 italic mb-8 max-w-lg mx-auto">
