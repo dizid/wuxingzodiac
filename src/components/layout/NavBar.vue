@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
+import MerchCartButton from '@/components/shop/MerchCartButton.vue'
+import MerchCartDrawer from '@/components/shop/MerchCartDrawer.vue'
 
 const route = useRoute()
 const mobileMenuOpen = ref(false)
@@ -10,6 +12,7 @@ const navItems = [
   { label: 'All Signs', to: '/zodiac' },
   { label: 'Compatibility', to: '/compatibility' },
   { label: 'Calculator', to: '/calculator' },
+  { label: 'Shop', to: '/shop' },
   { label: 'Blog', to: '/blog' },
 ]
 
@@ -50,28 +53,32 @@ function closeMobileMenu() {
           >
             {{ item.label }}
           </RouterLink>
+          <MerchCartButton />
         </div>
 
-        <!-- Mobile hamburger -->
-        <button
-          class="md:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg hover:bg-ash-800/50 transition-colors"
-          :aria-label="mobileMenuOpen ? 'Close menu' : 'Open menu'"
-          :aria-expanded="mobileMenuOpen"
-          @click="mobileMenuOpen = !mobileMenuOpen"
-        >
-          <span
-            class="block w-5 h-0.5 bg-ash-300 transition-all duration-300"
-            :class="mobileMenuOpen ? 'rotate-45 translate-y-[3px]' : ''"
-          />
-          <span
-            class="block w-5 h-0.5 bg-ash-300 mt-1 transition-all duration-300"
-            :class="mobileMenuOpen ? 'opacity-0' : ''"
-          />
-          <span
-            class="block w-5 h-0.5 bg-ash-300 mt-1 transition-all duration-300"
-            :class="mobileMenuOpen ? '-rotate-45 -translate-y-[7px]' : ''"
-          />
-        </button>
+        <!-- Mobile: cart icon + hamburger -->
+        <div class="md:hidden flex items-center gap-1">
+          <MerchCartButton />
+          <button
+            class="flex flex-col justify-center items-center w-10 h-10 rounded-lg hover:bg-ash-800/50 transition-colors"
+            :aria-label="mobileMenuOpen ? 'Close menu' : 'Open menu'"
+            :aria-expanded="mobileMenuOpen"
+            @click="mobileMenuOpen = !mobileMenuOpen"
+          >
+            <span
+              class="block w-5 h-0.5 bg-ash-300 transition-all duration-300"
+              :class="mobileMenuOpen ? 'rotate-45 translate-y-[3px]' : ''"
+            />
+            <span
+              class="block w-5 h-0.5 bg-ash-300 mt-1 transition-all duration-300"
+              :class="mobileMenuOpen ? 'opacity-0' : ''"
+            />
+            <span
+              class="block w-5 h-0.5 bg-ash-300 mt-1 transition-all duration-300"
+              :class="mobileMenuOpen ? '-rotate-45 -translate-y-[7px]' : ''"
+            />
+          </button>
+        </div>
       </div>
     </div>
 
@@ -102,4 +109,7 @@ function closeMobileMenu() {
       </div>
     </transition>
   </nav>
+
+  <!-- Global cart drawer (teleported to body) -->
+  <MerchCartDrawer />
 </template>
