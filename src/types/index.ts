@@ -288,6 +288,74 @@ export interface WuXingRelationship {
 }
 
 // ============================================
+// MERCH SHOP (Shopify Storefront API)
+// ============================================
+
+/** A single product image from Shopify */
+export interface MerchImage {
+  url: string
+  altText: string | null
+  width: number
+  height: number
+}
+
+/** A purchasable variant (size, color, etc.) */
+export interface MerchVariant {
+  id: string
+  title: string
+  price: string
+  currencyCode: string
+  available: boolean
+  image: MerchImage | null
+}
+
+/** A merch product pulled from Shopify */
+export interface MerchProduct {
+  id: string
+  title: string
+  handle: string
+  description: string
+  descriptionHtml: string
+  productType: string
+  tags: string[]
+  images: MerchImage[]
+  variants: MerchVariant[]
+  /** Lowest variant price */
+  priceRange: { min: string; max: string; currencyCode: string }
+  /** Extracted from tags: the sign slug this product belongs to (e.g. 'fire-horse') */
+  signSlug: string | null
+  /** Extracted from tags: the element (e.g. 'fire') */
+  element: string | null
+  /** Extracted from tags: the animal (e.g. 'horse') */
+  animal: string | null
+}
+
+/** Cart line item stored client-side */
+export interface CartItem {
+  variantId: string
+  productId: string
+  title: string
+  variantTitle: string
+  price: string
+  currencyCode: string
+  quantity: number
+  image: MerchImage | null
+  handle: string
+}
+
+/** Shopify Storefront API cart response */
+export interface ShopifyCart {
+  id: string
+  checkoutUrl: string
+  lines: CartItem[]
+  totalAmount: string
+  totalCurrencyCode: string
+}
+
+/** Product type filter options */
+export type MerchProductType = 't-shirt' | 'hoodie' | 'mug' | 'poster' | 'sticker' | 'tote-bag' | 'all'
+
+// ============================================
 // NAVIGATION
 // ============================================
 export interface NavItem {

@@ -75,6 +75,21 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/CalculatorPage.vue'),
   },
   {
+    path: '/shop',
+    name: 'shop',
+    component: () => import('@/pages/ShopPage.vue'),
+  },
+  {
+    path: '/shop/:slug',
+    name: 'shop-sign',
+    component: () => import('@/pages/ShopPage.vue'),
+    beforeEnter: (to) => {
+      if (!VALID_SIGN_SLUGS.includes(to.params.slug as string)) {
+        return { name: 'not-found', params: { pathMatch: to.path.split('/').slice(1) } }
+      }
+    },
+  },
+  {
     path: '/blog',
     name: 'blog',
     component: () => import('@/pages/BlogPage.vue'),

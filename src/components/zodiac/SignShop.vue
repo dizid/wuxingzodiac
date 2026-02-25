@@ -1,17 +1,34 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { RouterLink } from 'vue-router'
 import { generateShopProducts } from '@/lib/sign-shop'
 import { getAffiliateUrl } from '@/lib/affiliate-config'
+import { useShopify } from '@/composables/useShopify'
 import { useAnalytics } from '@/composables/useAnalytics'
+import MerchProductCard from '@/components/shop/MerchProductCard.vue'
 import type { SignContentV2 } from '@/types'
 
 const props = defineProps<{
   content: SignContentV2
 }>()
 
-const { trackAffiliateClick, trackAffiliateImpression } = useAnalytics()
+const { trackAffiliateClick, trackAffiliateImpression, trackEvent } = useAnalytics()
+const { fetchProducts, getProductsBySign, loaded: shopifyLoaded } = useShopify()
 
-const categories = computed(() => generateShopProducts(props.content))
+// Existing affiliate categories
+const affiliateCategories = computed(() => generateShopProducts(props.content))
+
+// Merch products for this specific sign
+const merchProducts = computed(() =>
+  getProductsBySign(props.content.slug)
+)
+
+const hasMerch = computed(() => merchProducts.value.length > 0)
+
+// Fetch Shopify products on mount
+onMounted(() => {
+  fetchProducts()
+})
 
 // Intersection observer for impression tracking (fire once per mount)
 let observer: IntersectionObserver | null = null
@@ -19,8 +36,6 @@ const shopRef = ref<HTMLElement | null>(null)
 let impressionFired = false
 
 onMounted(() => {
-  if (categories.value.length === 0) return
-
   observer = new IntersectionObserver(
     (entries) => {
       if (impressionFired) return
@@ -28,6 +43,12 @@ onMounted(() => {
         if (entry.isIntersecting) {
           impressionFired = true
           trackAffiliateImpression('amazon', 'shop')
+          if (hasMerch.value) {
+            trackEvent('merch_impression', {
+              sign_slug: props.content.slug,
+              product_count: merchProducts.value.length,
+            })
+          }
           observer?.disconnect()
           break
         }
@@ -44,51 +65,107 @@ onUnmounted(() => {
   observer = null
 })
 
-function handleClick(category: string) {
+function handleAffiliateClick(category: string) {
   trackAffiliateClick('amazon', category, 'shop')
 }
 </script>
 
 <template>
-  <div v-if="categories.length > 0" ref="shopRef">
-    <!-- Intro text -->
-    <p class="text-ash-400 mb-8">
-      Products hand-picked for {{ content.profile.name }} signs based on your lucky attributes,
-      element, and wellness profile.
-    </p>
-
-    <!-- Product categories -->
-    <section v-for="cat in categories" :key="cat.title" class="mb-10">
-      <!-- Category header -->
-      <h3 class="text-lg font-display font-bold text-ash-200 mb-4">
-        <span class="mr-2">{{ cat.icon }}</span>{{ cat.title }}
-      </h3>
-
-      <!-- Product grid: 1-col mobile, 2-col sm, 3-col lg -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div
-          v-for="product in cat.products"
-          :key="product.id"
-          class="glass rounded-xl p-4 flex flex-col"
+  <div ref="shopRef">
+    <!-- ========================================== -->
+    <!-- MERCH SECTION (Shopify POD products) -->
+    <!-- ========================================== -->
+    <section v-if="hasMerch" class="mb-10">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl font-display font-bold text-ash-100">
+          <span class="element-text">{{ content.profile.name }}</span> Merch
+        </h3>
+        <RouterLink
+          :to="`/shop/${content.slug}`"
+          class="text-xs text-[var(--el-accent)] hover:text-[var(--el-primary)] transition-colors"
         >
-          <p class="font-bold text-[var(--el-accent)] text-sm">{{ product.name }}</p>
-          <p class="text-ash-400 text-xs mt-1 flex-1">{{ product.description }}</p>
-          <a
-            :href="getAffiliateUrl(product)"
-            target="_blank"
-            rel="noopener sponsored"
-            class="btn-element text-xs px-3 py-1.5 mt-3 text-center inline-block"
-            @click="handleClick(product.category)"
-          >
-            View on Amazon
-          </a>
-        </div>
+          View all →
+        </RouterLink>
+      </div>
+
+      <p class="text-ash-400 text-sm mb-6">
+        Exclusive {{ content.profile.name }} designs on premium products. Printed on demand, shipped worldwide.
+      </p>
+
+      <!-- Merch product grid (max 4 on sign page) -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <MerchProductCard
+          v-for="product in merchProducts.slice(0, 4)"
+          :key="product.id"
+          :product="product"
+        />
+      </div>
+
+      <div v-if="merchProducts.length > 4" class="mt-4 text-center">
+        <RouterLink
+          :to="`/shop/${content.slug}`"
+          class="btn-element text-sm inline-block"
+        >
+          See all {{ merchProducts.length }} products
+        </RouterLink>
       </div>
     </section>
 
-    <!-- Affiliate disclaimer -->
-    <p class="text-ash-600 text-xs mt-6">
-      Affiliate links &mdash; we may earn a commission at no extra cost to you.
-    </p>
+    <!-- ========================================== -->
+    <!-- "COMING SOON" MERCH TEASER (no products yet) -->
+    <!-- ========================================== -->
+    <section
+      v-else-if="shopifyLoaded"
+      class="mb-10 glass rounded-xl p-6 text-center"
+    >
+      <div class="text-3xl mb-2">👕</div>
+      <h3 class="font-display font-bold text-ash-200 mb-1">
+        {{ content.profile.name }} Merch Coming Soon
+      </h3>
+      <p class="text-ash-400 text-sm max-w-md mx-auto">
+        Beautiful {{ content.profile.name }} zodiac designs on t-shirts, hoodies, and more.
+        Check out the <RouterLink to="/shop" class="text-[var(--el-accent)] underline">main shop</RouterLink> for available merch.
+      </p>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- AFFILIATE PRODUCTS (existing Amazon links) -->
+    <!-- ========================================== -->
+    <template v-if="affiliateCategories.length > 0">
+      <p class="text-ash-400 mb-8">
+        Products hand-picked for {{ content.profile.name }} signs based on your lucky attributes,
+        element, and wellness profile.
+      </p>
+
+      <section v-for="cat in affiliateCategories" :key="cat.title" class="mb-10">
+        <h3 class="text-lg font-display font-bold text-ash-200 mb-4">
+          <span class="mr-2">{{ cat.icon }}</span>{{ cat.title }}
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div
+            v-for="product in cat.products"
+            :key="product.id"
+            class="glass rounded-xl p-4 flex flex-col"
+          >
+            <p class="font-bold text-[var(--el-accent)] text-sm">{{ product.name }}</p>
+            <p class="text-ash-400 text-xs mt-1 flex-1">{{ product.description }}</p>
+            <a
+              :href="getAffiliateUrl(product)"
+              target="_blank"
+              rel="noopener sponsored"
+              class="btn-element text-xs px-3 py-1.5 mt-3 text-center inline-block"
+              @click="handleAffiliateClick(product.category)"
+            >
+              View on Amazon
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <p class="text-ash-600 text-xs mt-6">
+        Affiliate links &mdash; we may earn a commission at no extra cost to you.
+      </p>
+    </template>
   </div>
 </template>

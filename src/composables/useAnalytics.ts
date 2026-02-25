@@ -55,6 +55,21 @@ export function useAnalytics() {
       trackEvent('blog_read', { slug, title })
     },
 
+    /** Track when merch products are shown to the user */
+    trackMerchImpression: (signSlug: string, productCount: number) => {
+      trackEvent('merch_impression', { sign_slug: signSlug, product_count: productCount })
+    },
+
+    /** Track when a merch product is added to cart */
+    trackMerchAddToCart: (productId: string, title: string, variantId: string, price: string, signSlug: string | null) => {
+      trackEvent('merch_add_to_cart', { product_id: productId, product_title: title, variant_id: variantId, price, sign_slug: signSlug })
+    },
+
+    /** Track when user initiates checkout */
+    trackMerchCheckout: (itemCount: number, total: string, currency: string) => {
+      trackEvent('merch_checkout', { item_count: itemCount, total, currency })
+    },
+
     /** Generic event tracker for custom events */
     trackEvent,
   }
