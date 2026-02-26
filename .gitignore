@@ -44,3 +44,15 @@ __screenshots__/
 # Environment variables
 .env
 .env.*
+
+# Remotion video output + audio
+video/output/
+video/audio/
+video/node_modules/
+
+# Playwright
+playwright-report/
+test-results/
+
+# SSG build temp
+.vite-ssg-temp/

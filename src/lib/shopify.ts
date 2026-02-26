@@ -72,6 +72,7 @@ const PRODUCT_FRAGMENT = `
           title
           price { amount currencyCode }
           availableForSale
+          quantityAvailable
           selectedOptions { name value }
         }
       }
@@ -83,7 +84,8 @@ function mapShopifyProduct(product: Record<string, unknown>): ShopifyProduct {
   const p = product as Record<string, unknown>
   const imagesEdges = ((p.images as Record<string, unknown>)?.edges as Array<{ node: Record<string, unknown> }>) || []
   const variantsEdges = ((p.variants as Record<string, unknown>)?.edges as Array<{ node: Record<string, unknown> }>) || []
-  const priceRange = p.priceRange as Record<string, Record<string, string>>
+  const priceRange = p.priceRange as Record<string, unknown> | undefined
+  const defaultPrice: { amount: string; currencyCode: string } = { amount: '0', currencyCode: 'USD' }
 
   return {
     id: p.id as string,
@@ -93,8 +95,8 @@ function mapShopifyProduct(product: Record<string, unknown>): ShopifyProduct {
     descriptionHtml: p.descriptionHtml as string,
     tags: p.tags as string[],
     priceRange: {
-      minVariantPrice: priceRange.minVariantPrice,
-      maxVariantPrice: priceRange.maxVariantPrice,
+      minVariantPrice: (priceRange?.minVariantPrice as { amount: string; currencyCode: string }) ?? defaultPrice,
+      maxVariantPrice: (priceRange?.maxVariantPrice as { amount: string; currencyCode: string }) ?? defaultPrice,
     },
     images: imagesEdges.map(e => e.node as unknown as ShopifyImage),
     variants: variantsEdges.map(e => {
@@ -106,6 +108,7 @@ function mapShopifyProduct(product: Record<string, unknown>): ShopifyProduct {
         price: price.amount,
         currencyCode: price.currencyCode,
         available: v.availableForSale as boolean,
+        quantityAvailable: v.quantityAvailable as number | undefined,
         selectedOptions: v.selectedOptions as { name: string; value: string }[],
       } as ShopifyVariant
     }),
@@ -201,7 +204,7 @@ export async function createCheckout(lineItems: CheckoutLineItem[]): Promise<str
   })
 
   if (data.checkoutCreate.checkoutUserErrors.length > 0) {
-    throw new Error(data.checkoutCreate.checkoutUserErrors[0].message)
+    throw new Error(data.checkoutCreate.checkoutUserErrors[0]?.message ?? 'Checkout error')
   }
 
   if (!data.checkoutCreate.checkout) {
@@ -249,7 +252,7 @@ function extractProductType(tags: string[]): MerchProductType | null {
   for (const tag of tags) {
     if (tag.startsWith('type:')) {
       const type = tag.replace('type:', '')
-      if (type in PRODUCT_TYPE_MAP) return PRODUCT_TYPE_MAP[type]
+      if (type in PRODUCT_TYPE_MAP) return PRODUCT_TYPE_MAP[type] ?? null
     }
   }
   return null
@@ -257,7 +260,13 @@ function extractProductType(tags: string[]): MerchProductType | null {
 
 /** Transform a Shopify product into our app-level MerchProduct */
 export function toMerchProduct(product: ShopifyProduct): MerchProduct {
-  const firstVariant = product.variants[0]
+  // Compute total inventory from variant quantities (undefined if none tracked)
+  const quantities = product.variants
+    .map(v => v.quantityAvailable)
+    .filter((q): q is number => q != null)
+  const totalInventory = quantities.length > 0
+    ? quantities.reduce((sum, q) => sum + q, 0)
+    : undefined
 
   return {
     id: product.id,
@@ -275,6 +284,7 @@ export function toMerchProduct(product: ShopifyProduct): MerchProduct {
     element: extractElement(product.tags),
     animal: extractAnimal(product.tags),
     productType: extractProductType(product.tags),
+    totalInventory,
   }
 }
 

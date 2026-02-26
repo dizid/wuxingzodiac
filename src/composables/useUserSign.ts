@@ -1,4 +1,4 @@
-import { ref, onMounted, readonly } from 'vue'
+import { ref, onMounted } from 'vue'
 import type { SignProfile } from '@/types'
 import { getProfileBySlug } from '@/lib/sign-content/profiles'
 
@@ -45,7 +45,7 @@ export function useUserSign() {
   })
 
   return {
-    userSign: readonly(userSign),
+    userSign,
     setUserSign,
     clearUserSign,
   }

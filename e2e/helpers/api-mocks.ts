@@ -51,7 +51,7 @@ export async function mockBlogApi(page: Page, opts?: BlogMockOptions) {
   const posts = opts?.posts ?? mockBlogPosts
   const total = opts?.total ?? posts.length
 
-  await page.route('**/api/blog-posts**', (route: Route) => {
+  await page.route('**/api/blog/posts**', (route: Route) => {
     const url = new URL(route.request().url())
     const slug = url.searchParams.get('slug')
 
@@ -73,7 +73,7 @@ export async function mockBlogApi(page: Page, opts?: BlogMockOptions) {
 }
 
 export async function mockBlogApiError(page: Page) {
-  await page.route('**/api/blog-posts**', (route: Route) => {
+  await page.route('**/api/blog/posts**', (route: Route) => {
     route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'Internal server error' }) })
   })
 }

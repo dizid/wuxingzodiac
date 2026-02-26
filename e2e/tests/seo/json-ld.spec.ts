@@ -138,7 +138,7 @@ test.describe('JSON-LD structured data', () => {
   // ── 10. Blog post page has Article schema ─────────────────────────────────
   test('blog post page has Article JSON-LD schema', async ({ page }) => {
     // Override with a valid post so the page renders the post view
-    await page.route('**/api/blog-posts**', (route) => {
+    await page.route('**/api/blog/posts**', (route) => {
       const url = new URL(route.request().url())
       const slug = url.searchParams.get('slug')
       if (slug === 'understanding-wu-xing') {

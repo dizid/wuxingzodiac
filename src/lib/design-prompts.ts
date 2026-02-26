@@ -127,7 +127,7 @@ const ANIMAL_STYLES: Record<ZodiacAnimal, AnimalStyle> = {
 // ── Prompt builder ───────────────────────────
 
 function capitalize(s: string): string {
-  return s[0].toUpperCase() + s.slice(1)
+  return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
 /**

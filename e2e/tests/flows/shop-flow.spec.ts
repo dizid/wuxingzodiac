@@ -1,9 +1,7 @@
 import { test, expect } from '@playwright/test'
-import { mockAllApis, mockShopifyStorefront } from '../../helpers/api-mocks'
+import { mockAllApis } from '../../helpers/api-mocks'
 import { waitForApp, goto } from '../../helpers/test-app'
 import { setUserSign, clearAllStorage, setCart, getCart } from '../../helpers/storage'
-import { mockShopifyProducts } from '../../fixtures/shopify-products'
-import type { Route } from '@playwright/test'
 
 /**
  * The shop tests mock the Shopify Storefront GraphQL API.
@@ -194,48 +192,13 @@ test.describe('Shop flow', () => {
     await expect(page.locator('h3', { hasText: /Wood Element Poster/i })).toBeVisible()
   })
 
-  test('7. Checkout redirect (mock Shopify checkout URL)', async ({ page }) => {
-    const MOCK_CHECKOUT_URL = 'https://test-shop.myshopify.com/checkout/test-token'
-
-    // Mock the Shopify checkout creation
-    await page.route('**shopify.com/**', async (route: Route) => {
-      const body = await route.request().postDataJSON().catch(() => null)
-      // If it's a checkout mutation, return a checkout URL
-      if (body && JSON.stringify(body).includes('checkoutCreate')) {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            data: {
-              checkoutCreate: {
-                checkout: { webUrl: MOCK_CHECKOUT_URL },
-                checkoutUserErrors: [],
-              },
-            },
-          }),
-        })
-      } else {
-        // Product queries
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            data: {
-              products: {
-                edges: mockShopifyProducts.map((p) => ({ node: p })),
-              },
-            },
-          }),
-        })
-      }
-    })
-
+  test('7. Checkout button shows "Preview Only" in demo mode', async ({ page }) => {
     await goto(page, '/shop')
     await setCart(page, [
       {
-        variantId: 'gid://shopify/ProductVariant/1',
+        variantId: 'demo-fire-dragon-t-shirt-m',
         quantity: 1,
-        title: 'Fire Element T-Shirt',
+        title: 'Fire Dragon Element Tee',
         price: 29.99,
       },
     ])
@@ -244,10 +207,10 @@ test.describe('Shop flow', () => {
     await waitForApp(page)
     await openCart(page)
 
-    // Verify checkout button is visible
-    const checkoutBtn = page.locator('button', { hasText: /Checkout/i })
+    // In demo mode, checkout button shows "Preview Only" and is disabled
+    const checkoutBtn = page.locator('button', { hasText: /Preview Only/i })
     await expect(checkoutBtn).toBeVisible()
-    await expect(checkoutBtn).toBeEnabled()
+    await expect(checkoutBtn).toBeDisabled()
   })
 
   test('8. Personalized products (save fire-horse sign → visit shop → curated section visible)', async ({ page }) => {

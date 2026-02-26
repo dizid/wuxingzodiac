@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import type { MerchProduct, ShopifyVariant } from '@/types/merch'
 import { useShopify } from '@/composables/useShopify'
+import { useAnalytics } from '@/composables/useAnalytics'
+import SizeGuide from './SizeGuide.vue'
+
+const LOW_STOCK_THRESHOLD = 5
 
 const props = defineProps<{
   product: MerchProduct | null
@@ -12,10 +16,33 @@ const emit = defineEmits<{
 }>()
 
 const { addToCart } = useShopify()
+const { trackViewItem } = useAnalytics()
 
 const selectedImageIndex = ref(0)
 const selectedVariant = ref<ShopifyVariant | null>(null)
 const added = ref(false)
+
+// ── Image zoom state ───────────────────────
+const zoomed = ref(false)
+const zoomOrigin = ref('center center')
+const lightboxOpen = ref(false)
+const isTouchDevice = ref(false)
+
+onMounted(() => {
+  isTouchDevice.value = window.matchMedia('(hover: none)').matches
+})
+
+// ── Color swatch mapping ───────────────────
+const COLOR_SWATCH_MAP: Record<string, string> = {
+  'Black': '#171717',
+  'White': '#f5f5f5',
+  'Cream': '#fef3c7',
+  'Forest Green': '#22c55e',
+  'Crimson': '#ef4444',
+  'Amber': '#d97706',
+  'Silver': '#94a3b8',
+  'Ocean Blue': '#3b82f6',
+}
 
 // Reset state when product changes
 const currentProduct = computed(() => {
@@ -23,8 +50,23 @@ const currentProduct = computed(() => {
     selectedImageIndex.value = 0
     selectedVariant.value = props.product.variants[0] || null
     added.value = false
+    zoomed.value = false
+    lightboxOpen.value = false
   }
   return props.product
+})
+
+// Fire view_item when product modal opens
+watch(() => props.product, (product) => {
+  if (product) {
+    trackViewItem({
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      element: product.element || undefined,
+      productType: product.productType || undefined,
+    })
+  }
 })
 
 const images = computed(() => currentProduct.value?.images || [])
@@ -47,6 +89,14 @@ const optionGroups = computed(() => {
   }))
 })
 
+function isColorOption(groupName: string): boolean {
+  return groupName.toLowerCase() === 'color' || groupName.toLowerCase() === 'colour'
+}
+
+function isSizeOption(groupName: string): boolean {
+  return groupName.toLowerCase() === 'size'
+}
+
 function selectVariant(optionName: string, optionValue: string) {
   if (!currentProduct.value) return
 
@@ -66,12 +116,44 @@ function isOptionSelected(optionName: string, optionValue: string): boolean {
   )
 }
 
+function isVariantAvailable(optionName: string, optionValue: string): boolean {
+  if (!currentProduct.value) return false
+  return currentProduct.value.variants.some(v =>
+    v.available && v.selectedOptions.some(o => o.name === optionName && o.value === optionValue),
+  )
+}
+
 function formatPrice(amount: string): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
   }).format(parseFloat(amount))
 }
+
+// ── Image zoom handlers ────────────────────
+function handleImageHover(event: MouseEvent) {
+  if (isTouchDevice.value) return
+  const rect = (event.currentTarget as HTMLElement).getBoundingClientRect()
+  const x = ((event.clientX - rect.left) / rect.width) * 100
+  const y = ((event.clientY - rect.top) / rect.height) * 100
+  zoomOrigin.value = `${x}% ${y}%`
+}
+
+function handleImageClick() {
+  lightboxOpen.value = true
+  zoomed.value = false
+}
+
+function closeLightbox() {
+  lightboxOpen.value = false
+}
+
+// ── Stock status ───────────────────────────
+const selectedVariantLowStock = computed(() => {
+  const qty = selectedVariant.value?.quantityAvailable
+  if (qty == null) return false
+  return qty > 0 && qty <= LOW_STOCK_THRESHOLD
+})
 
 function handleAddToCart() {
   if (!currentProduct.value || !selectedVariant.value) return
@@ -85,6 +167,7 @@ function handleAddToCart() {
 }
 
 function handleClose() {
+  lightboxOpen.value = false
   emit('close')
 }
 </script>
@@ -135,13 +218,24 @@ function handleClose() {
           <div class="md:flex">
             <!-- Image Gallery -->
             <div class="md:w-1/2">
-              <!-- Main image -->
-              <div class="aspect-square bg-ash-900/50">
+              <!-- Main image with zoom -->
+              <div
+                class="aspect-square bg-ash-900/50 overflow-hidden relative"
+                :class="!isTouchDevice ? 'cursor-zoom-in' : ''"
+                @mousemove="handleImageHover"
+                @mouseenter="zoomed = true"
+                @mouseleave="zoomed = false"
+                @click="handleImageClick"
+              >
                 <img
                   v-if="images[selectedImageIndex]"
-                  :src="images[selectedImageIndex].url"
-                  :alt="images[selectedImageIndex].altText || currentProduct.title"
-                  class="w-full h-full object-cover"
+                  :src="images[selectedImageIndex]!.url"
+                  :alt="images[selectedImageIndex]!.altText || currentProduct.title"
+                  class="w-full h-full object-cover transition-transform duration-200"
+                  :style="zoomed && !isTouchDevice ? {
+                    transform: 'scale(2)',
+                    transformOrigin: zoomOrigin,
+                  } : {}"
                 />
               </div>
 
@@ -182,10 +276,65 @@ function handleClose() {
                 {{ currentProduct.description }}
               </p>
 
-              <!-- Variant Options (sizes, colors) -->
+              <!-- Variant Options -->
               <div v-for="group in optionGroups" :key="group.name" class="space-y-2">
                 <label class="text-ash-400 text-xs font-medium uppercase tracking-wider">{{ group.name }}</label>
-                <div class="flex flex-wrap gap-2">
+
+                <!-- Color swatches -->
+                <div v-if="isColorOption(group.name)" class="flex flex-wrap gap-2.5">
+                  <button
+                    v-for="value in group.values"
+                    :key="value"
+                    class="w-8 h-8 rounded-full border-2 transition-all relative"
+                    :class="[
+                      isOptionSelected(group.name, value)
+                        ? 'border-[var(--el-accent)] ring-2 ring-[var(--el-accent)] ring-offset-2 ring-offset-ash-900'
+                        : 'border-ash-600 hover:border-ash-400',
+                      !isVariantAvailable(group.name, value) && 'opacity-40',
+                    ]"
+                    :style="{ backgroundColor: COLOR_SWATCH_MAP[value] || '#525252' }"
+                    :title="value"
+                    :aria-label="value"
+                    :disabled="!isVariantAvailable(group.name, value)"
+                    @click="selectVariant(group.name, value)"
+                  >
+                    <!-- Checkmark for selected -->
+                    <svg
+                      v-if="isOptionSelected(group.name, value)"
+                      class="absolute inset-0 m-auto w-4 h-4 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]"
+                      :class="value === 'White' || value === 'Cream' ? 'text-ash-800' : 'text-white'"
+                      fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                    </svg>
+                    <!-- Strikethrough for unavailable -->
+                    <span v-if="!isVariantAvailable(group.name, value)" class="absolute inset-0 flex items-center justify-center">
+                      <span class="w-full h-0.5 bg-red-500 rotate-45 absolute" />
+                    </span>
+                  </button>
+                </div>
+
+                <!-- Size pills -->
+                <div v-else-if="isSizeOption(group.name)" class="flex flex-wrap gap-2">
+                  <button
+                    v-for="value in group.values"
+                    :key="value"
+                    class="min-w-[2.5rem] px-3 py-1.5 text-sm rounded-full border transition-all"
+                    :class="[
+                      isOptionSelected(group.name, value)
+                        ? 'border-[var(--el-accent)] text-[var(--el-accent)] bg-[rgba(var(--el-glow-rgb),0.1)]'
+                        : 'border-ash-700 text-ash-300 hover:border-ash-500',
+                      !isVariantAvailable(group.name, value) && 'opacity-40 line-through cursor-not-allowed',
+                    ]"
+                    :disabled="!isVariantAvailable(group.name, value)"
+                    @click="selectVariant(group.name, value)"
+                  >
+                    {{ value }}
+                  </button>
+                </div>
+
+                <!-- Default option buttons (fallback) -->
+                <div v-else class="flex flex-wrap gap-2">
                   <button
                     v-for="value in group.values"
                     :key="value"
@@ -198,6 +347,17 @@ function handleClose() {
                     {{ value }}
                   </button>
                 </div>
+              </div>
+
+              <!-- Size guide + stock warning row -->
+              <div class="flex items-center justify-between">
+                <SizeGuide :product-type="currentProduct.productType" />
+                <p
+                  v-if="selectedVariantLowStock"
+                  class="text-red-400 text-xs font-medium animate-pulse"
+                >
+                  Only {{ selectedVariant!.quantityAvailable }} left in stock
+                </p>
               </div>
 
               <!-- Add to Cart -->
@@ -220,6 +380,36 @@ function handleClose() {
             </div>
           </div>
         </div>
+      </div>
+    </transition>
+
+    <!-- Fullscreen lightbox -->
+    <transition
+      enter-active-class="transition-opacity duration-200"
+      enter-from-class="opacity-0"
+      leave-active-class="transition-opacity duration-150"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="lightboxOpen && images[selectedImageIndex]"
+        class="fixed inset-0 z-[72] bg-black/95 flex items-center justify-center cursor-zoom-out"
+        @click="closeLightbox"
+      >
+        <img
+          :src="images[selectedImageIndex]!.url"
+          :alt="images[selectedImageIndex]!.altText || ''"
+          class="max-h-[90vh] max-w-[90vw] object-contain"
+        />
+        <button
+          class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-ash-900/80 text-ash-300 hover:text-ash-100 transition-colors"
+          aria-label="Close zoom"
+          @click.stop="closeLightbox"
+        >
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
     </transition>
   </teleport>

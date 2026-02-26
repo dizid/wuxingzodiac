@@ -25,25 +25,14 @@ const PRODUCT_SPECS: { type: MerchProductType; label: string; price: number; has
   { type: 'tote', label: 'Tote Bag', price: 22.99, hasSizes: false },
 ]
 
-// Sized variants (tees and hoodies)
-const SIZED_VARIANTS: ShopifyVariant[] = ['S', 'M', 'L', 'XL', '2XL'].map((size) => ({
-  id: `demo-${size.toLowerCase()}`,
-  title: size,
-  price: '0', // overridden per product
-  currencyCode: 'USD',
-  available: true,
-  selectedOptions: [{ name: 'Size', value: size }],
-}))
-
-// One-size variant (mugs, posters, totes)
-const ONE_SIZE_VARIANT: ShopifyVariant[] = [{
-  id: 'demo-one-size',
-  title: 'One Size',
-  price: '0',
-  currencyCode: 'USD',
-  available: true,
-  selectedOptions: [{ name: 'Size', value: 'One Size' }],
-}]
+// Color names mapped to element themes
+const ELEMENT_COLORS: Record<ZodiacElement, { name: string; hex: string }> = {
+  wood: { name: 'Forest Green', hex: '#22c55e' },
+  fire: { name: 'Crimson', hex: '#ef4444' },
+  earth: { name: 'Amber', hex: '#d97706' },
+  metal: { name: 'Silver', hex: '#94a3b8' },
+  water: { name: 'Ocean Blue', hex: '#3b82f6' },
+}
 
 // Element display names and descriptions
 const ELEMENT_COPY: Record<ZodiacElement, { mood: string; desc: string }> = {
@@ -70,7 +59,65 @@ const ELEMENT_COPY: Record<ZodiacElement, { mood: string; desc: string }> = {
 }
 
 function capitalize(s: string): string {
-  return s[0].toUpperCase() + s.slice(1)
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+// Products that should show low stock for urgency demo
+const LOW_STOCK_PRODUCTS = new Set([
+  'demo-fire-dragon-t-shirt',
+  'demo-metal-horse-hoodie',
+  'demo-water-snake-mug',
+])
+
+/** Build variants for apparel (size × color matrix) */
+function buildApparelVariants(
+  slug: string, type: string, price: string, element: ZodiacElement,
+): ShopifyVariant[] {
+  const sizes = ['S', 'M', 'L', 'XL', '2XL']
+  const colors = [
+    { name: 'Black', hex: '#171717' },
+    ELEMENT_COLORS[element],
+  ]
+  const variants: ShopifyVariant[] = []
+  const productId = `demo-${slug}-${type}`
+  const isLowStock = LOW_STOCK_PRODUCTS.has(productId)
+
+  for (const color of colors) {
+    for (const size of sizes) {
+      // Low-stock items: XL and 2XL get very low inventory
+      const isLowVariant = isLowStock && (size === 'XL' || size === '2XL')
+      variants.push({
+        id: `${productId}-${size.toLowerCase()}-${color.name.toLowerCase().replace(/\s+/g, '-')}`,
+        title: `${size} / ${color.name}`,
+        price,
+        currencyCode: 'USD',
+        available: true,
+        quantityAvailable: isLowVariant ? (size === '2XL' ? 2 : 3) : 50,
+        selectedOptions: [
+          { name: 'Size', value: size },
+          { name: 'Color', value: color.name },
+        ],
+      })
+    }
+  }
+  return variants
+}
+
+/** Build variants for non-apparel (one-size only) */
+function buildOneSizeVariants(
+  slug: string, type: string, price: string,
+): ShopifyVariant[] {
+  const productId = `demo-${slug}-${type}`
+  const isLowStock = LOW_STOCK_PRODUCTS.has(productId)
+  return [{
+    id: `${productId}-one-size`,
+    title: 'One Size',
+    price,
+    currencyCode: 'USD',
+    available: true,
+    quantityAvailable: isLowStock ? 4 : 50,
+    selectedOptions: [{ name: 'Size', value: 'One Size' }],
+  }]
 }
 
 /** Generate 25 demo products (5 elements × 5 product types) */
@@ -93,11 +140,12 @@ export function generateDemoProducts(): MerchProduct[] {
 
     for (const spec of PRODUCT_SPECS) {
       const price = spec.price.toFixed(2)
-      const variants = (spec.hasSizes ? SIZED_VARIANTS : ONE_SIZE_VARIANT).map((v) => ({
-        ...v,
-        id: `demo-${slug}-${spec.type}-${v.title.toLowerCase()}`,
-        price,
-      }))
+      const variants = spec.hasSizes
+        ? buildApparelVariants(slug, spec.type, price, sign.element)
+        : buildOneSizeVariants(slug, spec.type, price)
+
+      // Compute total inventory from variant quantities
+      const totalInventory = variants.reduce((sum, v) => sum + (v.quantityAvailable || 0), 0)
 
       products.push({
         id: `demo-${slug}-${spec.type}`,
@@ -115,6 +163,7 @@ export function generateDemoProducts(): MerchProduct[] {
         element: sign.element,
         animal: sign.animal,
         productType: spec.type,
+        totalInventory,
       })
     }
   }

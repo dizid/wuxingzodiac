@@ -130,15 +130,15 @@ test.describe('Dark mode styling', () => {
     expect(dataElement).toBe('fire')
 
     // CSS custom properties for the fire element should be set
-    // The theme system uses --element-primary, --element-glow, etc.
-    const elementPrimary = await getCssVar(page, '--element-primary')
-    const elementGlow = await getCssVar(page, '--element-glow')
+    // The theme system uses --el-primary, --el-glow-rgb, etc.
+    const elementPrimary = await getCssVar(page, '--el-primary')
+    const elementGlow = await getCssVar(page, '--el-glow-rgb')
 
     // At least one element-specific CSS variable should be non-empty
     const hasThemeVars = (elementPrimary.length > 0) || (elementGlow.length > 0)
     expect(
       hasThemeVars,
-      `Fire element theme CSS variables should be set. --element-primary="${elementPrimary}", --element-glow="${elementGlow}"`,
+      `Fire element theme CSS variables should be set. --el-primary="${elementPrimary}", --el-glow-rgb="${elementGlow}"`,
     ).toBe(true)
 
     // Take a screenshot to confirm the visual appearance

@@ -1,0 +1,9 @@
+{
+  "duration": 40,
+  "traitCards": ["energy", "coreStrength"],
+  "matchToShow": "best",
+  "voiceover": {
+    "voice": "Adam",
+    "speed": 1.0
+  }
+}

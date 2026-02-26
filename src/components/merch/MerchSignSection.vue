@@ -74,6 +74,7 @@ function handleDetail(product: MerchProduct) {
       :products="products"
       :loading="loading"
       :limit="4"
+      :silent="true"
       @detail="handleDetail"
     />
 

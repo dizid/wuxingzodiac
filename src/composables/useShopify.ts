@@ -1,4 +1,4 @@
-import { ref, computed, onMounted, readonly } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import type { MerchProduct, CartItem, MerchFilterElement } from '@/types/merch'
 import type { ZodiacElement } from '@/types'
 import {
@@ -9,6 +9,7 @@ import {
   isShopifyConfigured,
 } from '@/lib/shopify'
 import { generateDemoProducts } from '@/lib/demo-products'
+import { useAnalytics } from '@/composables/useAnalytics'
 
 // Demo mode: show mock products when Shopify isn't configured
 const isDemoMode = !isShopifyConfigured()
@@ -33,6 +34,8 @@ const productsLoaded = ref(false)
  * SSR-safe: all fetches and localStorage happen in onMounted/client-side.
  */
 export function useShopify() {
+  const { trackAddToCart, trackBeginCheckout } = useAnalytics()
+
   // ── Cart persistence ───────────────────────
   function saveCart() {
     if (typeof window === 'undefined') return
@@ -108,7 +111,11 @@ export function useShopify() {
   }
 
   // ── Cart operations ────────────────────────
-  function addToCart(product: MerchProduct, variant?: { id: string; title: string; price: string }) {
+  function addToCart(
+    product: MerchProduct,
+    variant?: { id: string; title: string; price: string },
+    options?: { silent?: boolean },
+  ) {
     const selectedVariant = variant || product.variants[0]
     if (!selectedVariant) return
 
@@ -131,7 +138,18 @@ export function useShopify() {
     }
 
     saveCart()
-    cartOpen.value = true
+    if (!options?.silent) cartOpen.value = true
+
+    // GA4 add_to_cart event
+    trackAddToCart({
+      id: product.id,
+      title: product.title,
+      price: parseFloat(selectedVariant.price),
+      quantity: 1,
+      element: product.element || undefined,
+      productType: product.productType || undefined,
+      variant: selectedVariant.title,
+    })
   }
 
   function removeFromCart(variantId: string) {
@@ -169,6 +187,18 @@ export function useShopify() {
 
     checkingOut.value = true
 
+    // GA4 begin_checkout event
+    trackBeginCheckout(
+      cartItems.value.map(item => ({
+        id: item.productId,
+        title: item.title,
+        price: item.price,
+        quantity: item.quantity,
+        variant: item.variantTitle || undefined,
+      })),
+      cartTotal.value,
+    )
+
     try {
       const lineItems = cartItems.value.map(item => ({
         variantId: item.variantId,
@@ -198,13 +228,13 @@ export function useShopify() {
   })
 
   return {
-    // State
-    products: readonly(products),
-    loading: readonly(loading),
-    error: readonly(error),
-    cartItems: readonly(cartItems),
+    // State (not wrapped in readonly — DeepReadonly breaks downstream component props)
+    products,
+    loading,
+    error,
+    cartItems,
     cartOpen,
-    checkingOut: readonly(checkingOut),
+    checkingOut,
     configured: isShopifyConfigured(),
     isDemoMode,
 

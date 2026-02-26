@@ -17,6 +17,7 @@ export interface ShopifyVariant {
   price: string        // e.g. "29.99"
   currencyCode: string // e.g. "USD"
   available: boolean
+  quantityAvailable?: number  // Shopify inventory count (undefined = not tracked)
   selectedOptions: { name: string; value: string }[]
 }
 
@@ -55,6 +56,7 @@ export interface MerchProduct {
   element: ZodiacElement | null
   animal: ZodiacAnimal | null
   productType: MerchProductType | null
+  totalInventory?: number  // Sum of all variant quantities (undefined = not tracked)
 }
 
 export type MerchProductType = 't-shirt' | 'hoodie' | 'mug' | 'pin' | 'poster' | 'tote' | 'phone-case'

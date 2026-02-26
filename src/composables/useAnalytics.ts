@@ -55,6 +55,64 @@ export function useAnalytics() {
       trackEvent('blog_read', { slug, title })
     },
 
+    // ── GA4 Standard Ecommerce Events ─────────
+
+    /** GA4 standard: view_item — fired when product modal opens */
+    trackViewItem: (product: {
+      id: string; title: string; price: number
+      element?: string; productType?: string; variant?: string
+    }) => {
+      trackEvent('view_item', {
+        currency: 'USD',
+        value: product.price,
+        items: [{
+          item_id: product.id,
+          item_name: product.title,
+          price: product.price,
+          item_category: product.element || 'uncategorized',
+          item_category2: product.productType || 'unknown',
+          item_variant: product.variant || '',
+        }],
+      })
+    },
+
+    /** GA4 standard: add_to_cart — fired when item is added to cart */
+    trackAddToCart: (product: {
+      id: string; title: string; price: number; quantity: number
+      element?: string; productType?: string; variant?: string
+    }) => {
+      trackEvent('add_to_cart', {
+        currency: 'USD',
+        value: product.price * product.quantity,
+        items: [{
+          item_id: product.id,
+          item_name: product.title,
+          price: product.price,
+          quantity: product.quantity,
+          item_category: product.element || 'uncategorized',
+          item_category2: product.productType || 'unknown',
+          item_variant: product.variant || '',
+        }],
+      })
+    },
+
+    /** GA4 standard: begin_checkout — fired when user clicks Checkout */
+    trackBeginCheckout: (items: Array<{
+      id: string; title: string; price: number; quantity: number; variant?: string
+    }>, total: number) => {
+      trackEvent('begin_checkout', {
+        currency: 'USD',
+        value: total,
+        items: items.map(item => ({
+          item_id: item.id,
+          item_name: item.title,
+          price: item.price,
+          quantity: item.quantity,
+          item_variant: item.variant || '',
+        })),
+      })
+    },
+
     /** Generic event tracker for custom events */
     trackEvent,
   }

@@ -6,6 +6,7 @@ defineProps<{
   products: MerchProduct[]
   loading?: boolean
   limit?: number
+  silent?: boolean // Pass through to cards — skip opening cart drawer on add
 }>()
 
 const emit = defineEmits<{
@@ -40,6 +41,7 @@ const emit = defineEmits<{
       v-for="product in (limit ? products.slice(0, limit) : products)"
       :key="product.id"
       :product="product"
+      :silent="silent"
       @detail="emit('detail', $event)"
     />
   </div>

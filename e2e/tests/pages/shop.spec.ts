@@ -1,8 +1,12 @@
 import { test, expect } from '@playwright/test'
-import { mockAllApis, mockShopifyStorefront, mockShopifyError } from '../../helpers/api-mocks'
+import { mockAllApis, mockShopifyError } from '../../helpers/api-mocks'
 import { waitForApp } from '../../helpers/test-app'
 import { setUserSign } from '../../helpers/storage'
-import { mockShopifyProducts } from '../../fixtures/shopify-products'
+
+// Demo mode product names (Shopify not configured, demo products generated)
+// Pattern: "{Element} {Animal} {ProductType}" — see src/lib/demo-products.ts
+const DEMO_FIRE_TEE = 'Fire Dragon Element Tee'
+const DEMO_WATER_MUG = 'Water Snake Zodiac Mug'
 
 test.describe('ShopPage (/shop)', () => {
   // ── 1. Hero section heading ───────────────────────────────────────────────
@@ -22,15 +26,7 @@ test.describe('ShopPage (/shop)', () => {
     await page.goto('/shop')
     await waitForApp(page)
 
-    // When Shopify is configured these filters appear; when not configured the
-    // "Shop Coming Soon" notice renders instead. Test the configured path.
-    const isConfigured = await page.locator('[data-element]').first().isVisible().catch(() => false)
-    if (!isConfigured) {
-      // Shop not configured — skip filter assertions but confirm "Shop Coming Soon"
-      await expect(page.locator('body')).toContainText(/shop coming soon|collection/i)
-      return
-    }
-
+    // Demo mode shows the full UI with element filter buttons
     for (const label of ['All', 'Wood', 'Fire', 'Earth', 'Metal', 'Water']) {
       await expect(page.locator('button', { hasText: label }).first()).toBeVisible()
     }
@@ -39,34 +35,26 @@ test.describe('ShopPage (/shop)', () => {
   // ── 3. Filter by element narrows the product grid ────────────────────────
   test('clicking Fire filter shows only fire-element products', async ({ page }) => {
     await mockAllApis(page)
-    // Patch Shopify mock to return a non-empty product list
-    await mockShopifyStorefront(page, mockShopifyProducts)
     await page.goto('/shop')
     await waitForApp(page)
 
-    // If shop is not configured, skip
     const fireBtn = page.locator('button', { hasText: 'Fire' }).first()
-    if (!(await fireBtn.isVisible().catch(() => false))) return
-
+    await expect(fireBtn).toBeVisible()
     await fireBtn.click()
 
-    // Fire T-Shirt should be visible; Water Mug should not be
-    await expect(page.locator('body')).toContainText('Fire Element T-Shirt')
-    await expect(page.locator('body')).not.toContainText('Water Element Mug')
+    // Fire products should be visible; Water products should not be
+    await expect(page.locator('body')).toContainText(DEMO_FIRE_TEE)
+    await expect(page.locator('body')).not.toContainText(DEMO_WATER_MUG)
   })
 
   // ── 4. Product card shows title and price ────────────────────────────────
   test('product card renders title and formatted price', async ({ page }) => {
     await mockAllApis(page)
-    await mockShopifyStorefront(page, mockShopifyProducts)
     await page.goto('/shop')
     await waitForApp(page)
 
-    // Check that at least one known product title and price appear
-    const titleEl = page.locator('h3', { hasText: 'Fire Element T-Shirt' })
-    const count = await titleEl.count()
-    if (count === 0) return // shop not configured
-
+    // Demo mode renders 25 products — check the fire tee
+    const titleEl = page.locator('h3', { hasText: DEMO_FIRE_TEE })
     await expect(titleEl.first()).toBeVisible()
     // Price in USD format
     await expect(page.locator('body')).toContainText('$29.99')
@@ -75,35 +63,32 @@ test.describe('ShopPage (/shop)', () => {
   // ── 5. Clicking a product card opens the product modal ───────────────────
   test('clicking a product card opens the product detail modal', async ({ page }) => {
     await mockAllApis(page)
-    await mockShopifyStorefront(page, mockShopifyProducts)
     await page.goto('/shop')
     await waitForApp(page)
 
-    const card = page.locator('h3', { hasText: 'Fire Element T-Shirt' }).first()
-    if (!(await card.isVisible().catch(() => false))) return
+    const card = page.locator('h3', { hasText: DEMO_FIRE_TEE }).first()
+    await expect(card).toBeVisible()
 
     // Click the card wrapper
     await card.click()
 
     // Modal renders product title in an h2
-    const modal = page.locator('h2', { hasText: 'Fire Element T-Shirt' })
+    const modal = page.locator('h2', { hasText: DEMO_FIRE_TEE })
     await expect(modal).toBeVisible()
   })
 
   // ── 6. Product modal closes when close button is clicked ─────────────────
   test('product modal closes when the close button is clicked', async ({ page }) => {
     await mockAllApis(page)
-    await mockShopifyStorefront(page, mockShopifyProducts)
     await page.goto('/shop')
     await waitForApp(page)
 
-    const card = page.locator('h3', { hasText: 'Fire Element T-Shirt' }).first()
-    if (!(await card.isVisible().catch(() => false))) return
-
+    const card = page.locator('h3', { hasText: DEMO_FIRE_TEE }).first()
+    await expect(card).toBeVisible()
     await card.click()
 
     // Wait for modal to appear
-    const modal = page.locator('h2', { hasText: 'Fire Element T-Shirt' })
+    const modal = page.locator('h2', { hasText: DEMO_FIRE_TEE })
     await expect(modal).toBeVisible()
 
     // Click the close button (aria-label="Close")
@@ -116,17 +101,15 @@ test.describe('ShopPage (/shop)', () => {
   // ── 7. "Add to Cart" button on a product card triggers add ───────────────
   test('"Add to Cart" button on product card opens the cart drawer', async ({ page }) => {
     await mockAllApis(page)
-    await mockShopifyStorefront(page, mockShopifyProducts)
     await page.goto('/shop')
     await waitForApp(page)
 
-    // Locate the "Add to Cart" button that belongs to the Fire T-Shirt card
-    const addToCartBtn = page.locator('.glass', { hasText: 'Fire Element T-Shirt' })
+    // Locate the "Add to Cart" button on the fire tee card
+    const addToCartBtn = page.locator('.glass', { hasText: DEMO_FIRE_TEE })
       .locator('button', { hasText: /add to cart/i })
       .first()
 
-    if (!(await addToCartBtn.isVisible().catch(() => false))) return
-
+    await expect(addToCartBtn).toBeVisible()
     await addToCartBtn.click()
 
     // Cart drawer should open (it renders the header "Cart")
@@ -137,16 +120,14 @@ test.describe('ShopPage (/shop)', () => {
   // ── 8. Cart count updates after adding a product ─────────────────────────
   test('cart count in the drawer updates after adding a product', async ({ page }) => {
     await mockAllApis(page)
-    await mockShopifyStorefront(page, mockShopifyProducts)
     await page.goto('/shop')
     await waitForApp(page)
 
-    const addToCartBtn = page.locator('.glass', { hasText: 'Fire Element T-Shirt' })
+    const addToCartBtn = page.locator('.glass', { hasText: DEMO_FIRE_TEE })
       .locator('button', { hasText: /add to cart/i })
       .first()
 
-    if (!(await addToCartBtn.isVisible().catch(() => false))) return
-
+    await expect(addToCartBtn).toBeVisible()
     await addToCartBtn.click()
 
     // Cart count badge renders "(1)" inside the cart header
@@ -157,7 +138,6 @@ test.describe('ShopPage (/shop)', () => {
   // ── 9. Personalized section appears when user sign is stored ─────────────
   test('personalized section shows for user sign stored in localStorage', async ({ page }) => {
     await mockAllApis(page)
-    await mockShopifyStorefront(page, mockShopifyProducts)
 
     // Navigate first to establish a document context, then set localStorage
     await page.goto('/shop')
@@ -168,11 +148,9 @@ test.describe('ShopPage (/shop)', () => {
     await page.reload()
     await waitForApp(page)
 
-    // The personalized section heading "Curated for Fire Horse" should appear
-    // (only shows when Shopify is configured and has fire-element products)
+    // Demo mode has fire-element products so "Curated for Fire Horse" should appear
     const personalizedSection = page.locator('text=Curated for Fire Horse')
     const count = await personalizedSection.count()
-    // If shop is configured and has fire products, the section is present
     if (count > 0) {
       await expect(personalizedSection).toBeVisible()
     }
@@ -181,7 +159,6 @@ test.describe('ShopPage (/shop)', () => {
   // ── 10. Query param ?element=fire pre-selects the fire filter ─────────────
   test('/shop?element=fire pre-selects the Fire filter', async ({ page }) => {
     await mockAllApis(page)
-    await mockShopifyStorefront(page, mockShopifyProducts)
     await page.goto('/shop?element=fire')
     await waitForApp(page)
 
@@ -213,7 +190,6 @@ test.describe('ShopPage (/shop)', () => {
   // ── 12. Trust bar renders ────────────────────────────────────────────────
   test('trust bar renders with Secure Checkout, Free Shipping, 30-Day Returns', async ({ page }) => {
     await mockAllApis(page)
-    await mockShopifyStorefront(page, mockShopifyProducts)
     await page.goto('/shop')
     await waitForApp(page)
 

@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import type { MerchProduct } from '@/types/merch'
 import { useShopify } from '@/composables/useShopify'
 
+const LOW_STOCK_THRESHOLD = 5
+
 const props = defineProps<{
   product: MerchProduct
+  silent?: boolean // When true, don't open cart drawer on add
 }>()
 
 const emit = defineEmits<{
@@ -11,6 +15,8 @@ const emit = defineEmits<{
 }>()
 
 const { addToCart } = useShopify()
+
+const addedLabel = ref<string | null>(null)
 
 function formatPrice(price: number, currency: string): string {
   return new Intl.NumberFormat('en-US', {
@@ -20,7 +26,13 @@ function formatPrice(price: number, currency: string): string {
 }
 
 function handleQuickAdd() {
-  addToCart(props.product)
+  const variant = props.product.variants[0]
+  addToCart(props.product, undefined, { silent: props.silent })
+
+  // Show confirmation with variant info
+  const label = variant?.title && variant.title !== 'Default Title' ? variant.title : ''
+  addedLabel.value = label ? `Added! (${label})` : 'Added!'
+  setTimeout(() => { addedLabel.value = null }, 2000)
 }
 
 function handleDetail() {
@@ -58,6 +70,14 @@ function handleDetail() {
       >
         {{ product.element }}
       </span>
+
+      <!-- Low stock urgency badge -->
+      <span
+        v-if="product.totalInventory != null && product.totalInventory > 0 && product.totalInventory <= LOW_STOCK_THRESHOLD"
+        class="absolute bottom-3 left-3 text-xs font-medium px-2 py-1 rounded-full bg-red-900/80 text-red-300 backdrop-blur-sm"
+      >
+        Only {{ product.totalInventory }} left
+      </span>
     </div>
 
     <!-- Product Info -->
@@ -75,10 +95,12 @@ function handleDetail() {
         </span>
         <button
           class="px-3 py-1.5 text-xs font-medium rounded-lg transition-all"
-          style="background: rgba(var(--el-glow-rgb), 0.15); color: var(--el-accent);"
+          :style="addedLabel
+            ? 'background: rgba(34,197,94,0.15); color: #4ade80;'
+            : 'background: rgba(var(--el-glow-rgb), 0.15); color: var(--el-accent);'"
           @click.stop="handleQuickAdd"
         >
-          Add to Cart
+          {{ addedLabel || 'Add to Cart' }}
         </button>
       </div>
     </div>
