@@ -31,7 +31,8 @@ async function checkOrderStatus() {
   }
 
   try {
-    const res = await fetch(`/api/download-report?session=${encodeURIComponent(sessionId)}`)
+    // Step 1: Check order status (returns JSON, doesn't trigger download)
+    const res = await fetch(`/api/download-report?session=${encodeURIComponent(sessionId)}&action=check`)
 
     if (!res.ok) {
       const data = await res.json().catch(() => ({}))
@@ -48,7 +49,8 @@ async function checkOrderStatus() {
     }
 
     const data = await res.json()
-    downloadUrl.value = data.url
+    // Store the download URL for the actual PDF fetch
+    downloadUrl.value = `/api/download-report?session=${encodeURIComponent(sessionId)}`
     signName.value = data.signName || 'Your Sign'
     state.value = 'ready'
 
@@ -62,9 +64,10 @@ async function checkOrderStatus() {
 async function handleDownload() {
   state.value = 'downloading'
 
-  trackEvent('blueprint_download_start', { url: downloadUrl.value })
+  trackEvent('blueprint_download_start', { signName: signName.value })
 
   try {
+    // Step 2: Fetch actual PDF bytes and trigger browser download
     const res = await fetch(downloadUrl.value)
     if (!res.ok) throw new Error('Download failed')
 

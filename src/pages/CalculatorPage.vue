@@ -8,6 +8,10 @@ import { usePageSeo } from '@/composables/useSignSeo'
 import ElementPentagonChart from '@/components/zodiac/ElementPentagonChart.vue'
 import SignBadge from '@/components/zodiac/SignBadge.vue'
 import type { SignProfile } from '@/types'
+import BlueprintCTA from '@/components/zodiac/BlueprintCTA.vue'
+import { useUserSign } from '@/composables/useUserSign'
+
+const { setUserSign } = useUserSign()
 
 usePageSeo(
   'Chinese Zodiac Calculator',
@@ -74,6 +78,8 @@ function findSign() {
 
   if (profile) {
     result.value = profile
+    // Save user's sign for personalization across the site
+    setUserSign(slug)
   }
   hasSearched.value = true
 }
@@ -168,6 +174,9 @@ function findSign() {
         :element="result.element"
         size="sm"
       />
+
+      <!-- Blueprint PDF Upsell -->
+      <BlueprintCTA :profile="result" />
 
       <!-- CTAs -->
       <div class="flex flex-wrap justify-center gap-4">

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAnalytics } from '@/composables/useAnalytics'
+import { useUserSign } from '@/composables/useUserSign'
 
 const props = withDefaults(defineProps<{
   sourcePage?: string
@@ -9,6 +10,7 @@ const props = withDefaults(defineProps<{
 })
 
 const { trackNewsletterSignup } = useAnalytics()
+const { userSign } = useUserSign()
 
 const email = ref('')
 const honeypot = ref('')
@@ -34,6 +36,7 @@ async function handleSubmit() {
       body: JSON.stringify({
         email: email.value.trim(),
         honeypot: honeypot.value,
+        sign: userSign.value?.slug ?? null,
       }),
     })
 

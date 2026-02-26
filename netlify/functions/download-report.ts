@@ -2,9 +2,9 @@ import type { Context } from "@netlify/functions"
 import { neon } from '@neondatabase/serverless'
 import { getStore } from '@netlify/blobs'
 
-// Max downloads per order and expiry window (7 days)
+// Max downloads per order and expiry window (30 days, matches UI promise)
 const MAX_DOWNLOADS = 5
-const EXPIRY_MS = 7 * 24 * 60 * 60 * 1000
+const EXPIRY_MS = 30 * 24 * 60 * 60 * 1000
 
 export default async (req: Request, _context: Context) => {
   if (req.method !== 'GET') {
@@ -65,7 +65,28 @@ export default async (req: Request, _context: Context) => {
       })
     }
 
-    // Fetch PDF from Netlify Blobs
+    // Two modes: ?action=check returns status JSON, default streams the PDF
+    const action = url.searchParams.get('action')
+
+    if (action === 'check') {
+      // Status check mode — return order info without downloading
+      const signName = order.sign_slug
+        .split('-')
+        .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ')
+
+      return new Response(JSON.stringify({
+        status: 'ready',
+        signName,
+        signSlug: order.sign_slug,
+        downloadsRemaining: MAX_DOWNLOADS - order.download_count,
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
+    // Download mode — fetch and stream the PDF
     const store = getStore('reports')
     const pdfBuffer = await store.get(`${order.sign_slug}.pdf`, { type: 'arrayBuffer' })
 

@@ -3,8 +3,11 @@ import { RouterLink } from 'vue-router'
 import { zodiacElements, zodiacAnimals } from '@/lib/zodiac-data'
 import NewsletterForm from '@/components/ui/NewsletterForm.vue'
 import { useHomeSeo } from '@/composables/useSignSeo'
+import { useUserSign } from '@/composables/useUserSign'
 
 useHomeSeo()
+
+const { userSign } = useUserSign()
 
 const elements = zodiacElements
 const animals = zodiacAnimals
@@ -40,6 +43,28 @@ const howItWorks = [
         >
           Browse All Signs
         </RouterLink>
+      </div>
+    </section>
+
+    <!-- Personalized Welcome (shown if user has saved their sign) -->
+    <section v-if="userSign" class="px-4 pb-8 max-w-xl mx-auto">
+      <div
+        :data-element="userSign.element"
+        class="glass element-glow rounded-2xl p-6 text-center"
+      >
+        <p class="text-ash-500 text-sm uppercase tracking-widest mb-1">Welcome back</p>
+        <h2 class="element-text font-display text-2xl md:text-3xl font-bold mb-1">
+          {{ userSign.name }}
+        </h2>
+        <p class="text-ash-400 text-sm mb-4">{{ userSign.chineseName }} &mdash; {{ userSign.tagline }}</p>
+        <div class="flex flex-wrap justify-center gap-3">
+          <RouterLink :to="`/zodiac/${userSign.slug}`" class="btn-element px-5 py-2 text-sm">
+            Your Profile
+          </RouterLink>
+          <RouterLink :to="`/compatibility?sign=${userSign.slug}`" class="px-5 py-2 text-sm border border-ash-500 text-ash-200 hover:border-ash-300 hover:text-ash-100 rounded-lg transition-all">
+            Check Compatibility
+          </RouterLink>
+        </div>
       </div>
     </section>
 

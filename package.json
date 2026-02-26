@@ -8,7 +8,10 @@
     "build": "vue-tsc -b && vite-ssg build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "playwright test --config e2e/playwright.config.ts",
+    "test:e2e:headed": "playwright test --config e2e/playwright.config.ts --headed",
+    "test:e2e:ui": "playwright test --config e2e/playwright.config.ts --ui"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
@@ -20,8 +23,10 @@
   },
   "devDependencies": {
     "@anthropic-ai/sdk": "^0.74.0",
+    "@axe-core/playwright": "^4.11.1",
     "@netlify/blobs": "^10.7.0",
     "@netlify/vite-plugin": "^2.10.0",
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/vite": "^4.1.18",
     "@tsconfig/node24": "^24.0.4",
     "@types/jsdom": "^27.0.0",

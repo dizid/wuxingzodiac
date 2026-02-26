@@ -81,6 +81,37 @@ export default async (req: Request, _context: Context) => {
       DO UPDATE SET status = 'paid', fulfilled_at = NOW()
     `
 
+    // Fire GA4 purchase event via Measurement Protocol (server-side)
+    if (process.env.GA4_API_SECRET) {
+      try {
+        await fetch(
+          `https://www.google-analytics.com/mp/collect?measurement_id=G-5M7CY55LL8&api_secret=${process.env.GA4_API_SECRET}`,
+          {
+            method: 'POST',
+            body: JSON.stringify({
+              client_id: session.client_reference_id || session.id,
+              events: [{
+                name: 'purchase',
+                params: {
+                  transaction_id: session.id,
+                  value: (session.amount_total || 999) / 100,
+                  currency: session.currency || 'usd',
+                  items: [{
+                    item_name: `Elemental Blueprint - ${signSlug}`,
+                    price: (session.amount_total || 999) / 100,
+                    quantity: 1,
+                  }],
+                },
+              }],
+            }),
+          }
+        )
+      } catch (ga4Error) {
+        // Non-blocking — don't fail the webhook if GA4 is down
+        console.error('GA4 Measurement Protocol error:', ga4Error)
+      }
+    }
+
     return new Response(JSON.stringify({ received: true }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }

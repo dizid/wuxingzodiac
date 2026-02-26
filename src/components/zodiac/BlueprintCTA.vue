@@ -90,7 +90,7 @@ const features = [
       @click="handlePurchase"
     >
       <span v-if="loading">Redirecting to checkout...</span>
-      <span v-else>Get Your Blueprint &mdash; $9.99</span>
+      <span v-else>Get Your Blueprint &mdash; $9.90</span>
     </button>
 
     <!-- Error state -->

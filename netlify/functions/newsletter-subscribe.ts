@@ -10,7 +10,7 @@ export default async (req: Request, _context: Context) => {
   }
 
   try {
-    const { email, honeypot } = await req.json()
+    const { email, honeypot, sign } = await req.json()
 
     // Spam bot check — honeypot field should be empty
     if (honeypot) {
@@ -46,6 +46,10 @@ export default async (req: Request, _context: Context) => {
       body: JSON.stringify({
         email_address: email,
         type: 'regular',
+        ...(sign ? {
+          tags: [sign],
+          metadata: { zodiac_sign: sign },
+        } : {}),
       }),
     })
 

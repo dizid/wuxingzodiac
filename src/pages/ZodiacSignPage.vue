@@ -22,6 +22,9 @@ import WuXingCycleDiagram from '@/components/zodiac/WuXingCycleDiagram.vue'
 import SignMatchesV2 from '@/components/zodiac/SignMatchesV2.vue'
 import SignSiblingNav from '@/components/zodiac/SignSiblingNav.vue'
 import SignShop from '@/components/zodiac/SignShop.vue'
+import BlueprintCTA from '@/components/zodiac/BlueprintCTA.vue'
+import MerchSignSection from '@/components/merch/MerchSignSection.vue'
+import MerchCartDrawer from '@/components/merch/MerchCartDrawer.vue'
 import PageCTA from '@/components/ui/PageCTA.vue'
 
 const route = useRoute()
@@ -133,9 +136,11 @@ function goToElement(element: string) {
           <SignShadow :data="content.shadow" />
           <MonetizationSlot section="personality" />
           <SignRelationships :data="content.relationships" />
+          <MonetizationSlot section="love" />
 
           <!-- Element Balance + Wu Xing Cycle Diagram -->
           <SignElementBalance :data="content.elementBalance" />
+          <MonetizationSlot section="health" />
           <WuXingCycleDiagram
             :active-element="profile.element"
             :interactive="true"
@@ -145,12 +150,18 @@ function goToElement(element: string) {
 
           <SignMatchesV2 :matches="content.matches" :slug="slug" />
 
+          <!-- Blueprint PDF Upsell -->
+          <BlueprintCTA v-if="profile" :profile="profile" />
+
           <!-- Sibling Navigation (same animal/element) -->
           <SignSiblingNav
             :element="profile.element"
             :animal="profile.animal"
             :current-slug="slug"
           />
+
+          <!-- Merch (own products, higher margin — above affiliate shop) -->
+          <MerchSignSection :element="profile.element" :animal="profile.animal" />
 
           <SignShop :content="content" />
 
@@ -162,5 +173,8 @@ function goToElement(element: string) {
         </template>
       </main>
     </template>
+
+    <!-- Cart Drawer (global, teleported to body) -->
+    <MerchCartDrawer />
   </div>
 </template>
