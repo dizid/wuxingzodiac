@@ -20,7 +20,7 @@ usePageSeo(
 )
 
 const route = useRoute()
-const { loadAllProducts, filterByElement, products, loading, configured } = useShopify()
+const { loadAllProducts, filterByElement, products, loading, isDemoMode } = useShopify()
 const { userSign } = useUserSign()
 const { trackEvent } = useAnalytics()
 
@@ -93,16 +93,14 @@ watch(() => route.query.element, (newElement) => {
     </section>
 
     <div class="max-w-5xl mx-auto px-4 pb-20 space-y-10">
-      <!-- Not configured notice (only visible in dev) -->
-      <div v-if="!configured" class="glass rounded-2xl p-8 text-center">
-        <div class="text-4xl mb-4">🏪</div>
-        <h2 class="font-display text-xl font-bold text-ash-100 mb-2">Shop Coming Soon</h2>
-        <p class="text-ash-400 max-w-md mx-auto">
-          The Five Elements Collection is being crafted. Sign up for our newsletter to be the first to know when it launches.
-        </p>
+      <!-- Demo mode badge -->
+      <div v-if="isDemoMode" class="text-center">
+        <span class="inline-block text-xs px-3 py-1 rounded-full bg-ash-800 text-ash-400 border border-ash-700">
+          Preview Mode — Sample products shown
+        </span>
       </div>
 
-      <template v-else>
+      <template>
         <!-- Trust Bar -->
         <TrustBar />
 

@@ -8,6 +8,10 @@ import {
   toMerchProduct,
   isShopifyConfigured,
 } from '@/lib/shopify'
+import { generateDemoProducts } from '@/lib/demo-products'
+
+// Demo mode: show mock products when Shopify isn't configured
+const isDemoMode = !isShopifyConfigured()
 
 // ============================================
 // SHARED STATE (singleton across components)
@@ -50,7 +54,13 @@ export function useShopify() {
   // ── Product fetching ───────────────────────
   async function loadAllProducts() {
     if (productsLoaded.value || loading.value) return
-    if (!isShopifyConfigured()) return
+
+    // Demo mode: use mock products
+    if (isDemoMode) {
+      products.value = generateDemoProducts()
+      productsLoaded.value = true
+      return
+    }
 
     loading.value = true
     error.value = null
@@ -68,7 +78,14 @@ export function useShopify() {
   }
 
   async function loadProductsByElement(element: ZodiacElement) {
-    if (!isShopifyConfigured()) return []
+    // Demo mode: filter mock products by element
+    if (isDemoMode) {
+      if (!productsLoaded.value) {
+        products.value = generateDemoProducts()
+        productsLoaded.value = true
+      }
+      return products.value.filter(p => p.element === element)
+    }
 
     loading.value = true
     error.value = null
@@ -143,6 +160,13 @@ export function useShopify() {
   // ── Checkout ───────────────────────────────
   async function checkout() {
     if (cartItems.value.length === 0) return
+
+    // Demo mode: can't checkout with mock products
+    if (isDemoMode) {
+      error.value = 'Preview mode — checkout available when the store launches.'
+      return
+    }
+
     checkingOut.value = true
 
     try {
@@ -182,6 +206,7 @@ export function useShopify() {
     cartOpen,
     checkingOut: readonly(checkingOut),
     configured: isShopifyConfigured(),
+    isDemoMode,
 
     // Product loading
     loadAllProducts,

@@ -13,7 +13,7 @@ const props = defineProps<{
   animal: ZodiacAnimal
 }>()
 
-const { loadProductsByElement, configured } = useShopify()
+const { loadProductsByElement } = useShopify()
 const { trackEvent } = useAnalytics()
 
 const products = ref<MerchProduct[]>([])
@@ -22,11 +22,6 @@ const selectedProduct = ref<MerchProduct | null>(null)
 const viewed = ref(false)
 
 onMounted(async () => {
-  if (!configured) {
-    loading.value = false
-    return
-  }
-
   try {
     products.value = await loadProductsByElement(props.element)
 
@@ -55,8 +50,8 @@ function handleDetail(product: MerchProduct) {
 </script>
 
 <template>
-  <!-- Only render if Shopify is configured and there are products -->
-  <section v-if="configured && (loading || products.length > 0)" class="glass rounded-2xl p-6 md:p-8">
+  <!-- Only render if there are products (or still loading) -->
+  <section v-if="loading || products.length > 0" class="glass rounded-2xl p-6 md:p-8">
     <div class="flex items-center justify-between mb-5">
       <div>
         <h3 class="element-text font-display text-xl font-bold">

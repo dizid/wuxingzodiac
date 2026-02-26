@@ -11,6 +11,8 @@ const {
   updateQuantity,
   checkout,
   checkingOut,
+  error,
+  isDemoMode,
 } = useShopify()
 
 function formatPrice(price: number): string {
@@ -145,17 +147,24 @@ function close() {
             <span class="text-ash-100 font-display font-bold text-xl">{{ formatPrice(cartTotal) }}</span>
           </div>
 
+          <!-- Error/preview message -->
+          <p v-if="error" class="text-amber-400 text-xs text-center bg-amber-900/20 rounded-lg px-3 py-2">
+            {{ error }}
+          </p>
+
           <button
             class="btn-element w-full text-center text-lg py-3"
-            :disabled="checkingOut"
+            :disabled="checkingOut || isDemoMode"
             @click="checkout"
           >
             <span v-if="checkingOut">Redirecting...</span>
+            <span v-else-if="isDemoMode">Preview Only</span>
             <span v-else>Checkout</span>
           </button>
 
           <p class="text-ash-600 text-xs text-center">
-            Secure checkout via Shopify. Shipping calculated at checkout.
+            <template v-if="isDemoMode">Store launching soon — these are sample products.</template>
+            <template v-else>Secure checkout via Shopify. Shipping calculated at checkout.</template>
           </p>
         </div>
       </div>
