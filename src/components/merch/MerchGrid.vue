@@ -1,16 +1,11 @@
 <script setup lang="ts">
-import type { MerchProduct } from '@/types/merch'
-import MerchProductCard from './MerchProductCard.vue'
+import type { ShopProduct } from '@/lib/shop-products'
+import ShopProductCard from './ShopProductCard.vue'
 
 defineProps<{
-  products: MerchProduct[]
+  products: ShopProduct[]
   loading?: boolean
   limit?: number
-  silent?: boolean // Pass through to cards — skip opening cart drawer on add
-}>()
-
-const emit = defineEmits<{
-  detail: [product: MerchProduct]
 }>()
 </script>
 
@@ -37,12 +32,10 @@ const emit = defineEmits<{
 
   <!-- Product grid -->
   <div v-else class="grid grid-cols-2 md:grid-cols-3 gap-4">
-    <MerchProductCard
+    <ShopProductCard
       v-for="product in (limit ? products.slice(0, limit) : products)"
-      :key="product.id"
+      :key="product.slug"
       :product="product"
-      :silent="silent"
-      @detail="emit('detail', $event)"
     />
   </div>
 </template>

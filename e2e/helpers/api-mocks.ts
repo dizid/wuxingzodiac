@@ -1,7 +1,6 @@
 // Centralized API mocking for all external services
 import type { Page, Route } from '@playwright/test'
 import { mockBlogPosts } from '../fixtures/blog-posts'
-import { mockShopifyProducts } from '../fixtures/shopify-products'
 
 // ============================================
 // NEWSLETTER (Buttondown)
@@ -154,34 +153,6 @@ export async function mockDownloadReport(page: Page, opts?: DownloadReportMockOp
 }
 
 // ============================================
-// SHOPIFY (Storefront GraphQL)
-// ============================================
-
-export async function mockShopifyStorefront(page: Page, products?: unknown[]) {
-  const data = products ?? mockShopifyProducts
-
-  await page.route('**shopify.com/**', (route: Route) => {
-    route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        data: {
-          products: {
-            edges: data.map((p: any) => ({ node: p })),
-          },
-        },
-      }),
-    })
-  })
-}
-
-export async function mockShopifyError(page: Page) {
-  await page.route('**shopify.com/**', (route: Route) => {
-    route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ errors: [{ message: 'Internal error' }] }) })
-  })
-}
-
-// ============================================
 // ANALYTICS (block silently)
 // ============================================
 
@@ -199,6 +170,5 @@ export async function mockAllApis(page: Page) {
   await mockBlogApi(page)
   await mockStripeCheckout(page)
   await mockDownloadReport(page)
-  await mockShopifyStorefront(page)
   await blockAnalytics(page)
 }

@@ -18,66 +18,54 @@ Full plan: `.claude/plans/mighty-giggling-penguin.md`
 - [x] "My Sign" link in NavBar (when sign known)
 - [x] Newsletter sign-segmentation (form + backend Buttondown tags)
 
-### Phase 2: Shopify + Printful Integration — DONE (code only)
-- [x] `src/types/merch.ts` — TypeScript interfaces
-- [x] `src/lib/shopify.ts` — Storefront API GraphQL client
-- [x] `src/composables/useShopify.ts` — cart, products, checkout
-- [x] 6 merch components: MerchProductCard, MerchGrid, MerchCartDrawer, MerchProductModal, MerchSignSection, TrustBar
-- [x] ShopPage.vue at `/shop` with element filters + personalized section
-- [x] NavBar: Shop link + cart icon badge (desktop + mobile)
-- [x] ZodiacSignPage: MerchSignSection + MerchCartDrawer integrated
-- [x] Type check passes cleanly
+### Phase 2: Fourthwall Shop Integration — DONE
+Replaced Shopify Storefront API (~1,970 lines) with lightweight static catalog linking to Fourthwall.
+- [x] `src/lib/shop-products.ts` — Static catalog: 60 products (1 tee per sign) from `signProfiles`
+- [x] `ShopProductCard.vue` — Simple card: image, title, price, "Shop Now" / "Coming Soon"
+- [x] `MerchGrid.vue` — Updated for `ShopProduct` type
+- [x] `ShopPage.vue` — Rewritten: fully static, SSR-safe, element filter tabs
+- [x] `SignMerchCTA.vue` — Sign page merch CTA with product preview + "Browse all" link
+- [x] `TrustBar.vue` — Updated copy (Secure Payment, Worldwide Shipping)
+- [x] NavBar: removed cart icon (Fourthwall handles cart), kept Shop link
+- [x] ZodiacSignPage: `SignMerchCTA` replaces old `MerchSignSection`
+- [x] Deleted 9 Shopify files, cleaned up e2e tests
+- [x] `design-prompts.ts` kept — 60 ready-to-paste ImageFX prompts
+- [x] Build + type-check passes cleanly
 
-### Phase 2.5: Demo Mode & Design Prompts — DONE
-- [x] `src/lib/demo-products.ts` — 25 mock products (5 elements × 5 types) using OG images
-- [x] `useShopify.ts` demo fallback — loads mock products when Shopify not configured
-- [x] `ShopPage.vue` — removed "Coming Soon" gate, shows full UI with "Preview Mode" badge
-- [x] `MerchSignSection.vue` — removed `configured` guard, works in demo mode
-- [x] `MerchCartDrawer.vue` — "Preview Only" checkout button, error display
-- [x] `src/lib/design-prompts.ts` — 60 ready-to-paste ImageFX prompts with `buildPrompt(element, animal)`
-- [x] Type check passes cleanly
+### Phase 3: Fourthwall Store Setup — TODO (manual)
+- [ ] Create Fourthwall account at fourthwall.com
+- [ ] Set store name: "Wu Xing Zodiac" or "Five Elements Collection"
+- [ ] Configure branding (dark theme, upload logo)
 
-### Phase 3: Conversion & Product Experience — TODO
-- [ ] Image gallery zoom in product modal
-- [ ] Visual variant swatches (color circles, size pills)
-- [ ] "Only X left" urgency indicator (Shopify inventory)
-- [ ] Size guide popup per product type
-- [ ] Quick-add to cart from sign pages
-- [ ] Merch analytics events (view, add-to-cart, checkout)
-
-### Phase 4: Cross-Sell, Bundles & Email — TODO
-- [ ] Element Bundle ($39.99): Tee + Mug + Pin
-- [ ] Zodiac Identity Kit ($54.99): Tee + Hoodie + Blueprint PDF
-- [ ] Compatibility Gift Set ($29.99): Two mugs for a pair
-- [ ] Cross-sell: post-purchase merch, compatibility "His & Hers", cart drawer upsell
-- [ ] Email sequences: Blueprint buyers, newsletter sign-segmented
+### Phase 4: Merch Art Production — PROMPTS READY
+- [x] Design prompt library: `src/lib/design-prompts.ts`
+- [x] Video prompts: `prompts/video-prompts.md`
+- [x] MVP prompts: Wood Tiger, Fire Dragon, Earth Ox, Metal Horse, Water Snake
+- [ ] Fire Horse style development (Google ImageFX, 50+ variations → 3-5 finalists)
+- [ ] Lock prompt formula + typography template
+- [ ] MVP: 5 Element Tees (1 per element) → upload to Fourthwall
+- [ ] Add Fourthwall product URLs to `src/lib/shop-products.ts` (flips "Coming Soon" → "Shop Now")
+- [ ] Fire Horse Launch Collection (premium tee, art print, mug)
+- [ ] Batch remaining 55 sign artworks
+- [ ] Full catalog: expand `MVP_TYPES` in `shop-products.ts` to add hoodie/mug/poster/tote
 
 ### Phase 5: SEO & Social — TODO
 - [ ] Shop page JSON-LD Product schema
 - [ ] OG image for `/shop`
-- [ ] Add `/shop` to SSG routes
-- [ ] Product schema.org markup
+- [ ] Add `/shop` to SSG routes (vite-ssg-sitemap)
 - [ ] Breadcrumb schema
 
+### Phase 6: Cross-Sell & Email — TODO
+- [ ] Cross-sell: post-purchase merch recommendations, compatibility pair merch
+- [ ] Email sequences: Blueprint buyers, newsletter sign-segmented
+
 ### Infrastructure — NOT STARTED (manual)
-- [ ] Create Shopify store + connect Printful
-- [ ] Enable Storefront API → get `VITE_SHOPIFY_STORE_DOMAIN`, `VITE_SHOPIFY_STOREFRONT_TOKEN`
 - [ ] Run DB migration: `scripts/migrations/001-report-orders.sql`
 - [ ] Create Stripe product + $9.99 price → `STRIPE_PRICE_ID`
 - [ ] Register Stripe webhook for `checkout.session.completed`
 - [ ] Set env vars: `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID`, `STRIPE_WEBHOOK_SECRET`, `SITE_URL`, `GA4_API_SECRET`
 - [ ] Build Blueprint PDF generation pipeline (60 PDFs via Claude API + PDF lib)
 - [ ] Upload PDFs to Netlify Blobs
-
-### Merch Art Production — PROMPTS READY
-- [x] Design prompt library created (`src/lib/design-prompts.ts`)
-- [x] MVP prompts: Wood Tiger, Fire Dragon, Earth Ox, Metal Horse, Water Snake
-- [ ] Fire Horse style development (Google ImageFX, 50+ variations → 3-5 finalists)
-- [ ] Lock prompt formula + Figma typography template
-- [ ] MVP: 5 Element Tees + 5 Element Mugs (10 products) → Shopify upload
-- [ ] Fire Horse Launch Collection (premium tee, art print, mug)
-- [ ] Batch remaining 55 sign artworks
-- [ ] Full catalog upload (60 tees + 60 mugs + hoodies + pins)
 
 ### Remaining Phase 0 Items
 - [ ] Upgrade Amazon affiliate links from search URLs to specific ASINs

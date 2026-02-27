@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="fireGrad" x1="0" y1="1" x2="0.2" y2="0">
+      <stop offset="0%" stop-color="#c2410c"/>
+      <stop offset="40%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#fbbf24"/>
+    </linearGradient>
+    <linearGradient id="maneGrad" x1="0.5" y1="1" x2="0.3" y2="0">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="50%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#fef3c7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Dark circular background -->
+  <circle cx="32" cy="32" r="32" fill="#0a0a0a"/>
+
+  <!-- Flame mane - three bold flames rising from poll/neck -->
+  <path d="M14,40 Q13,34 15,28
+           Q17,22 18,16 Q18,10 21,5
+           Q22,11 22,16 Q23,12 25,7
+           Q26,12 26,17 Q28,12 31,8
+           Q30,14 29,19
+           Q27,26 24,32
+           Z"
+        fill="url(#maneGrad)" opacity="0.92"/>
+
+  <!-- Horse head - long elegant profile facing right -->
+  <!-- Forehead slopes down to long muzzle -->
+  <path d="M15,46
+           Q14,42 14,38
+           Q14,34 16,31
+           Q18,28 22,27
+           Q25,26 28,27
+           Q31,27 34,27
+           Q38,27 42,29
+           Q46,31 49,34
+           Q51,36 50,38
+           Q49,40 46,39
+           Q48,41 49,43
+           Q48,45 46,44
+           Q44,42 42,40
+           Q38,42 34,44
+           Q28,47 22,46
+           Q17,46 15,46 Z"
+        fill="url(#fireGrad)"/>
+
+  <!-- Ear -->
+  <path d="M21,27 L17,19 L25,25 Z" fill="#ea580c"/>
+
+  <!-- Eye -->
+  <circle cx="29" cy="32.5" r="2.2" fill="#0a0a0a"/>
+  <circle cx="29.6" cy="32" r="0.7" fill="#fde68a"/>
+
+  <!-- Nostril -->
+  <ellipse cx="47.5" cy="37" rx="1.2" ry="1" fill="#0a0a0a" opacity="0.5"/>
+
+  <!-- Mouth line -->
+  <path d="M46,39 Q42,41 38,41" fill="none" stroke="#9a3412" stroke-width="0.6" opacity="0.4"/>
+
+  <!-- Subtle outer glow ring -->
+  <circle cx="32" cy="32" r="30.5" fill="none" stroke="#f97316" stroke-width="0.5" opacity="0.3"/>
+</svg>

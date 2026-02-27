@@ -23,8 +23,7 @@ import SignMatchesV2 from '@/components/zodiac/SignMatchesV2.vue'
 import SignSiblingNav from '@/components/zodiac/SignSiblingNav.vue'
 import SignShop from '@/components/zodiac/SignShop.vue'
 import BlueprintCTA from '@/components/zodiac/BlueprintCTA.vue'
-import MerchSignSection from '@/components/merch/MerchSignSection.vue'
-import MerchCartDrawer from '@/components/merch/MerchCartDrawer.vue'
+import SignMerchCTA from '@/components/merch/SignMerchCTA.vue'
 import PageCTA from '@/components/ui/PageCTA.vue'
 
 const route = useRoute()
@@ -160,8 +159,8 @@ function goToElement(element: string) {
             :current-slug="slug"
           />
 
-          <!-- Merch (own products, higher margin — above affiliate shop) -->
-          <MerchSignSection :element="profile.element" :animal="profile.animal" />
+          <!-- Merch CTA (links to Fourthwall shop) -->
+          <SignMerchCTA :sign-slug="slug" :element="profile.element" :name="profile.name" />
 
           <SignShop :content="content" />
 
@@ -174,7 +173,5 @@ function goToElement(element: string) {
       </main>
     </template>
 
-    <!-- Cart Drawer (global, teleported to body) -->
-    <MerchCartDrawer />
   </div>
 </template>

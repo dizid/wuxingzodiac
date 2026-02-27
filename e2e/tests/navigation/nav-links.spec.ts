@@ -5,7 +5,7 @@ import { setUserSign, clearAllStorage } from '../../helpers/storage'
 
 /**
  * NavBar link tests — verify the desktop navigation works correctly.
- * 10 tests covering logo, nav links, active states, My Sign, and cart badge.
+ * 10 tests covering logo, nav links, active states, My Sign, and Shop link.
  */
 
 test.describe('NavBar — desktop navigation', () => {
@@ -139,36 +139,15 @@ test.describe('NavBar — desktop navigation', () => {
     await expect(mySignLink).toHaveAttribute('href', '/zodiac/fire-horse')
   })
 
-  test('10. Cart badge shows count when cart has items', async ({ page }) => {
+  test('10. Shop link navigates to /shop', async ({ page }) => {
     await page.goto('/')
     await waitForApp(page)
 
-    // Set cart items in localStorage (matches CartItem shape from useShopify)
-    await page.evaluate(() => {
-      localStorage.setItem(
-        'wuxing_merch_cart',
-        JSON.stringify([
-          {
-            variantId: 'gid://shopify/ProductVariant/123',
-            productId: 'gid://shopify/Product/456',
-            title: 'Fire Horse Tee',
-            variantTitle: 'M',
-            price: 29.99,
-            currency: 'USD',
-            quantity: 2,
-            handle: 'fire-horse-tee',
-          },
-        ]),
-      )
-    })
-
-    await page.reload()
+    const shopLink = page.locator('nav a[href="/shop"]').first()
+    await expect(shopLink).toBeVisible()
+    await shopLink.click()
     await waitForApp(page)
 
-    // Cart badge shows count > 0
-    const cartBadge = page.locator('nav span', { hasText: /[0-9]+/ }).first()
-    await expect(cartBadge).toBeVisible()
-    const badgeText = await cartBadge.textContent()
-    expect(Number(badgeText?.trim())).toBeGreaterThan(0)
+    await expect(page).toHaveURL('/shop')
   })
 })

@@ -4,7 +4,6 @@ import {
   mockNewsletterError,
   mockBlogApiError,
   mockBlogApiEmpty,
-  mockShopifyError,
   mockStripeCheckout,
   mockDownloadReport,
 } from '../../helpers/api-mocks'
@@ -96,20 +95,7 @@ test.describe('API failure handling', () => {
     })
   })
 
-  // ── 5. Shopify API error → error state on shop ────────────────────────────
-  test('Shopify API error shows an error state on the shop page', async ({ page }) => {
-    await mockAllApis(page)
-    await mockShopifyError(page) // overrides Shopify mock with 500
-
-    await page.goto('/shop')
-    await waitForApp(page)
-
-    await expect(page.locator('body')).toContainText(/error|could not load|unavailable|try again/i, {
-      timeout: 5000,
-    })
-  })
-
-  // ── 6. Stripe checkout 500 → error on Blueprint CTA ──────────────────────
+  // ── 5. Stripe checkout 500 → error on Blueprint CTA ──────────────────────
   test('Stripe checkout API 500 shows an error when clicking the buy button', async ({ page }) => {
     await mockAllApis(page)
     await mockStripeCheckout(page, { status: 500 })

@@ -11,13 +11,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test --config e2e/playwright.config.ts",
     "test:e2e:headed": "playwright test --config e2e/playwright.config.ts --headed",
-    "test:e2e:ui": "playwright test --config e2e/playwright.config.ts --ui",
-    "video:export": "npx tsx scripts/export-sign-data.ts",
-    "video:voiceover": "npx tsx scripts/generate-voiceovers.ts",
-    "video:voiceover:dry": "npx tsx scripts/generate-voiceovers.ts --dry-run",
-    "video:studio": "cd video && npx remotion studio",
-    "video:render": "cd video && npx tsx render.ts",
-    "video:batch": "cd video && npx tsx render.ts --all"
+    "test:e2e:ui": "playwright test --config e2e/playwright.config.ts --ui"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
