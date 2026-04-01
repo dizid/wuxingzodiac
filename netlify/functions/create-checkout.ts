@@ -12,6 +12,15 @@ export default async (req: Request, _context: Context) => {
     })
   }
 
+  // Read PlugAff affiliate ref from cookie
+  const cookies = Object.fromEntries(
+    (req.headers.get('cookie') || '').split(';').map(c => {
+      const [k, ...v] = c.trim().split('=')
+      return [k, decodeURIComponent(v.join('='))]
+    })
+  )
+  const plugaffRef = cookies['plugaff_ref'] || ''
+
   try {
     const { slug } = await req.json()
 
@@ -38,7 +47,7 @@ export default async (req: Request, _context: Context) => {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
-      metadata: { sign_slug: slug, product: 'elemental_blueprint' },
+      metadata: { sign_slug: slug, product: 'elemental_blueprint', plugaff_ref: plugaffRef, plugaff_app: 'wuxingzodiac' },
       success_url: `${siteUrl}/report/download?session={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/zodiac/${slug}?purchase=cancelled`,
     })
