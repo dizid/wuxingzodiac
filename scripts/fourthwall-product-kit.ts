@@ -4,14 +4,18 @@
  * Prompts formatted for Midjourney with --sref style reference for brand consistency.
  *
  * Run: npx tsx scripts/fourthwall-product-kit.ts
- * Run: npx tsx scripts/fourthwall-product-kit.ts --sref https://cdn.midjourney.com/your-hero-image.png
+ * Run: npx tsx scripts/fourthwall-product-kit.ts --sref 7031655206          (Style Creator code)
+ * Run: npx tsx scripts/fourthwall-product-kit.ts --sref https://cdn.mid...  (image URL fallback)
  */
 
-// -- Parse --sref argument --
+// -- Brand style code (from Midjourney Style Creator) --
+const BRAND_STYLE_CODE = '6401195053'
+
+// -- Parse --sref argument (overrides default if provided) --
 const srefArg = process.argv.find((a) => a.startsWith('--sref'))
-const srefUrl = srefArg
-  ? process.argv[process.argv.indexOf(srefArg) + 1] || ''
-  : ''
+const srefValue = srefArg
+  ? process.argv[process.argv.indexOf(srefArg) + 1] || BRAND_STYLE_CODE
+  : BRAND_STYLE_CODE
 
 // -- MVP signs (must match design-prompts.ts getMvpPrompts) --
 
@@ -69,26 +73,19 @@ function cap(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
-// Midjourney params
-const MJ_PARAMS = '--ar 3:4 --s 750 --q 2 --v 6.1'
-
-function buildMidjourneyPrompt(element: string, animal: string, isHero: boolean): string {
+function buildMidjourneyPrompt(element: string, animal: string): string {
   const animalPrompt = ANIMAL_PROMPTS[animal]
   const colorPrompt = ELEMENT_COLORS[element]
 
-  const base = `Chinese zodiac ${cap(animal)}, modern ink wash sumi-e art style. ${animalPrompt}. ${colorPrompt}. Bold black ink brush strokes on solid black background, dramatic element-colored glow emanating from animal, ink splatter and calligraphic flourishes, high contrast, no text, no words, no letters, no borders, no ground surface, animal floats in void, centered composition, generous negative space, single subject. Wu Xing Five Elements Collection wearable art`
+  const base = `Chinese zodiac ${cap(animal)}, modern ink wash sumi-e art style. ${animalPrompt}. ${colorPrompt}. Bold black ink brush strokes on solid black background, dramatic element-colored glow emanating from animal, ink splatter and calligraphic flourishes, high contrast, no text, no words, no letters, no characters, no kanji, no Chinese characters, no writing, no borders, no ground surface, animal floats in void, centered composition, generous negative space, single subject. Wu Xing Five Elements Collection wearable art`
 
-  // Hero design: no --sref (this IS the style reference)
-  // All others: add --sref if URL provided
-  if (isHero) {
-    return `/imagine ${base} ${MJ_PARAMS}`
+  // V7 web UI: no --ar/--s/--q/--v params (handled by UI sliders)
+  // --sref accepts either a Style Creator code (number) or an image URL
+  if (srefValue) {
+    return `${base} --sref ${srefValue}`
   }
 
-  if (srefUrl) {
-    return `/imagine ${base} ${MJ_PARAMS} --sref ${srefUrl}`
-  }
-
-  return `/imagine ${base} ${MJ_PARAMS} --sref <PASTE_HERO_IMAGE_URL>`
+  return `${base} --sref <YOUR_STYLE_CODE_OR_IMAGE_URL>`
 }
 
 // -- Main output --
@@ -103,16 +100,17 @@ ${'█'.repeat(60)}
   Products: 5 MVP Element Tees
 ${'█'.repeat(60)}
 
-MIDJOURNEY WORKFLOW:
-  1. Sign up at midjourney.com ($10/mo Basic plan)
-  2. Generate the FIRE DRAGON first (Product 1 below) — this is your HERO design
-  3. Pick the best result, upscale it (U1-U4 button)
-  4. Copy the upscaled image URL from Midjourney
-  5. Re-run this script with the URL:
-     npx tsx scripts/fourthwall-product-kit.ts --sref https://cdn.midjourney.com/your-image.png
-  6. All subsequent prompts will use --sref to match the hero's style
+MIDJOURNEY V7 WEB UI SETTINGS (set BEFORE generating):
+  Go to midjourney.com/imagine and configure:
+  • Image Size:     Portrait → drag to 3:4
+  • Aesthetics:     Stylization ~750 (drag right ~75%)
+  • Weirdness:      0 (leave at default)
+  • Variety:        Low (drag left)
+  • Model:          Standard, Version 7
+  • Speed:          Fast
 
-${srefUrl ? `STYLE REFERENCE: ${srefUrl}` : 'STYLE REFERENCE: Not set yet (generate Fire Dragon hero first)'}
+BRAND STYLE: --sref ${srefValue}
+  (Override with: npx tsx scripts/fourthwall-product-kit.ts --sref <other-code>)
 
 PRODUCT SETTINGS (same for all 5):
   Base tee:         Bella+Canvas 3001 (or similar premium unisex)
@@ -129,7 +127,7 @@ MVP_SIGNS.forEach(({ element, animal }, i) => {
   const description = ELEMENT_DESCRIPTIONS[element]
   const tags = `zodiac, wu xing, five elements, ${element}, ${animal}, chinese zodiac, five elements collection`
   const isHero = i === 0
-  const midjourneyPrompt = buildMidjourneyPrompt(element, animal, isHero)
+  const midjourneyPrompt = buildMidjourneyPrompt(element, animal)
 
   console.log(`
 ${SEP}
@@ -157,19 +155,13 @@ ${description}
 🏷️  TAGS (paste into Tags field):
 ${tags}
 
-🎨 MIDJOURNEY PROMPT (paste into Midjourney /imagine):
+🎨 MIDJOURNEY PROMPT (paste into midjourney.com/imagine text box):
 ${midjourneyPrompt}
 ${isHero ? `
-⭐ THIS IS THE HERO DESIGN — Generate this FIRST!
-   1. Paste the prompt above into Midjourney
-   2. Pick your favorite from the 4 results
-   3. Click U1-U4 to upscale it
-   4. Right-click the upscaled image → Copy image URL
-   5. Re-run this script with: --sref <that URL>
-   6. All other designs will match this style` : ''}
+⭐ HERO DESIGN — This is the flagship design for the collection.` : ''}
 📐 POST-PROCESS:
-  1. In Midjourney: click U1-U4 to upscale the best result
-  2. Download the upscaled image
+  1. In Midjourney: click "Upscale" on the best result
+  2. Download the upscaled image (right-click → Save)
   3. Center on #0a0a0a canvas, 4500×5400px (300 DPI)
   4. Export as PNG → upload to Fourthwall product
 `)

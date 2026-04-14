@@ -1,5 +1,25 @@
 # TODO
 
+https://wuxing-shop.fourthwall.com/products/fire-dragon
+
+
+Good news: you don't need 60 right now. Some ideas:
+
+Launch strategy:
+
+Ship with just the 5 MVP designs (one per element) — the shop already shows "Coming Soon" for the rest
+Add more designs over time as a rolling release (builds anticipation too)
+Speed up generation when you do expand:
+
+Queue prompts back-to-back — Midjourney processes multiple jobs in parallel. Paste all prompts quickly one after another, don't wait for each to finish
+Midjourney Turbo mode — faster than Fast, costs more GPU minutes but saves wall-clock time
+Skip upscale for selection — browse the 4-image grids first, mark favorites, then only upscale the winners at the end
+12 designs, not 60 — one per animal (your best-selling element per animal), not all 60 combos. Most visitors only care about their specific animal
+Programmatic options (for later):
+
+Services like GoAPI or Imaginepy can automate Midjourney via API — queue all 60 prompts programmatically
+Alternative generators (DALL-E 3, Flux) have real APIs for batch generation, though Midjourney's quality is still superior for this style
+
 ## In Progress: Merch & Revenue Maximization
 
 Full plan: `.claude/plans/mighty-giggling-penguin.md`
