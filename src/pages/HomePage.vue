@@ -2,7 +2,7 @@
 import { RouterLink } from 'vue-router'
 import { zodiacElements, zodiacAnimals } from '@/lib/zodiac-data'
 import NewsletterForm from '@/components/ui/NewsletterForm.vue'
-import { useHomeSeo } from '@/composables/useSignSeo'
+import { useHomeSeo, HOME_FAQ_ENTRIES } from '@/composables/useSignSeo'
 import { useUserSign } from '@/composables/useUserSign'
 
 useHomeSeo()
@@ -163,7 +163,7 @@ const howItWorks = [
     </section>
 
     <!-- How It Works Section -->
-    <section class="px-4 py-12 pb-20 max-w-4xl mx-auto">
+    <section class="px-4 py-12 max-w-4xl mx-auto">
       <h2 class="font-display text-2xl md:text-3xl font-bold text-center text-ash-100 mb-10">
         How It Works
       </h2>
@@ -176,6 +176,23 @@ const howItWorks = [
           <div class="text-3xl font-display font-bold text-ash-500 mb-3">{{ item.step }}</div>
           <h3 class="font-display font-bold text-ash-100 text-lg mb-2">{{ item.title }}</h3>
           <p class="text-ash-400 text-sm">{{ item.description }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="px-4 py-12 pb-20 max-w-3xl mx-auto">
+      <h2 class="font-display text-2xl md:text-3xl font-bold text-center text-ash-100 mb-10">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-4">
+        <div
+          v-for="faq in HOME_FAQ_ENTRIES"
+          :key="faq.question"
+          class="glass rounded-xl p-6"
+        >
+          <h3 class="font-display font-bold text-ash-100 text-lg mb-2">{{ faq.question }}</h3>
+          <p class="text-ash-400 text-sm">{{ faq.answer }}</p>
         </div>
       </div>
     </section>

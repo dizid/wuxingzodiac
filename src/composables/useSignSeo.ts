@@ -246,9 +246,41 @@ export function useSignSeoReactive(
   }))
 }
 
+/**
+ * Homepage FAQ entries — kept in sync with the visible FAQ section
+ * rendered in HomePage.vue so the FAQPage schema matches on-page content.
+ */
+export const HOME_FAQ_ENTRIES = [
+  {
+    question: 'What is Wu Xing Zodiac?',
+    answer:
+      'Wu Xing Zodiac combines the Chinese zodiac\'s 12 animal signs with the Wu Xing five-element system — Wood, Fire, Earth, Metal, and Water — to create 60 unique element-animal personality profiles, one for every year in the 60-year Chinese calendar cycle.',
+  },
+  {
+    question: 'How many Chinese zodiac sign combinations are there?',
+    answer:
+      'There are 60 combinations in total: each of the 12 animal signs (Rat, Ox, Tiger, Rabbit, Dragon, Snake, Horse, Goat, Monkey, Rooster, Dog, Pig) paired with one of the 5 elements (Wood, Fire, Earth, Metal, Water). Your exact element-animal combination repeats only once every 60 years.',
+  },
+  {
+    question: 'How do I find my Chinese zodiac sign and element?',
+    answer:
+      'Enter your birthdate in the free zodiac calculator. Because the Chinese lunar year doesn\'t start on January 1st, the calculator accounts for the exact lunar new year date so people born in January or February still get the correct sign.',
+  },
+  {
+    question: 'How does Chinese zodiac compatibility work?',
+    answer:
+      'The compatibility checker compares any two of the 60 element-animal signs using pre-computed scores based on traditional animal relationships — such as the Six Harmonies and Three Harmonies — combined with the Wu Xing five-element generating and controlling cycles.',
+  },
+  {
+    question: 'What Chinese zodiac sign is 2026?',
+    answer:
+      '2026 is the Year of the Fire Horse — a combination that occurs only once every 60 years and is traditionally considered one of the most powerful and independent signs in the Chinese zodiac.',
+  },
+]
+
 export function useHomeSeo() {
-  const title = `${SITE_NAME} — Discover Your Chinese Zodiac Sign & Element`
-  const description = 'Explore all 60 Chinese zodiac sign combinations across the five elements: Wood, Fire, Earth, Metal, and Water. Find your sign, check compatibility, and unlock ancient wisdom.'
+  const title = `${SITE_NAME} — Chinese Zodiac Signs & Elements`
+  const description = 'Explore all 60 Chinese zodiac sign combinations across the five elements — Wood, Fire, Earth, Metal, Water. Find your sign and check compatibility.'
 
   useHead({
     title,
@@ -273,18 +305,46 @@ export function useHomeSeo() {
         type: 'application/ld+json',
         innerHTML: JSON.stringify({
           '@context': 'https://schema.org',
-          '@type': 'WebSite',
-          name: SITE_NAME,
-          url: SITE_URL,
-          description,
-          potentialAction: {
-            '@type': 'SearchAction',
-            target: {
-              '@type': 'EntryPoint',
-              urlTemplate: `${SITE_URL}/zodiac/{search_term_string}`,
+          '@graph': [
+            {
+              '@type': 'WebSite',
+              name: SITE_NAME,
+              url: SITE_URL,
+              description,
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: {
+                  '@type': 'EntryPoint',
+                  urlTemplate: `${SITE_URL}/zodiac/{search_term_string}`,
+                },
+                'query-input': 'required name=search_term_string',
+              },
             },
-            'query-input': 'required name=search_term_string',
-          },
+            {
+              '@type': 'Organization',
+              name: SITE_NAME,
+              url: SITE_URL,
+              logo: `${SITE_URL}/apple-touch-icon.png`,
+              sameAs: ['https://firehorse.info'],
+            },
+            {
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+              ],
+            },
+            {
+              '@type': 'FAQPage',
+              mainEntity: HOME_FAQ_ENTRIES.map((entry) => ({
+                '@type': 'Question',
+                name: entry.question,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: entry.answer,
+                },
+              })),
+            },
+          ],
         }),
       },
     ],
