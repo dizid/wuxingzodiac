@@ -141,33 +141,6 @@ export interface AnimalCompatibility {
 }
 
 // ============================================
-// AFFILIATE SYSTEM
-// ============================================
-export type AffiliateCategory =
-  | 'crystals' | 'career-books' | 'relationship-services'
-  | 'astrology-books' | 'wellness' | 'jewelry'
-  | 'colors' | 'botanicals' | 'fitness' | 'element'
-
-export interface AffiliateProduct {
-  id: string
-  name: string
-  description: string
-  url: string
-  program: 'amazon' | 'keen' | 'kasamba' | 'astro-charts'
-  category: AffiliateCategory
-  image?: string
-}
-
-// ============================================
-// SIGN SHOP (auto-generated per sign)
-// ============================================
-export interface ShopCategory {
-  title: string
-  icon: string
-  products: AffiliateProduct[]
-}
-
-// ============================================
 // BLOG
 // ============================================
 export interface BlogPost {

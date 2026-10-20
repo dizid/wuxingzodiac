@@ -30,16 +30,6 @@ export function useAnalytics() {
       trackEvent('compatibility_check', { sign_a: signA, sign_b: signB, score })
     },
 
-    /** Track when a user clicks an affiliate link */
-    trackAffiliateClick: (program: string, productType: string, section: string) => {
-      trackEvent('affiliate_click', { program, product_type: productType, section })
-    },
-
-    /** Track when an affiliate product is shown to the user */
-    trackAffiliateImpression: (program: string, section: string) => {
-      trackEvent('affiliate_impression', { program, section })
-    },
-
     /** Track newsletter signup */
     trackNewsletterSignup: (sourcePage: string) => {
       trackEvent('newsletter_signup', { source_page: sourcePage })

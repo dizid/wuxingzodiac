@@ -15,13 +15,11 @@ import ElementPentagonChart from '@/components/zodiac/ElementPentagonChart.vue'
 import SignPersonalityV2 from '@/components/zodiac/SignPersonalityV2.vue'
 import SignPowerLevels from '@/components/zodiac/SignPowerLevels.vue'
 import SignShadow from '@/components/zodiac/SignShadow.vue'
-import MonetizationSlot from '@/components/zodiac/MonetizationSlot.vue'
 import SignRelationships from '@/components/zodiac/SignRelationships.vue'
 import SignElementBalance from '@/components/zodiac/SignElementBalance.vue'
 import WuXingCycleDiagram from '@/components/zodiac/WuXingCycleDiagram.vue'
 import SignMatchesV2 from '@/components/zodiac/SignMatchesV2.vue'
 import SignSiblingNav from '@/components/zodiac/SignSiblingNav.vue'
-import SignShop from '@/components/zodiac/SignShop.vue'
 import BlueprintCTA from '@/components/zodiac/BlueprintCTA.vue'
 import SignMerchCTA from '@/components/merch/SignMerchCTA.vue'
 import PageCTA from '@/components/ui/PageCTA.vue'
@@ -133,13 +131,10 @@ function goToElement(element: string) {
           />
 
           <SignShadow :data="content.shadow" />
-          <MonetizationSlot section="personality" />
           <SignRelationships :data="content.relationships" />
-          <MonetizationSlot section="love" />
 
           <!-- Element Balance + Wu Xing Cycle Diagram -->
           <SignElementBalance :data="content.elementBalance" />
-          <MonetizationSlot section="health" />
           <WuXingCycleDiagram
             :active-element="profile.element"
             :interactive="true"
@@ -161,8 +156,6 @@ function goToElement(element: string) {
 
           <!-- Merch CTA (links to Fourthwall shop) -->
           <SignMerchCTA :sign-slug="slug" :element="profile.element" :name="profile.name" />
-
-          <SignShop :content="content" />
 
           <!-- CTA Funnel -->
           <PageCTA
