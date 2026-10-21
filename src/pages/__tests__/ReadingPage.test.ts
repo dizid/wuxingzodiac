@@ -101,7 +101,11 @@ describe('ReadingPage (/reading)', () => {
     expect(text).toContain('$9.90')
     expect(text).toContain('delivered by email')
     expect(text).toContain("What isn't it?")
+    // No refunds (Marc, 2026-10-21): the FAQ says so, and nothing promises one
+    expect(text).toContain('Can I get a refund?')
     expect(text).toContain(READING_REFUND_POLICY)
+    expect(text).toContain('all sales are final')
+    expect(text).not.toMatch(/full refund|money[- ]back/i)
     expect(text).toContain('for entertainment and self-reflection')
     expect(text).toContain(BIRTH_CHART_DISCLAIMER)
     expect(text.replace(BIRTH_CHART_DISCLAIMER, '')).not.toMatch(BANNED_COPY)

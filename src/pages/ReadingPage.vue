@@ -92,7 +92,7 @@ const faqs = [
     answer: 'By email, as a PDF. You enter your first name, birth date and email, pay securely through Stripe, and your reading arrives in your inbox, usually within a few minutes.',
   }] : []),
   {
-    question: "What if I'm not happy with it?",
+    question: 'Can I get a refund?',
     // Same wording as the Terms of Service (one constant in reading-offer.ts)
     answer: READING_REFUND_POLICY,
   },

@@ -20,9 +20,13 @@ export const READING_PAGE_COUNT = 8
 /**
  * Refund policy for the reading: the ONE place to change it. Shown word for
  * word in the Terms of Service (/terms) and the /reading FAQ, so the two
- * always promise the same thing. Still being confirmed by Marc.
+ * always say the same thing. No refunds (Marc, 2026-10-21): the reading is
+ * made for you and delivered instantly, and buyers waive their 14-day EU right
+ * of withdrawal on the order form. Broken files or a wrong name or date are
+ * still fixed or re-sent.
  */
-export const READING_REFUND_POLICY = 'Not happy? Full refund: reply to the email your reading came with.'
+export const READING_REFUND_POLICY =
+  "Because each reading is made for you and delivered instantly, all sales are final. If something is wrong with your file (it won't open, wrong name or date), reply to the email and we'll fix it or send a new one."
 
 /**
  * Buttondown tag for the launch waitlist. The newsletter-subscribe function

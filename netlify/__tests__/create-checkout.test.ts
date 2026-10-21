@@ -29,6 +29,7 @@ const validReading = {
   birthDates: ['1990-05-14'],
   email: 'anna@example.com',
   isGift: false,
+  withdrawalWaiver: true,
 }
 
 beforeEach(() => {
@@ -87,6 +88,35 @@ describe('create-checkout function', () => {
       expect(params.metadata.sign_slug).toBe('metal-horse')
       expect(params.cancel_url).toBe('https://wuxingzodiac.me/reading')
       expect(params.success_url).toBe('https://wuxingzodiac.me/report/download?session_id={CHECKOUT_SESSION_ID}')
+    })
+
+    it('records the withdrawal waiver with a server timestamp and repeats it above the pay button', async () => {
+      createSession.mockResolvedValue({ url: 'https://checkout.stripe.com/c/pay/cs_test_123' })
+      const before = Date.now()
+
+      await createCheckout(post(validReading), context)
+
+      const params = createSession.mock.calls[0]![0]
+      expect(params.metadata.withdrawal_waiver).toBe('accepted')
+      const consentAt = Date.parse(params.metadata.withdrawal_waiver_at)
+      expect(new Date(consentAt).toISOString()).toBe(params.metadata.withdrawal_waiver_at)
+      expect(consentAt).toBeGreaterThanOrEqual(before)
+      expect(consentAt).toBeLessThanOrEqual(Date.now())
+      expect(params.custom_text.submit.message).toContain('delivered immediately')
+      expect(params.custom_text.submit.message).toContain('14-day right of withdrawal')
+      expect(params.custom_text.submit.message).toContain('all sales are final')
+    })
+
+    it.each([
+      ['missing', undefined],
+      ['false', false],
+      ['a string instead of true', 'true'],
+    ])('refuses a checkout when the withdrawal waiver is %s (400, no Stripe call)', async (_label, waiver) => {
+      const res = await createCheckout(post({ ...validReading, withdrawalWaiver: waiver }), context)
+
+      expect(res.status).toBe(400)
+      expect((await res.json()).error).toContain('14-day right of withdrawal')
+      expect(createSession).not.toHaveBeenCalled()
     })
   })
 })

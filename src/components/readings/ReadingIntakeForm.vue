@@ -9,6 +9,7 @@ import {
   todayIso,
   READING_LIMITS,
   MIN_BIRTH_DATE,
+  WITHDRAWAL_WAIVER_ERROR,
   type ReadingType,
   type CheckoutRequestBody,
 } from '@/lib/readings/types'
@@ -26,6 +27,8 @@ const email = ref('')
 const isGift = ref(false)
 const recipientName = ref('')
 const giftMessage = ref('')
+// EU 14-day right-of-withdrawal waiver: required, never pre-ticked
+const withdrawalWaiver = ref(false)
 const submitting = ref(false)
 const error = ref('')
 const nameInput = ref<HTMLInputElement | null>(null)
@@ -58,12 +61,18 @@ async function handleSubmit() {
     isGift: isGift.value,
     recipientName: isGift.value ? recipientName.value : undefined,
     giftMessage: isGift.value ? giftMessage.value : undefined,
+    withdrawalWaiver: withdrawalWaiver.value,
   }
 
   // Same validation as the server — instant feedback without a round trip
   const validation = validateReadingInput(body)
   if (!validation.ok) {
     error.value = validation.error
+    return
+  }
+  // The button is disabled until it's ticked; this also covers any other submit path
+  if (!withdrawalWaiver.value) {
+    error.value = WITHDRAWAL_WAIVER_ERROR
     return
   }
 
@@ -198,10 +207,26 @@ async function handleSubmit() {
       </div>
     </div>
 
+    <!-- Required EU withdrawal waiver (no refunds). Terms opens in a new tab so the form keeps its entries -->
+    <div class="flex items-start gap-3">
+      <input
+        id="reading-withdrawal-waiver"
+        v-model="withdrawalWaiver"
+        type="checkbox"
+        required
+        :disabled="submitting"
+        class="w-5 h-5 mt-0.5 shrink-0 rounded border-ash-600 bg-ash-900 accent-[var(--el-500)] cursor-pointer"
+      />
+      <label for="reading-withdrawal-waiver" class="text-sm text-ash-200 cursor-pointer select-none">
+        I agree that my reading is delivered immediately and I give up my 14-day right of withdrawal. See
+        <RouterLink to="/terms" target="_blank" rel="noopener" class="underline hover:text-ash-100">Terms</RouterLink>.
+      </label>
+    </div>
+
     <button
       type="submit"
-      class="btn-element w-full text-center text-lg py-3"
-      :disabled="submitting"
+      class="btn-element w-full text-center text-lg py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+      :disabled="submitting || !withdrawalWaiver"
     >
       <span v-if="submitting">Redirecting to checkout...</span>
       <span v-else>Continue to Payment &mdash; $9.90</span>
