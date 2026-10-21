@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { usePageSeo } from '@/composables/useSignSeo'
+// Refund wording lives in reading-offer.ts so these terms and the /reading FAQ match
+import { READING_REFUND_POLICY } from '@/lib/reading-offer'
 
 usePageSeo(
   'Terms of Service',
@@ -14,7 +16,7 @@ usePageSeo(
       <h1 class="font-display text-4xl md:text-5xl font-bold text-ash-100 mb-4">
         Terms of Service
       </h1>
-      <p class="text-ash-500 mb-10">Last updated: February 2026</p>
+      <p class="text-ash-500 mb-10">Last updated: October 21, 2026</p>
 
       <div class="space-y-8 text-ash-300 leading-relaxed">
         <section>
@@ -39,13 +41,12 @@ usePageSeo(
         <section>
           <h2 class="font-display text-xl font-bold text-ash-100 mb-3">Digital Product Purchases</h2>
           <p class="mb-3">
-            The Elemental Blueprint PDF reports are digital products delivered electronically. By purchasing
-            a report, you agree to the following:
+            The WuXing Personal Reading is a personalized PDF, delivered by email. By purchasing a reading,
+            you agree to the following:
           </p>
           <ul class="list-disc list-inside space-y-2 text-ash-400">
-            <li>All sales of digital products are <strong class="text-ash-200">final</strong>. Due to the nature of digital downloads, refunds are not available once the PDF has been delivered.</li>
-            <li>Download links are valid for 30 days from the date of purchase.</li>
-            <li>Reports are for personal use only and may not be redistributed, resold, or shared publicly.</li>
+            <li><strong class="text-ash-200">Refunds:</strong> {{ READING_REFUND_POLICY }}</li>
+            <li>Your reading is for personal use only and may not be redistributed, resold, or shared publicly.</li>
             <li>Payment processing is handled securely by Stripe. We do not store your payment details.</li>
           </ul>
         </section>
@@ -57,15 +58,6 @@ usePageSeo(
             compatibility analyses — is the intellectual property of Wu Xing Zodiac. You may not reproduce,
             distribute, or create derivative works from our content without prior written permission, except
             for personal, non-commercial use.
-          </p>
-        </section>
-
-        <section>
-          <h2 class="font-display text-xl font-bold text-ash-100 mb-3">Affiliate Links</h2>
-          <p>
-            Some links on this Site are affiliate links. When you make a purchase through an affiliate link,
-            we may earn a small commission at no additional cost to you. Affiliate products are recommended
-            based on their relevance to your zodiac sign and element.
           </p>
         </section>
 

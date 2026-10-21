@@ -13,6 +13,7 @@ import {
   READING_PRICE,
   READING_PAGE_COUNT,
   READING_WAITLIST_TAG,
+  READING_REFUND_POLICY,
 } from '@/lib/reading-offer'
 
 const siteUrl = 'https://wuxingzodiac.me'
@@ -85,13 +86,15 @@ const faqs = [
     question: "What isn't it?",
     answer: "It isn't a full birth chart and doesn't use your birth time. It isn't a prediction or a guarantee, and it isn't medical, financial, legal or psychological advice. Your birth day and month only matter if you were born in January or February, to place you on the right side of the Lunar New Year.",
   },
-  {
+  // The checkout steps only make sense once the reading is on sale
+  ...(canOrder ? [{
     question: 'How is it delivered?',
     answer: 'By email, as a PDF. You enter your first name, birth date and email, pay securely through Stripe, and your reading arrives in your inbox, usually within a few minutes.',
-  },
+  }] : []),
   {
     question: "What if I'm not happy with it?",
-    answer: "Not happy, full refund. Reply to the email your reading came with and we'll refund you in full.",
+    // Same wording as the Terms of Service (one constant in reading-offer.ts)
+    answer: READING_REFUND_POLICY,
   },
   ...(canOrder ? [] : [{
     question: 'When can I get it?',

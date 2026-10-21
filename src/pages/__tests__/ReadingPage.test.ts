@@ -4,6 +4,7 @@ import { resolve } from 'node:path'
 import { flushPromises, mount, RouterLinkStub } from '@vue/test-utils'
 import { createHead } from '@unhead/vue/client'
 import type { Component } from 'vue'
+import { READING_REFUND_POLICY } from '@/lib/reading-offer'
 
 // Vitest runs from the project root
 const PUBLIC_DIR = resolve(process.cwd(), 'public')
@@ -47,6 +48,12 @@ describe('ReadingPage (/reading)', () => {
       expect(wrapper.find('input[type="email"]').exists()).toBe(true)
     })
 
+    it('hides the Stripe checkout FAQ while not on sale', async () => {
+      const text = (await mountReadingPage()).text()
+      expect(text).not.toContain('How is it delivered?')
+      expect(text).not.toContain('Stripe')
+    })
+
     it('links the free calculator', async () => {
       const wrapper = await mountReadingPage()
       const calculatorLink = wrapper.findAllComponents(RouterLinkStub).find(link => link.props('to') === '/calculator')
@@ -78,9 +85,12 @@ describe('ReadingPage (/reading)', () => {
     if (INTAKE_FORM_PRESENT) {
       expect(buttons.some(label => label.includes('Get your reading'))).toBe(true)
       expect(buttons).not.toContain('Get notified when it launches')
+      // The checkout FAQ comes back once the reading is on sale
+      expect(wrapper.text()).toContain('pay securely through Stripe')
     } else {
       // Without the form there is nothing to buy with, so it stays on the waitlist
       expect(buttons).toContain('Get notified when it launches')
+      expect(wrapper.text()).not.toContain('Stripe')
     }
   })
 
@@ -91,7 +101,7 @@ describe('ReadingPage (/reading)', () => {
     expect(text).toContain('$9.90')
     expect(text).toContain('delivered by email')
     expect(text).toContain("What isn't it?")
-    expect(text).toContain('Not happy, full refund.')
+    expect(text).toContain(READING_REFUND_POLICY)
     expect(text).toContain('for entertainment and self-reflection')
     expect(text).toContain(BIRTH_CHART_DISCLAIMER)
     expect(text.replace(BIRTH_CHART_DISCLAIMER, '')).not.toMatch(BANNED_COPY)

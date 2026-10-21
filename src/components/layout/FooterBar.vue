@@ -6,6 +6,7 @@ const currentYear = new Date().getFullYear()
 const exploreLinks = [
   { label: 'All Signs', to: '/zodiac' },
   { label: 'Compatibility', to: '/compatibility' },
+  { label: 'Reading', to: '/reading' },
   { label: 'Calculator', to: '/calculator' },
   { label: 'Blog', to: '/blog' },
 ]

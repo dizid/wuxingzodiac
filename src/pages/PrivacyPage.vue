@@ -30,7 +30,7 @@ usePageSeo(
           <p class="mb-3">We collect minimal data to operate this site:</p>
           <ul class="list-disc list-inside space-y-2 text-ash-400">
             <li><strong class="text-ash-200">Analytics data:</strong> We use Google Analytics 4 (GA4) to understand site usage. This includes anonymous page views, session duration, and general location data. No personally identifiable information is collected through analytics.</li>
-            <li><strong class="text-ash-200">Email address:</strong> If you subscribe to our newsletter via Buttondown, your email is stored by Buttondown for email delivery purposes only. If you purchase an Elemental Blueprint report, your email is collected by Stripe for payment processing and receipt delivery.</li>
+            <li><strong class="text-ash-200">Email address:</strong> If you subscribe to our newsletter via Buttondown, your email is stored by Buttondown for email delivery purposes only. If you purchase a personal reading, your email is collected by Stripe for payment processing and receipt delivery.</li>
             <li><strong class="text-ash-200">Payment information:</strong> All payment processing is handled by Stripe. We never store, see, or have access to your credit card details.</li>
           </ul>
         </section>

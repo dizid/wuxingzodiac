@@ -11,6 +11,7 @@ const baseNavItems = [
   { label: 'Home', to: '/' },
   { label: 'All Signs', to: '/zodiac' },
   { label: 'Compatibility', to: '/compatibility' },
+  { label: 'Reading', to: '/reading' },
   { label: 'Calculator', to: '/calculator' },
   { label: 'Blog', to: '/blog' },
 ]
@@ -54,7 +55,7 @@ function closeMobileMenu() {
             v-for="item in navItems"
             :key="item.to"
             :to="item.to"
-            class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+            class="px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
             :class="isActive(item.to)
               ? 'text-[var(--el-primary)] bg-[rgba(var(--el-glow-rgb),0.1)]'
               : 'text-ash-400 hover:text-ash-100 hover:bg-ash-800/50'"

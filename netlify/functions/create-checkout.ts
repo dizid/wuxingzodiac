@@ -4,10 +4,22 @@ import Stripe from 'stripe'
 const VALID_ELEMENTS = ['wood', 'fire', 'earth', 'metal', 'water']
 const VALID_ANIMALS = ['rat', 'ox', 'tiger', 'rabbit', 'dragon', 'snake', 'horse', 'goat', 'monkey', 'rooster', 'dog', 'pig']
 
+// The old "Elemental Blueprint" offer was refunded and is off sale. Mirrors
+// OFFER_ENABLED in src/components/zodiac/BlueprintCTA.vue (keep the two in sync):
+// while false, calling this function directly can't start a Blueprint checkout.
+const OFFER_ENABLED = false
+
 export default async (req: Request, _context: Context) => {
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+
+  if (!OFFER_ENABLED) {
+    return new Response(JSON.stringify({ error: 'The Elemental Blueprint is no longer available for purchase.' }), {
+      status: 410,
       headers: { 'Content-Type': 'application/json' }
     })
   }

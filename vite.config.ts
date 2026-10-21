@@ -67,7 +67,11 @@ export default defineConfig({
       return allPaths
     },
     onFinished() {
-      generateSitemap({ hostname: 'https://wuxingzodiac.me' })
+      generateSitemap({
+        hostname: 'https://wuxingzodiac.me',
+        // Private post-purchase page (noindex), still pre-rendered but not listed
+        exclude: ['/report/download'],
+      })
     },
   },
 })

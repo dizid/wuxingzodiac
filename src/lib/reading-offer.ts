@@ -18,6 +18,13 @@ export const READING_PRICE = '$9.90'
 export const READING_PAGE_COUNT = 8
 
 /**
+ * Refund policy for the reading: the ONE place to change it. Shown word for
+ * word in the Terms of Service (/terms) and the /reading FAQ, so the two
+ * always promise the same thing. Still being confirmed by Marc.
+ */
+export const READING_REFUND_POLICY = 'Not happy? Full refund: reply to the email your reading came with.'
+
+/**
  * Buttondown tag for the launch waitlist. The newsletter-subscribe function
  * only accepts tags on its own allowlist, so keep the two in sync.
  */

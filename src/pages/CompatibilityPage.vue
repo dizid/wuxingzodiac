@@ -14,7 +14,14 @@ import {
 import { useAnalytics } from '@/composables/useAnalytics'
 import { usePageSeo } from '@/composables/useSignSeo'
 import { useCompatibilitySeo } from '@/composables/useCompatibilitySeo'
+import { READING_LIVE } from '@/lib/reading-offer'
 import type { SignProfile, EnhancedCompatibilityResult } from '@/types'
+
+// Soft pointer to the /reading waitlist (no promised date). Hidden once the
+// reading is on sale, because /reading then shows the order form, not the waitlist.
+const relationshipReadingNote = READING_LIVE
+  ? undefined
+  : "Hoping for a reading for two people? Join the waitlist on the reading page and we'll keep you posted."
 
 const route = useRoute()
 const router = useRouter()
@@ -132,7 +139,7 @@ const popularPairs = [
       <div class="mt-8">
         <ReadingCTA
           placement="compatibility_result"
-          note="A relationship reading for two people is coming soon."
+          :note="relationshipReadingNote"
         />
       </div>
 

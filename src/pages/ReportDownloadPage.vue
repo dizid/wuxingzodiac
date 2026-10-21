@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useHead } from '@unhead/vue'
 import { usePageSeo } from '@/composables/useSignSeo'
 import { useAnalytics } from '@/composables/useAnalytics'
 
@@ -9,6 +10,11 @@ usePageSeo(
   'Download your personalized Elemental Blueprint PDF report.',
   '/report/download',
 )
+
+// Private post-purchase page: keep it out of search results (also excluded from the sitemap in vite.config.ts)
+useHead({
+  meta: [{ name: 'robots', content: 'noindex' }],
+})
 
 const { trackEvent } = useAnalytics()
 const route = useRoute()
