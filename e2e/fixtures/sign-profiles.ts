@@ -4,7 +4,7 @@ export const sampleSigns = [
   { slug: 'fire-horse', name: 'Fire Horse', element: 'fire', animal: 'horse', chineseName: '丙午', tagline: 'The Untamable Spirit' },
   { slug: 'earth-dragon', name: 'Earth Dragon', element: 'earth', animal: 'dragon', chineseName: '戊辰', tagline: 'The Grounded Sovereign' },
   { slug: 'metal-tiger', name: 'Metal Tiger', element: 'metal', animal: 'tiger', chineseName: '庚寅', tagline: 'The Unyielding Force' },
-  { slug: 'water-snake', name: 'Water Snake', element: 'water', animal: 'snake', chineseName: '壬巳', tagline: 'The Intuitive Strategist' },
+  { slug: 'water-snake', name: 'Water Snake', element: 'water', animal: 'snake', chineseName: '癸巳', tagline: 'The Intuitive Strategist' },
 ] as const
 
 // All 60 valid slugs

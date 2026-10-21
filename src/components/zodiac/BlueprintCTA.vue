@@ -9,6 +9,11 @@ const props = defineProps<{
 
 const { trackEvent } = useAnalytics()
 
+// The old "Elemental Blueprint" PDF offer was refunded and must not be shown.
+// While this is false the whole card renders nothing on every page that uses it
+// (sign, calculator, result, shop). Set to true only once this card sells the
+// new personal reading instead.
+const OFFER_ENABLED = false
 const loading = ref(false)
 const error = ref('')
 
@@ -53,7 +58,7 @@ const features = [
 </script>
 
 <template>
-  <div class="glass element-glow rounded-2xl p-6 md:p-8">
+  <div v-if="OFFER_ENABLED" class="glass element-glow rounded-2xl p-6 md:p-8">
     <!-- Header -->
     <div class="flex items-center gap-3 mb-4">
       <svg class="w-8 h-8 shrink-0" style="color: var(--el-accent)" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">

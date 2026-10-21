@@ -196,16 +196,21 @@ function buildTsFile(slug: string, element: string, animal: string, content: V2C
   const signName = slugToName(slug)
   const archetype = ARCHETYPES[slug] ?? 'Unknown'
 
-  // Chinese stem/branch for comment
+  // Chinese stem/branch for comment (yin animals take the yin stem, e.g. Wood Ox = 乙丑)
   const YANG_STEMS: Record<string, string> = {
     wood: '甲', fire: '丙', earth: '戊', metal: '庚', water: '壬',
   }
+  const YIN_STEMS: Record<string, string> = {
+    wood: '乙', fire: '丁', earth: '己', metal: '辛', water: '癸',
+  }
+  const YIN_ANIMALS = ['ox', 'rabbit', 'snake', 'goat', 'rooster', 'pig']
   const EARTHLY_BRANCHES: Record<string, string> = {
     rat: '子', ox: '丑', tiger: '寅', rabbit: '卯',
     dragon: '辰', snake: '巳', horse: '午', goat: '未',
     monkey: '申', rooster: '酉', dog: '戌', pig: '亥',
   }
-  const chineseName = (YANG_STEMS[element] ?? '') + (EARTHLY_BRANCHES[animal] ?? '')
+  const stems = YIN_ANIMALS.includes(animal) ? YIN_STEMS : YANG_STEMS
+  const chineseName = (stems[element] ?? '') + (EARTHLY_BRANCHES[animal] ?? '')
 
   return `// ============================================
 // ${signName.toUpperCase()} (${chineseName}) — ${archetype}
