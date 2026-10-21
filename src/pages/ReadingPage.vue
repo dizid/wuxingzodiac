@@ -13,7 +13,6 @@ import {
   READING_PRICE,
   READING_PAGE_COUNT,
   READING_WAITLIST_TAG,
-  READING_REFUND_POLICY,
 } from '@/lib/reading-offer'
 
 const siteUrl = 'https://wuxingzodiac.me'
@@ -91,11 +90,6 @@ const faqs = [
     question: 'How is it delivered?',
     answer: 'By email, as a PDF. You enter your first name, birth date and email, pay securely through Stripe, and your reading arrives in your inbox, usually within a few minutes.',
   }] : []),
-  {
-    question: 'Can I get a refund?',
-    // Same wording as the Terms of Service (one constant in reading-offer.ts)
-    answer: READING_REFUND_POLICY,
-  },
   ...(canOrder ? [] : [{
     question: 'When can I get it?',
     answer: "It isn't on sale yet. Leave your email at the top of this page and we'll let you know when it launches.",

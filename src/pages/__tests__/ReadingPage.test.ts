@@ -4,7 +4,6 @@ import { resolve } from 'node:path'
 import { flushPromises, mount, RouterLinkStub } from '@vue/test-utils'
 import { createHead } from '@unhead/vue/client'
 import type { Component } from 'vue'
-import { READING_REFUND_POLICY } from '@/lib/reading-offer'
 
 // Vitest runs from the project root
 const PUBLIC_DIR = resolve(process.cwd(), 'public')
@@ -15,6 +14,8 @@ const INTAKE_FORM_PRESENT = existsSync(resolve(process.cwd(), 'src/components/re
 // "Birth chart" may only appear in the FAQ line that says it isn't one.
 const BIRTH_CHART_DISCLAIMER = "It isn't a full birth chart"
 const BANNED_COPY = /bazi|birth[- ]chart|four pillars|expert|master|limited|hurry|last chance|only \d+ left|today only/i
+// No friction (Marc, 2026-10-21): never mention refunds, finality or a waiver
+const BANNED_POLICY_COPY = /sales are final|refund|withdraw|waive|14-day/i
 
 /** Import ReadingPage fresh, so READING_LIVE is re-read from the stubbed env */
 async function mountReadingPage(readingLive?: string) {
@@ -87,6 +88,7 @@ describe('ReadingPage (/reading)', () => {
       expect(buttons).not.toContain('Get notified when it launches')
       // The checkout FAQ comes back once the reading is on sale
       expect(wrapper.text()).toContain('pay securely through Stripe')
+      expect(wrapper.text()).not.toMatch(BANNED_POLICY_COPY)
     } else {
       // Without the form there is nothing to buy with, so it stays on the waitlist
       expect(buttons).toContain('Get notified when it launches')
@@ -101,13 +103,9 @@ describe('ReadingPage (/reading)', () => {
     expect(text).toContain('$9.90')
     expect(text).toContain('delivered by email')
     expect(text).toContain("What isn't it?")
-    // No refunds (Marc, 2026-10-21): the FAQ answer is exactly the one policy line
-    expect(text).toContain('Can I get a refund?')
-    expect(READING_REFUND_POLICY).toBe(
-      "All sales are final. If something is wrong with your file, reply to the email and we'll fix it.",
-    )
-    expect(text).toContain(READING_REFUND_POLICY)
-    expect(text).not.toMatch(/withdrawal|waiver|waive|14-day|full refund|money[- ]back/i)
+    // No friction (Marc, 2026-10-21): no refund FAQ and no policy or finality wording
+    expect(text).not.toContain('Can I get a refund?')
+    expect(text).not.toMatch(BANNED_POLICY_COPY)
     expect(text).toContain('for entertainment and self-reflection')
     expect(text).toContain(BIRTH_CHART_DISCLAIMER)
     expect(text.replace(BIRTH_CHART_DISCLAIMER, '')).not.toMatch(BANNED_COPY)

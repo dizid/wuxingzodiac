@@ -31,8 +31,9 @@ const validReading = {
   isGift: false,
 }
 
-// No consent box (Marc, 2026-10-21): this policy wording must never come back
-const BANNED_POLICY_COPY = /withdrawal|waiver|waive|14-day|full refund/i
+// No consent box, no friction (Marc, 2026-10-21): this policy or finality
+// wording must never come back
+const BANNED_POLICY_COPY = /sales are final|refund|withdraw|waive|14-day/i
 
 beforeEach(() => {
   createSession.mockReset()

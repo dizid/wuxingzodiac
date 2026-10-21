@@ -18,13 +18,12 @@ export const READING_PRICE = '$9.90'
 export const READING_PAGE_COUNT = 8
 
 /**
- * Refund policy for the reading: the ONE place to change it. Shown word for
- * word in the Terms of Service (/terms) and the /reading FAQ, so the two
- * always say the same thing. No refunds (Marc, 2026-10-21): all sales are
- * final, and a broken file is still fixed.
+ * What we promise if a reading file has a problem, shown in the Terms of
+ * Service (/terms). Keep it friendly and low-friction (Marc, 2026-10-21):
+ * no policy or finality wording anywhere in the buying flow.
  */
-export const READING_REFUND_POLICY =
-  "All sales are final. If something is wrong with your file, reply to the email and we'll fix it."
+export const READING_FIX_PROMISE =
+  "If something is wrong with your reading file, reply to the email and we'll fix it or send a new one."
 
 /**
  * Buttondown tag for the launch waitlist. The newsletter-subscribe function

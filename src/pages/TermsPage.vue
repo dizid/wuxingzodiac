@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { usePageSeo } from '@/composables/useSignSeo'
-// Refund wording lives in reading-offer.ts so these terms and the /reading FAQ match
-import { READING_REFUND_POLICY } from '@/lib/reading-offer'
+// The "broken file" promise lives in reading-offer.ts with the other offer facts
+import { READING_FIX_PROMISE } from '@/lib/reading-offer'
 
 usePageSeo(
   'Terms of Service',
@@ -47,7 +47,7 @@ usePageSeo(
           <ul class="list-disc list-inside space-y-2 text-ash-400">
             <li>A personal reading is based on your Chinese zodiac birth-year sign and the five elements (Wu Xing), and written for you using the name you provide. Your birth day and month are only used to place you on the correct side of the Lunar New Year. It is not a full birth chart (BaZi / Four Pillars) analysis.</li>
             <li>Your reading is emailed to you as a PDF shortly after purchase. Keep the email &mdash; we don't store a copy.</li>
-            <li><strong class="text-ash-200">Refunds:</strong> {{ READING_REFUND_POLICY }}</li>
+            <li>{{ READING_FIX_PROMISE }}</li>
             <li>Your reading is for personal use only and may not be redistributed, resold, or shared publicly.</li>
             <li>Payment processing is handled securely by Stripe. We do not store your payment details.</li>
           </ul>

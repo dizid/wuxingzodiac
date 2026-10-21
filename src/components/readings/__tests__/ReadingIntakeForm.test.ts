@@ -4,8 +4,8 @@ import ReadingIntakeForm from '@/components/readings/ReadingIntakeForm.vue'
 
 // No consent box (Marc, 2026-10-21): the order form is name, birth date, email
 // and the gift option, and the pay button only waits for a submit in progress.
-// Policy wording that must never come back on the form:
-const BANNED_POLICY_COPY = /withdrawal|waiver|waive|14-day|full refund/i
+// Policy or finality wording that must never come back on the form:
+const BANNED_POLICY_COPY = /sales are final|refund|withdraw|waive|14-day/i
 
 async function mountFilledForm() {
   const wrapper = mount(ReadingIntakeForm, {
