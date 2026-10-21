@@ -48,9 +48,8 @@ const elementEmoji: Record<ZodiacElement, string> = {
 }
 
 function formatYearsPreview(years: number[]): string {
-  // Show up to 3 recent/notable years
-  const relevant = years.filter(y => y >= 1940 && y <= 2040)
-  return relevant.slice(0, 3).join(', ')
+  // Show the sign's complete birth-year list (1900-2100, 3 or 4 years)
+  return years.join(', ')
 }
 </script>
 

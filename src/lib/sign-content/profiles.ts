@@ -18,7 +18,8 @@
 //   Element by last digit: 0,1=metal  2,3=water  4,5=wood  6,7=fire  8,9=earth
 //   Animal by year%12: 4=rat 5=ox 6=tiger 7=rabbit 8=dragon 9=snake
 //                      10=horse 11=goat 0=monkey 1=rooster 2=dog 3=pig
-//   Each combo repeats every 60 years. Range: 1804-2103.
+//   Each combo repeats every 60 years (1924 = Wood Rat).
+//   Every sign lists ALL its years in 1900-2100 (3 or 4 years per sign).
 
 import type { SignProfile, ZodiacAnimal, ZodiacElement } from '@/types'
 
@@ -38,10 +39,14 @@ const ANIMAL_BY_MOD: Record<number, ZodiacAnimal> = {
   0: 'monkey', 1: 'rooster', 2: 'dog',    3: 'pig',
 }
 
-/** Compute the matching years for an element-animal pair in range 1804-2103. */
+// Birth-year range shown for every sign
+const FIRST_YEAR = 1900
+const LAST_YEAR = 2100
+
+/** Compute all matching years for an element-animal pair in range 1900-2100. */
 function computeYears(element: ZodiacElement, animal: ZodiacAnimal): number[] {
   const years: number[] = []
-  for (let y = 1804; y <= 2103; y++) {
+  for (let y = FIRST_YEAR; y <= LAST_YEAR; y++) {
     const lastDigit = y % 10
     const animalMod = y % 12
     if (ELEMENT_BY_DIGIT[lastDigit] === element && ANIMAL_BY_MOD[animalMod] === animal) {
@@ -127,7 +132,7 @@ const TAGLINES: Record<string, string> = {
   'earth-horse':  'The Enduring Trailblazer',
   'earth-goat':   'The Nurturing Architect',
   'earth-monkey': 'The Pragmatic Innovator',
-  'earth-rooster':'The Diligent Master',
+  'earth-rooster':'The Diligent Steward',
   'earth-dog':    'The Unwavering Sentinel',
   'earth-pig':    'The Abundant Provider',
 

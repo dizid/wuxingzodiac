@@ -25,7 +25,7 @@ export interface SignProfile {
   name: string           // 'Fire Horse'
   chineseName: string    // '丙午'
   tagline: string        // 'The Untamable Spirit'
-  years: number[]        // [1846, 1906, 1966, 2026, 2086]
+  years: number[]        // all years in 1900-2100, e.g. [1906, 1966, 2026, 2086]
 }
 
 // ============================================

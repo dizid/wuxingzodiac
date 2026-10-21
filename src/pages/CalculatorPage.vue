@@ -163,7 +163,7 @@ function findSign() {
         <div class="text-ash-400 text-lg mb-1">{{ result.chineseName }}</div>
         <div class="text-ash-300 italic mb-4">{{ result.tagline }}</div>
         <div class="text-ash-500 text-sm mb-6">
-          Years: {{ result.years.filter(y => y >= 1924 && y <= 2043).join(', ') }}
+          Years: {{ result.years.join(', ') }}
         </div>
       </div>
 

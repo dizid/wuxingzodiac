@@ -109,7 +109,7 @@ onMounted(async () => {
           </div>
           <div>
             <span class="text-ash-500 block">Years</span>
-            <span class="text-ash-100 font-semibold">{{ profile.years.slice(-3).join(', ') }}</span>
+            <span class="text-ash-100 font-semibold">{{ profile.years.join(', ') }}</span>
           </div>
           <div v-if="content?.atAGlance?.coreStrength" class="col-span-2">
             <span class="text-ash-500 block">Core Strength</span>

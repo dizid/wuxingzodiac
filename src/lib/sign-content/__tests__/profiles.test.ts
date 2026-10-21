@@ -61,3 +61,59 @@ describe('sign profile Chinese names (stem + branch)', () => {
     expect(getProfileBySlug('fire-horse')?.chineseName).toBe('丙午')
   })
 })
+
+// The 60-year cycle starts at Wood Rat in 1924. Each year's stem-branch
+// characters identify exactly one sign, which gives an independent year list.
+const CYCLE_START_YEAR = 1924
+const FIRST_YEAR = 1900
+const LAST_YEAR = 2100
+
+/** Slug of the sign for a (lunar) year, derived from its stem-branch characters. */
+function slugForYear(year: number): string {
+  const characters = stemBranchForYear(year)
+  const slug = Object.keys(EXPECTED_CHINESE_NAMES).find(s => EXPECTED_CHINESE_NAMES[s] === characters)
+  if (!slug) throw new Error(`No sign for ${year} (${characters})`)
+  return slug
+}
+
+describe('sign profile birth years (complete 1900-2100)', () => {
+  it('starts the 60-year cycle with Wood Rat in 1924', () => {
+    expect(slugForYear(CYCLE_START_YEAR)).toBe('wood-rat')
+    expect(getProfileBySlug('wood-rat')?.years).toContain(CYCLE_START_YEAR)
+  })
+
+  it.each(signProfiles.map(p => [p.slug, p] as const))(
+    '%s lists every one of its years from 1900 to 2100',
+    (slug, profile) => {
+      const expectedYears: number[] = []
+      for (let year = FIRST_YEAR; year <= LAST_YEAR; year++) {
+        if (slugForYear(year) === slug) expectedYears.push(year)
+      }
+      expect(profile.years).toEqual(expectedYears)
+      // 201 years / 60 signs: each sign has 3 or 4 years, 60 apart
+      expect([3, 4]).toContain(profile.years.length)
+      profile.years.slice(1).forEach((year, i) => expect(year - profile.years[i]!).toBe(60))
+    },
+  )
+
+  it('covers every year from 1900 to 2100 exactly once across all 60 signs', () => {
+    const allYears = signProfiles.flatMap(p => p.years).sort((a, b) => a - b)
+    const expected = Array.from({ length: LAST_YEAR - FIRST_YEAR + 1 }, (_, i) => FIRST_YEAR + i)
+    expect(allYears).toEqual(expected)
+  })
+
+  it('lists the known examples', () => {
+    expect(getProfileBySlug('wood-rat')?.years).toEqual([1924, 1984, 2044])
+    expect(getProfileBySlug('metal-rat')?.years).toEqual([1900, 1960, 2020, 2080])
+    expect(getProfileBySlug('fire-horse')?.years).toEqual([1906, 1966, 2026, 2086])
+    expect(getProfileBySlug('water-pig')?.years).toEqual([1923, 1983, 2043])
+  })
+})
+
+describe('sign archetypes', () => {
+  it('no archetype tagline contains "Master"', () => {
+    for (const profile of signProfiles) {
+      expect(profile.tagline).not.toMatch(/master/i)
+    }
+  })
+})

@@ -180,7 +180,7 @@ function capitalize(s: string): string {
         <div class="text-ash-500 text-sm mb-1">{{ profile.chineseName }}</div>
         <div class="text-ash-400 text-sm italic mb-2">{{ profile.tagline }}</div>
         <div class="text-ash-600 text-xs">
-          {{ profile.years.filter(y => y >= 1924 && y <= 2043).join(', ') }}
+          {{ profile.years.join(', ') }}
         </div>
       </RouterLink>
     </div>
