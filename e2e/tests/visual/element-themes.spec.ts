@@ -137,7 +137,8 @@ test.describe('Visual regression — element themes', () => {
   })
 
   // ── 10. Shop page screenshot ──────────────────────────────────────────────
-  test('shop page screenshot matches baseline', async ({ page }) => {
+  // Shop is not routed (order 003): /shop 301s to /reading. Re-enable with the shop.
+  test.skip('shop page screenshot matches baseline', async ({ page }) => {
     await page.goto('/shop')
     await waitForApp(page)
     await page.waitForTimeout(500)

@@ -97,12 +97,11 @@ test.describe('Smoke tests', () => {
     await expect(page.locator('body')).toContainText(/blog/i)
   })
 
-  test('7. Shop page loads — /shop renders', async ({ page }) => {
-    await page.goto('/shop')
+  test('7. Reading page loads — /reading renders', async ({ page }) => {
+    await page.goto('/reading')
     await waitForApp(page)
 
-    // Shop page has its SEO title content visible on page
-    await expect(page.locator('body')).toContainText(/collection|shop|merch/i)
+    await expect(page.locator('h1')).toContainText(/personal wuxing reading/i)
   })
 
   test('8. 404 page works — /nonexistent-route shows 404 content', async ({ page }) => {

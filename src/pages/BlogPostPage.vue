@@ -3,6 +3,7 @@ import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { useHead } from '@unhead/vue'
 import { useAnalytics } from '@/composables/useAnalytics'
+import ReadingCTA from '@/components/readings/ReadingCTA.vue'
 import type { BlogPost } from '@/types'
 
 const { trackBlogRead } = useAnalytics()
@@ -184,6 +185,11 @@ onMounted(() => {
             class="prose-zodiac max-w-none"
             v-html="post.content"
           ></div>
+        </div>
+
+        <!-- Personal reading, end of every post -->
+        <div class="mt-8">
+          <ReadingCTA placement="blog_post_end" />
         </div>
       </article>
     </div>

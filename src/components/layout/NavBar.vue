@@ -11,7 +11,6 @@ const baseNavItems = [
   { label: 'Home', to: '/' },
   { label: 'All Signs', to: '/zodiac' },
   { label: 'Compatibility', to: '/compatibility' },
-  { label: 'Shop', to: '/shop' },
   { label: 'Calculator', to: '/calculator' },
   { label: 'Blog', to: '/blog' },
 ]

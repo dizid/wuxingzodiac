@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { RouterLink } from 'vue-router'
 import { getProductsForSign, isProductLive } from '@/lib/shop-products'
 import type { ShopProduct } from '@/lib/shop-products'
 
@@ -10,8 +9,11 @@ const props = defineProps<{
   name: string      // e.g. 'Fire Horse'
 }>()
 
-// All products for this sign — limited to first 2 in the template
-const products = computed<ShopProduct[]>(() => getProductsForSign(props.signSlug))
+// Only products that are live on Fourthwall (limited to first 2 in the template).
+// "Coming Soon" products are hidden, so the block disappears until one goes live.
+const products = computed<ShopProduct[]>(() =>
+  getProductsForSign(props.signSlug).filter(isProductLive),
+)
 
 // Format a price value as USD currency string
 const formatPrice = new Intl.NumberFormat('en-US', {
@@ -56,7 +58,6 @@ function formatProductPrice(price: number): string {
 
       <!-- Live product: link to Fourthwall store -->
       <a
-        v-if="isProductLive(product)"
         :href="product.fourthwallUrl"
         target="_blank"
         rel="noopener noreferrer"
@@ -65,19 +66,9 @@ function formatProductPrice(price: number): string {
       >
         Shop Now
       </a>
-
-      <!-- Not yet live -->
-      <span v-else class="text-ash-600 text-xs shrink-0">Coming Soon</span>
     </div>
 
-    <!-- Browse all link for this element's merch -->
-    <RouterLink
-      :to="`/shop?element=${element}`"
-      class="block text-center text-sm font-medium transition-colors hover:opacity-80"
-      style="color: var(--el-accent);"
-    >
-      Browse all {{ name }} merch →
-    </RouterLink>
+    <!-- No "browse all merch" link: /shop is not routed (it redirects to /reading) -->
 
   </section>
 </template>

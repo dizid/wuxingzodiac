@@ -8,7 +8,7 @@ import { usePageSeo } from '@/composables/useSignSeo'
 import ElementPentagonChart from '@/components/zodiac/ElementPentagonChart.vue'
 import SignBadge from '@/components/zodiac/SignBadge.vue'
 import type { SignProfile } from '@/types'
-import BlueprintCTA from '@/components/zodiac/BlueprintCTA.vue'
+import ReadingCTA from '@/components/readings/ReadingCTA.vue'
 import { useUserSign } from '@/composables/useUserSign'
 
 const { setUserSign } = useUserSign()
@@ -175,8 +175,8 @@ function findSign() {
         size="sm"
       />
 
-      <!-- Blueprint PDF Upsell -->
-      <BlueprintCTA :profile="result" />
+      <!-- Personal reading -->
+      <ReadingCTA placement="calculator_result" :sign-name="result.name" />
 
       <!-- CTAs -->
       <div class="flex flex-wrap justify-center gap-4">

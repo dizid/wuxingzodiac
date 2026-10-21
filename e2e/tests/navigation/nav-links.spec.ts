@@ -5,7 +5,7 @@ import { setUserSign, clearAllStorage } from '../../helpers/storage'
 
 /**
  * NavBar link tests — verify the desktop navigation works correctly.
- * 10 tests covering logo, nav links, active states, My Sign, and Shop link.
+ * 10 tests covering logo, nav links, active states, My Sign, and the removed Shop link.
  */
 
 test.describe('NavBar — desktop navigation', () => {
@@ -59,16 +59,12 @@ test.describe('NavBar — desktop navigation', () => {
     await expect(page).toHaveURL('/compatibility')
   })
 
-  test('4. "Shop" nav link navigates to /shop', async ({ page }) => {
+  test('4. Desktop nav has no "Shop" link (there is no shop)', async ({ page }) => {
     await page.goto('/')
     await waitForApp(page)
 
-    const shopLink = page.locator('nav a[href="/shop"]').first()
-    await expect(shopLink).toBeVisible()
-    await shopLink.click()
-    await waitForApp(page)
-
-    await expect(page).toHaveURL('/shop')
+    await expect(page.locator('nav a[href="/shop"]')).toHaveCount(0)
+    await expect(page.locator('nav a', { hasText: /^\s*shop\s*$/i })).toHaveCount(0)
   })
 
   test('5. "Calculator" nav link navigates to /calculator', async ({ page }) => {
@@ -139,15 +135,14 @@ test.describe('NavBar — desktop navigation', () => {
     await expect(mySignLink).toHaveAttribute('href', '/zodiac/fire-horse')
   })
 
-  test('10. Shop link navigates to /shop', async ({ page }) => {
+  test('10. Mobile menu has no "Shop" link (there is no shop)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
     await page.goto('/')
     await waitForApp(page)
 
-    const shopLink = page.locator('nav a[href="/shop"]').first()
-    await expect(shopLink).toBeVisible()
-    await shopLink.click()
-    await waitForApp(page)
-
-    await expect(page).toHaveURL('/shop')
+    await page.getByRole('button', { name: 'Open menu' }).click()
+    // Role queries skip the hidden desktop links, so this is the mobile menu entry
+    await expect(page.getByRole('navigation').getByRole('link', { name: 'Calculator', exact: true })).toBeVisible()
+    await expect(page.locator('nav a[href="/shop"]')).toHaveCount(0)
   })
 })

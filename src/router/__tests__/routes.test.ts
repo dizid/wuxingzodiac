@@ -38,6 +38,15 @@ describe('route table', () => {
     expect(await landOn('/compatibility/fire-horse/water-rat')).toBe('compatibility-pair')
   })
 
+  it('/reading opens the personal reading page', async () => {
+    expect(await landOn('/reading')).toBe('reading')
+  })
+
+  // There is no shop: the app doesn't route it, netlify.toml 301s it to /reading
+  it.each(['/shop', '/shop/fire-horse-tee'])('%s is not routed in the app', async (path) => {
+    expect(await landOn(path)).toBe('not-found')
+  })
+
   it.each([
     '/zodiac/element/plastic',
     '/zodiac/element',

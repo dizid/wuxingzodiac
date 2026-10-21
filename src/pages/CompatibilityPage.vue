@@ -4,6 +4,7 @@ import { useRoute, useRouter, RouterLink } from 'vue-router'
 import CompatibilityPicker from '@/components/compatibility/CompatibilityPicker.vue'
 import CompatibilityResults from '@/components/compatibility/CompatibilityResults.vue'
 import PageCTA from '@/components/ui/PageCTA.vue'
+import ReadingCTA from '@/components/readings/ReadingCTA.vue'
 import { getProfileBySlug } from '@/lib/sign-content/profiles'
 import {
   getEnhancedCompatibility,
@@ -126,6 +127,14 @@ const popularPairs = [
         :result="result"
         :element-interaction="elementInteraction"
       />
+
+      <!-- Personal reading (relationship reading is only mentioned, never a button) -->
+      <div class="mt-8">
+        <ReadingCTA
+          placement="compatibility_result"
+          note="A relationship reading for two people is coming soon."
+        />
+      </div>
 
       <!-- CTA Funnel -->
       <div class="mt-8">

@@ -23,6 +23,20 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# There is no shop: old /shop links go to the personal reading page.
+# Listed before the SPA fallback (first match wins); force in case a stale shop.html is ever deployed.
+[[redirects]]
+  from = "/shop"
+  to = "/reading"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/shop/*"
+  to = "/reading"
+  status = 301
+  force = true
+
 # SPA fallback: pre-rendered pages serve static HTML, unknown routes get index.html (shows 404 page)
 [[redirects]]
   from = "/*"

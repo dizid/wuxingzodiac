@@ -45,6 +45,11 @@ export function useAnalytics() {
       trackEvent('blog_read', { slug, title })
     },
 
+    /** Track a click on a personal reading CTA (placement = where on the site it sits) */
+    trackReadingCtaClick: (placement: string) => {
+      trackEvent('reading_cta_click', { placement })
+    },
+
     // ── GA4 Standard Ecommerce Events ─────────
 
     /** GA4 standard: view_item — fired when product modal opens */
