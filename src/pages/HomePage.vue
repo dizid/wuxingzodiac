@@ -2,6 +2,7 @@
 import { RouterLink } from 'vue-router'
 import { zodiacElements, zodiacAnimals } from '@/lib/zodiac-data'
 import NewsletterForm from '@/components/ui/NewsletterForm.vue'
+import ReadingCTA from '@/components/readings/ReadingCTA.vue'
 import { useHomeSeo, HOME_FAQ_ENTRIES } from '@/composables/useSignSeo'
 import { useUserSign } from '@/composables/useUserSign'
 
@@ -33,6 +34,7 @@ const howItWorks = [
         <RouterLink to="/calculator" class="btn-element text-lg px-8 py-3">
           Find Your Sign
         </RouterLink>
+        <ReadingCTA variant="button" placement="home_hero" />
         <RouterLink to="/compatibility" class="text-lg px-8 py-3 border border-ash-500 text-ash-200 hover:border-ash-300 hover:text-ash-100 rounded-lg transition-all">
           Check Compatibility
         </RouterLink>
@@ -115,6 +117,11 @@ const howItWorks = [
           </a>
         </div>
       </div>
+    </section>
+
+    <!-- Personal Reading -->
+    <section class="px-4 py-12 max-w-3xl mx-auto">
+      <ReadingCTA placement="home_block" />
     </section>
 
     <!-- Compatibility Section -->

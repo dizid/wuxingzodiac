@@ -106,14 +106,14 @@ test.describe('Routing — all routes load correctly', () => {
     await expect(page).toHaveURL('/result/fire-horse')
   })
 
-  // ─── Shop ───────────────────────────────────────────────────────────────────
+  // ─── Personal reading (/shop is not routed; netlify.toml 301s it to /reading) ──
 
-  test('10. /shop — shop page renders', async ({ page }) => {
-    await page.goto('/shop')
+  test('10. /reading — personal reading page renders', async ({ page }) => {
+    await page.goto('/reading')
     await waitForApp(page)
 
-    await expect(page.locator('body')).toContainText(/collection|shop|merch/i)
-    await expect(page).toHaveURL('/shop')
+    await expect(page.locator('h1')).toContainText(/personal wuxing reading/i)
+    await expect(page).toHaveURL('/reading')
   })
 
   // ─── Blog ───────────────────────────────────────────────────────────────────

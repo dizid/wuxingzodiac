@@ -4,16 +4,22 @@
 // Ordered by element (wood, fire, earth, metal, water)
 // then by traditional animal sequence within each element.
 //
-// Chinese names use the Heavenly Stem (yang) + Earthly Branch:
-//   Stems:  Wood=甲  Fire=丙  Earth=戊  Metal=庚  Water=壬
+// Chinese names use the Heavenly Stem + Earthly Branch of the sign's year.
+// Yang animals take the yang stem of their element, yin animals the yin stem:
+//   Yang animals (Rat, Tiger, Dragon, Horse, Monkey, Dog):
+//     Wood=甲  Fire=丙  Earth=戊  Metal=庚  Water=壬
+//   Yin animals (Ox, Rabbit, Snake, Goat, Rooster, Pig):
+//     Wood=乙  Fire=丁  Earth=己  Metal=辛  Water=癸
 //   Branches: Rat=子 Ox=丑 Tiger=寅 Rabbit=卯 Dragon=辰 Snake=巳
 //             Horse=午 Goat=未 Monkey=申 Rooster=酉 Dog=戌 Pig=亥
+//   e.g. Wood Ox = 乙丑, Fire Goat = 丁未, Fire Horse = 丙午
 //
 // Year calculation:
 //   Element by last digit: 0,1=metal  2,3=water  4,5=wood  6,7=fire  8,9=earth
 //   Animal by year%12: 4=rat 5=ox 6=tiger 7=rabbit 8=dragon 9=snake
 //                      10=horse 11=goat 0=monkey 1=rooster 2=dog 3=pig
-//   Each combo repeats every 60 years. Range: 1804-2103.
+//   Each combo repeats every 60 years (1924 = Wood Rat).
+//   Every sign lists ALL its years in 1900-2100 (3 or 4 years per sign).
 
 import type { SignProfile, ZodiacAnimal, ZodiacElement } from '@/types'
 
@@ -33,10 +39,14 @@ const ANIMAL_BY_MOD: Record<number, ZodiacAnimal> = {
   0: 'monkey', 1: 'rooster', 2: 'dog',    3: 'pig',
 }
 
-/** Compute the matching years for an element-animal pair in range 1804-2103. */
+// Birth-year range shown for every sign
+const FIRST_YEAR = 1900
+const LAST_YEAR = 2100
+
+/** Compute all matching years for an element-animal pair in range 1900-2100. */
 function computeYears(element: ZodiacElement, animal: ZodiacAnimal): number[] {
   const years: number[] = []
-  for (let y = 1804; y <= 2103; y++) {
+  for (let y = FIRST_YEAR; y <= LAST_YEAR; y++) {
     const lastDigit = y % 10
     const animalMod = y % 12
     if (ELEMENT_BY_DIGIT[lastDigit] === element && ANIMAL_BY_MOD[animalMod] === animal) {
@@ -52,6 +62,15 @@ const YANG_STEMS: Record<ZodiacElement, string> = {
   wood: '甲', fire: '丙', earth: '戊', metal: '庚', water: '壬',
 }
 
+const YIN_STEMS: Record<ZodiacElement, string> = {
+  wood: '乙', fire: '丁', earth: '己', metal: '辛', water: '癸',
+}
+
+// Yin animals always fall on odd years, which carry the yin stem
+const YIN_ANIMALS: ReadonlySet<ZodiacAnimal> = new Set<ZodiacAnimal>([
+  'ox', 'rabbit', 'snake', 'goat', 'rooster', 'pig',
+])
+
 const EARTHLY_BRANCHES: Record<ZodiacAnimal, string> = {
   rat: '子',    ox: '丑',     tiger: '寅',  rabbit: '卯',
   dragon: '辰', snake: '巳',  horse: '午',  goat: '未',
@@ -59,7 +78,8 @@ const EARTHLY_BRANCHES: Record<ZodiacAnimal, string> = {
 }
 
 function chineseName(element: ZodiacElement, animal: ZodiacAnimal): string {
-  return YANG_STEMS[element] + EARTHLY_BRANCHES[animal]
+  const stem = YIN_ANIMALS.has(animal) ? YIN_STEMS[element] : YANG_STEMS[element]
+  return stem + EARTHLY_BRANCHES[animal]
 }
 
 function displayName(element: ZodiacElement, animal: ZodiacAnimal): string {
@@ -112,7 +132,7 @@ const TAGLINES: Record<string, string> = {
   'earth-horse':  'The Enduring Trailblazer',
   'earth-goat':   'The Nurturing Architect',
   'earth-monkey': 'The Pragmatic Innovator',
-  'earth-rooster':'The Diligent Master',
+  'earth-rooster':'The Diligent Steward',
   'earth-dog':    'The Unwavering Sentinel',
   'earth-pig':    'The Abundant Provider',
 

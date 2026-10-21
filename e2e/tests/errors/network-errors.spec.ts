@@ -34,7 +34,8 @@ test.describe('Network error handling', () => {
   })
 
   // ── 2. Shop with network failure → error state ────────────────────────────
-  test('shop page shows error state when Shopify API request fails', async ({ page }) => {
+  // Shop is not routed (order 003): /shop 301s to /reading. Re-enable with the shop.
+  test.skip('shop page shows error state when Shopify API request fails', async ({ page }) => {
     await page.route('**shopify.com/**', (route) => route.abort('failed'))
 
     await page.goto('/shop')

@@ -106,17 +106,17 @@ test.describe('Sign profiles — data integrity', () => {
       // Extract all 4-digit numbers from the page that look like years
       const yearNumbers = await page.evaluate(() => {
         const text = document.body.innerText
-        const matches = text.match(/\b(19\d{2}|20[0-4]\d)\b/g)
+        const matches = text.match(/\b(1[89]\d{2}|20\d{2}|21\d{2})\b/g)
         return matches ? matches.map(Number) : []
       })
 
       // At least one year should be present on the sign page
       expect(yearNumbers.length).toBeGreaterThan(0)
 
-      // All detected years must be within the expected zodiac range (1924–2043)
+      // All detected years must be within the listed birth-year range (1900–2100)
       for (const year of yearNumbers) {
-        expect(year).toBeGreaterThanOrEqual(1924)
-        expect(year).toBeLessThanOrEqual(2043)
+        expect(year).toBeGreaterThanOrEqual(1900)
+        expect(year).toBeLessThanOrEqual(2100)
       }
     }
   })

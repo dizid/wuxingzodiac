@@ -20,7 +20,7 @@ import SignElementBalance from '@/components/zodiac/SignElementBalance.vue'
 import WuXingCycleDiagram from '@/components/zodiac/WuXingCycleDiagram.vue'
 import SignMatchesV2 from '@/components/zodiac/SignMatchesV2.vue'
 import SignSiblingNav from '@/components/zodiac/SignSiblingNav.vue'
-import BlueprintCTA from '@/components/zodiac/BlueprintCTA.vue'
+import ReadingCTA from '@/components/readings/ReadingCTA.vue'
 import SignMerchCTA from '@/components/merch/SignMerchCTA.vue'
 import PageCTA from '@/components/ui/PageCTA.vue'
 
@@ -130,6 +130,9 @@ function goToElement(element: string) {
             :traits="visualData.traitScores"
           />
 
+          <!-- Personal reading (full) -->
+          <ReadingCTA placement="sign_after_personality" :sign-name="profile.name" />
+
           <SignShadow :data="content.shadow" />
           <SignRelationships :data="content.relationships" />
 
@@ -144,8 +147,8 @@ function goToElement(element: string) {
 
           <SignMatchesV2 :matches="content.matches" :slug="slug" />
 
-          <!-- Blueprint PDF Upsell -->
-          <BlueprintCTA v-if="profile" :profile="profile" />
+          <!-- Personal reading (compact), in the old Blueprint upsell spot -->
+          <ReadingCTA variant="compact" placement="sign_end" />
 
           <!-- Sibling Navigation (same animal/element) -->
           <SignSiblingNav

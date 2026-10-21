@@ -5,8 +5,17 @@ import { useUserSign } from '@/composables/useUserSign'
 
 const props = withDefaults(defineProps<{
   sourcePage?: string
+  /** Extra Buttondown tag, e.g. 'reading-waitlist' (server allowlist only) */
+  tag?: string
+  buttonLabel?: string
+  /** Line shown under the success message */
+  successDetail?: string
+  privacyNote?: string
 }>(), {
   sourcePage: 'homepage',
+  buttonLabel: 'Subscribe',
+  successDetail: 'Watch your inbox for zodiac insights.',
+  privacyNote: 'We respect your privacy. Unsubscribe anytime.',
 })
 
 const { trackNewsletterSignup } = useAnalytics()
@@ -37,6 +46,7 @@ async function handleSubmit() {
         email: email.value.trim(),
         honeypot: honeypot.value,
         sign: userSign.value?.slug ?? null,
+        ...(props.tag ? { tags: [props.tag] } : {}),
       }),
     })
 
@@ -63,7 +73,7 @@ async function handleSubmit() {
     <!-- Success state -->
     <div v-if="submitted" class="glass rounded-xl p-6 text-center">
       <p class="text-ash-100 text-lg font-semibold">{{ successMsg }}</p>
-      <p class="text-ash-300 mt-2">Watch your inbox for zodiac insights.</p>
+      <p class="text-ash-300 mt-2">{{ successDetail }}</p>
     </div>
 
     <!-- Form state -->
@@ -88,7 +98,7 @@ async function handleSubmit() {
           :disabled="submitting"
           class="btn-element px-8 py-4 font-semibold disabled:opacity-50"
         >
-          {{ submitting ? 'Subscribing...' : 'Subscribe' }}
+          {{ submitting ? 'Subscribing...' : buttonLabel }}
         </button>
       </div>
 
@@ -96,8 +106,8 @@ async function handleSubmit() {
         {{ errorMsg }}
       </p>
 
-      <p class="text-xs text-ash-500 mt-4 text-center">
-        We respect your privacy. Unsubscribe anytime.
+      <p class="text-xs text-ash-400 mt-4 text-center">
+        {{ privacyNote }}
       </p>
     </form>
   </div>

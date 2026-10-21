@@ -171,7 +171,7 @@ test.describe('Calculator → Result → Profile flow', () => {
     expect(updated).not.toBe('fire-horse')
   })
 
-  test('8. Blueprint CTA visible in calculator result', async ({ page }) => {
+  test('8. Personal Reading CTA visible in calculator result', async ({ page }) => {
     await goto(page, '/calculator')
 
     await selectByValue(page, 'Year', '1990')
@@ -182,11 +182,11 @@ test.describe('Calculator → Result → Profile flow', () => {
     await expect(page.locator('h2').filter({ hasText: /Metal Horse/i })).toBeVisible()
 
     // Personal Reading CTA should be visible in the result section
-    const readingCta = page.locator('text=Your Personal Reading').first()
+    const readingCta = page.locator('text=WuXing Personal Reading').first()
     await expect(readingCta).toBeVisible()
 
-    // The purchase button should also be visible
-    const purchaseBtn = page.locator('button', { hasText: /Get Your Personal Reading/i }).first()
-    await expect(purchaseBtn).toBeVisible()
+    // It links to /reading, where the reading is ordered
+    const readingLink = page.locator('a[href="/reading"]', { hasText: /See what.s inside/i }).first()
+    await expect(readingLink).toBeVisible()
   })
 })

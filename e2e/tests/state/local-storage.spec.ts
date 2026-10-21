@@ -134,7 +134,8 @@ test.describe('localStorage — user sign persistence', () => {
   })
 
   // ── 8. Sign persists to shop personalization ───────────────────────────────
-  test('saved sign is used for shop personalisation', async ({ page }) => {
+  // Shop is not routed (order 003): /shop 301s to /reading. Re-enable with the shop.
+  test.skip('saved sign is used for shop personalisation', async ({ page }) => {
     await setUserSign(page, 'fire-horse')
     await page.goto('/shop')
     await waitForApp(page)

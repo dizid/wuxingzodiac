@@ -22,9 +22,16 @@ const ELEMENT_COLORS: Record<string, { primary: string; dark: string; light: str
   water: { primary: '#3b82f6', dark: '#1e3a8a', light: '#93c5fd' },
 }
 
+// Yang animals take the yang stem, yin animals the yin stem (e.g. Wood Ox = 乙丑)
 const YANG_STEMS: Record<string, string> = {
   wood: '甲', fire: '丙', earth: '戊', metal: '庚', water: '壬',
 }
+
+const YIN_STEMS: Record<string, string> = {
+  wood: '乙', fire: '丁', earth: '己', metal: '辛', water: '癸',
+}
+
+const YIN_ANIMALS = ['ox', 'rabbit', 'snake', 'goat', 'rooster', 'pig']
 
 const EARTHLY_BRANCHES: Record<string, string> = {
   rat: '子', ox: '丑', tiger: '寅', rabbit: '卯',
@@ -45,7 +52,8 @@ const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 function signSvg(element: string, animal: string): string {
   const colors = ELEMENT_COLORS[element]
   const name = `${cap(element)} ${cap(animal)}`
-  const chinese = YANG_STEMS[element] + EARTHLY_BRANCHES[animal]
+  const stems = YIN_ANIMALS.includes(animal) ? YIN_STEMS : YANG_STEMS
+  const chinese = stems[element] + EARTHLY_BRANCHES[animal]
   const emoji = ANIMAL_EMOJI[animal]
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">

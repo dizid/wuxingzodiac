@@ -22,12 +22,32 @@
     # Google Fonts (stylesheet + font files), GA4/gtag (script + beacon),
     # Promoten affiliate tracking (script + beacon). Stripe checkout is a
     # full-page redirect (window.location), not an embed, so it needs no entry.
-    Content-Security-Policy = "default-src 'self'; script-src 'self' https://www.googletagmanager.com https://promoten.pro; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://promoten.pro; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+    # GA4 hosts are the ones gtag.js for G-5M7CY55LL8 actually sends to. It uses
+    # fetch/sendBeacon (connect-src) and falls back to an image pixel (img-src):
+    # *.google-analytics.com + (*.)analytics.google.com (hits; the bare host is
+    # not matched by the wildcard), www.google.com (/g/collect retry when a hit
+    # fails), stats.g.doubleclick.net and www.google.co.th (Google Signals;
+    # .co.th is the property's ads domain).
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://www.googletagmanager.com https://promoten.pro; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com https://www.google.com https://www.google.co.th https://stats.g.doubleclick.net; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com https://www.google.com https://stats.g.doubleclick.net https://promoten.pro; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
 
 [[headers]]
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+# There is no shop: old /shop links go to the personal reading page.
+# Listed before the SPA fallback (first match wins); force in case a stale shop.html is ever deployed.
+[[redirects]]
+  from = "/shop"
+  to = "/reading"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/shop/*"
+  to = "/reading"
+  status = 301
+  force = true
 
 # SPA fallback: pre-rendered pages serve static HTML, unknown routes get index.html (shows 404 page)
 [[redirects]]

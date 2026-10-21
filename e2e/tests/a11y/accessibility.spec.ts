@@ -56,9 +56,9 @@ test.describe('Accessibility — axe-core scans', () => {
     await assertAccessible(page)
   })
 
-  // ── 6. Shop page passes ───────────────────────────────────────────────────
-  test('shop page passes axe accessibility scan', async ({ page }) => {
-    await page.goto('/shop')
+  // ── 6. Reading page passes (replaces the shop, which is not routed) ──────
+  test('reading page passes axe accessibility scan', async ({ page }) => {
+    await page.goto('/reading')
     await waitForApp(page)
     await assertAccessible(page)
   })

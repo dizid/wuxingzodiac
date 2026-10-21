@@ -7,7 +7,9 @@ import { setUserSign } from '../../helpers/storage'
 const FIRE_DRAGON_TEE = 'Fire Dragon Element Tee'
 const WATER_SNAKE_TEE = 'Water Snake Element Tee'
 
-test.describe('ShopPage (/shop)', () => {
+// Shop is not routed (order 003, Oct 2026): /shop 301s to /reading in netlify.toml.
+// Skipped, not deleted: re-enable when the shop route comes back.
+test.describe.skip('ShopPage (/shop)', () => {
   // ── 1. Hero section heading ───────────────────────────────────────────────
   test('hero section heading renders', async ({ page }) => {
     await mockAllApis(page)

@@ -74,10 +74,12 @@ export const routes: RouteRecordRaw[] = [
     name: 'calculator',
     component: () => import('@/pages/CalculatorPage.vue'),
   },
+  // No /shop route: there is no shop yet. netlify.toml 301s /shop and /shop/*
+  // to /reading. ShopPage.vue stays in the repo for when merch goes live.
   {
-    path: '/shop',
-    name: 'shop',
-    component: () => import('@/pages/ShopPage.vue'),
+    path: '/reading',
+    name: 'reading',
+    component: () => import('@/pages/ReadingPage.vue'),
   },
   {
     path: '/blog',

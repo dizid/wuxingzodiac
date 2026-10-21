@@ -106,13 +106,12 @@ test.describe('ZodiacSignPage — /zodiac/fire-horse', () => {
   })
 
   // ── 10. Personal Reading CTA renders ──────────────────────────────────────
-  test('Personal Reading CTA renders with purchase button', async ({ page }) => {
-    const readingHeading = page.locator('h3', { hasText: /Personal Reading/i })
-    await expect(readingHeading).toBeVisible()
+  test('Personal Reading CTA renders and links to /reading', async ({ page }) => {
+    await expect(page.locator('text=WuXing Personal Reading').first()).toBeVisible()
 
-    // Purchase button shows the price
-    const purchaseBtn = page.locator('button', { hasText: /Get Your Personal Reading.*\$9\.90/i })
-    await expect(purchaseBtn).toBeVisible()
+    // The reading is ordered on /reading, not on the sign page
+    const readingLink = page.locator('a[href="/reading"]', { hasText: /See what.s inside/i }).first()
+    await expect(readingLink).toBeVisible()
   })
 
   // ── 11. Sibling Navigation: same-animal and same-element sign links ────────

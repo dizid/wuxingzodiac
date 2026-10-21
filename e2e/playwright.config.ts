@@ -23,6 +23,8 @@ export default defineConfig({
     url: 'http://localhost:4173',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
+    // Build the "on sale" state so the purchase-flow specs can order on /reading
+    env: { READING_LIVE: 'true' },
   },
 
   projects: [

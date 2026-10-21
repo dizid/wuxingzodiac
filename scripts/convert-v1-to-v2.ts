@@ -35,7 +35,7 @@ const ARCHETYPES: Record<string, string> = {
   'earth-tiger': 'The Patient Warrior', 'earth-rabbit': 'The Serene Mediator',
   'earth-dragon': 'The Sovereign Builder', 'earth-snake': 'The Silent Authority',
   'earth-horse': 'The Enduring Trailblazer', 'earth-goat': 'The Nurturing Architect',
-  'earth-monkey': 'The Pragmatic Innovator', 'earth-rooster': 'The Diligent Master',
+  'earth-monkey': 'The Pragmatic Innovator', 'earth-rooster': 'The Diligent Steward',
   'earth-dog': 'The Unwavering Sentinel', 'earth-pig': 'The Abundant Provider',
   'metal-rat': 'The Sharp-Witted Survivor', 'metal-ox': 'The Iron Pillar',
   'metal-tiger': 'The Steel Enforcer', 'metal-rabbit': 'The Polished Strategist',

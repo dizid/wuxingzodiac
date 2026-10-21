@@ -10,9 +10,21 @@ function jsonResponse(body: Record<string, unknown>, status: number) {
   })
 }
 
+// Same READING_LIVE env var that switches /reading from the waitlist to the order
+// form (src/lib/reading-offer.ts). While it isn't "true", calling this function
+// directly can't start a checkout. The old Elemental Blueprint body ({ slug })
+// is refused either way: it fails validateReadingInput below.
+function isReadingLive(): boolean {
+  return process.env.READING_LIVE === 'true'
+}
+
 export default async (req: Request, _context: Context) => {
   if (req.method !== 'POST') {
     return jsonResponse({ error: 'Method not allowed' }, 405)
+  }
+
+  if (!isReadingLive()) {
+    return jsonResponse({ error: 'The personal reading is not on sale yet.' }, 410)
   }
 
   // Read PlugAff affiliate ref from cookie
@@ -60,7 +72,8 @@ export default async (req: Request, _context: Context) => {
         },
       },
       success_url: `${siteUrl}/report/download?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl}/zodiac/${sign.slug}?purchase=cancelled`,
+      // Back to the page the reading is ordered from
+      cancel_url: `${siteUrl}/reading`,
     })
 
     return jsonResponse({ url: session.url }, 200)

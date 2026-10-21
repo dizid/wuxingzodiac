@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watchEffect } from 'vue'
+import { computed } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { getProfilesByElement } from '@/lib/sign-content/profiles'
 import { zodiacElements, zodiacAnimals } from '@/lib/zodiac-data'
@@ -87,16 +87,14 @@ const wuXingInfo: Record<ZodiacElement, WuXingInfo> = {
 
 const elementInfo = computed(() => wuXingInfo[element.value])
 
-// SEO meta tags
-watchEffect(() => {
-  if (elementData.value) {
-    usePageSeo(
-      `${elementData.value.name} Element — 12 Chinese Zodiac Signs`,
-      `Explore all twelve Chinese zodiac animals with the ${elementData.value.name} element. Learn how ${elementData.value.name} energy shapes personality, compatibility, and destiny.`,
-      `/zodiac/element/${element.value}`
-    )
-  }
-})
+// SEO meta tags — reactive so the head updates when navigating between
+// element pages (the component is reused, only the route param changes)
+const elementName = computed(() => elementData.value?.name ?? capitalize(element.value))
+usePageSeo(
+  () => `${elementName.value} Element — 12 Chinese Zodiac Signs`,
+  () => `Explore all twelve Chinese zodiac animals with the ${elementName.value} element. Learn how ${elementName.value} energy shapes personality, compatibility, and destiny.`,
+  () => `/zodiac/element/${element.value}`
+)
 
 // Element emoji for the cycle display
 const elementEmoji: Record<ZodiacElement, string> = {
@@ -182,7 +180,7 @@ function capitalize(s: string): string {
         <div class="text-ash-500 text-sm mb-1">{{ profile.chineseName }}</div>
         <div class="text-ash-400 text-sm italic mb-2">{{ profile.tagline }}</div>
         <div class="text-ash-600 text-xs">
-          {{ profile.years.filter(y => y >= 1924 && y <= 2043).join(', ') }}
+          {{ profile.years.join(', ') }}
         </div>
       </RouterLink>
     </div>

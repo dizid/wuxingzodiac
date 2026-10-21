@@ -8,7 +8,7 @@ import { usePageSeo } from '@/composables/useSignSeo'
 import ElementPentagonChart from '@/components/zodiac/ElementPentagonChart.vue'
 import SignBadge from '@/components/zodiac/SignBadge.vue'
 import type { SignProfile } from '@/types'
-import BlueprintCTA from '@/components/zodiac/BlueprintCTA.vue'
+import ReadingCTA from '@/components/readings/ReadingCTA.vue'
 import { useUserSign } from '@/composables/useUserSign'
 
 const { setUserSign } = useUserSign()
@@ -163,7 +163,7 @@ function findSign() {
         <div class="text-ash-400 text-lg mb-1">{{ result.chineseName }}</div>
         <div class="text-ash-300 italic mb-4">{{ result.tagline }}</div>
         <div class="text-ash-500 text-sm mb-6">
-          Years: {{ result.years.filter(y => y >= 1924 && y <= 2043).join(', ') }}
+          Years: {{ result.years.join(', ') }}
         </div>
       </div>
 
@@ -175,8 +175,8 @@ function findSign() {
         size="sm"
       />
 
-      <!-- Blueprint PDF Upsell -->
-      <BlueprintCTA :profile="result" />
+      <!-- Personal reading -->
+      <ReadingCTA placement="calculator_result" :sign-name="result.name" />
 
       <!-- CTAs -->
       <div class="flex flex-wrap justify-center gap-4">

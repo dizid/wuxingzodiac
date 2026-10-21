@@ -5,7 +5,7 @@ import { useHead } from '@unhead/vue'
 import { getProfileBySlug, loadSignContent } from '@/lib/sign-content'
 import { useElementTheme } from '@/composables/useElementTheme'
 import type { SignContentV2, ZodiacElement } from '@/types'
-import BlueprintCTA from '@/components/zodiac/BlueprintCTA.vue'
+import ReadingCTA from '@/components/readings/ReadingCTA.vue'
 
 const route = useRoute()
 const sign = route.params.sign as string
@@ -109,7 +109,7 @@ onMounted(async () => {
           </div>
           <div>
             <span class="text-ash-500 block">Years</span>
-            <span class="text-ash-100 font-semibold">{{ profile.years.slice(-3).join(', ') }}</span>
+            <span class="text-ash-100 font-semibold">{{ profile.years.join(', ') }}</span>
           </div>
           <div v-if="content?.atAGlance?.coreStrength" class="col-span-2">
             <span class="text-ash-500 block">Core Strength</span>
@@ -124,8 +124,8 @@ onMounted(async () => {
         <p class="text-ash-300 leading-relaxed">{{ condensedPersonality }}</p>
       </section>
 
-      <!-- Blueprint PDF Upsell -->
-      <BlueprintCTA :profile="profile" />
+      <!-- Personal reading -->
+      <ReadingCTA placement="result_page" :sign-name="profile.name" />
 
       <!-- CTA Buttons -->
       <section class="space-y-3 mb-10 mt-8">

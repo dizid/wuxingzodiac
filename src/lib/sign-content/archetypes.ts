@@ -44,7 +44,7 @@ export const ARCHETYPES: Record<string, string> = {
   'earth-horse':  'The Enduring Trailblazer',
   'earth-goat':   'The Nurturing Architect',
   'earth-monkey': 'The Pragmatic Innovator',
-  'earth-rooster':'The Diligent Master',
+  'earth-rooster':'The Diligent Steward',
   'earth-dog':    'The Unwavering Sentinel',
   'earth-pig':    'The Abundant Provider',
 

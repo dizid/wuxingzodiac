@@ -1,17 +1,18 @@
 import { useHead } from '@unhead/vue'
-import { computed, type Ref } from 'vue'
+import { computed, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
 import type { SignProfile, SignContentV2 } from '@/types'
 
 const SITE_NAME = 'Wu Xing Zodiac'
 const SITE_URL = 'https://wuxingzodiac.me'
 
-// Shared author/expert Person schema used across all sign pages
+// Shared author Person schema used across all sign pages.
+// Keep this neutral: no expert, BaZi, birth-chart or Four Pillars claims.
 const EDITORIAL_PERSON = {
   '@type': 'Person',
   name: 'Wu Xing Zodiac Editorial Team',
   url: `${SITE_URL}/about`,
   description:
-    'Expert team specializing in Chinese astrology, BaZi, and Wu Xing five-element theory',
+    'WuXing Zodiac: Chinese zodiac and five-elements (Wu Xing) guides for self-reflection.',
 }
 
 /** Capitalize first letter. */
@@ -107,7 +108,7 @@ function buildSignGraph(
         '@id': url,
       },
     },
-    // Expert author / Person schema
+    // Author / Person schema
     EDITORIAL_PERSON,
     // Breadcrumb navigation
     {
@@ -172,28 +173,37 @@ export function useSignSeo(profile: SignProfile, content?: SignContentV2 | null)
 
 /**
  * SEO for generic pages (calculator, compatibility, blog, etc.).
+ * Accepts plain strings, or refs/getters for pages whose route params change
+ * while the component stays mounted (e.g. element pages). Call once in setup.
  */
-export function usePageSeo(title: string, description: string, path: string) {
-  const fullTitle = `${title} | ${SITE_NAME}`
-  const url = `${SITE_URL}${path}`
+export function usePageSeo(
+  title: MaybeRefOrGetter<string>,
+  description: MaybeRefOrGetter<string>,
+  path: MaybeRefOrGetter<string>,
+) {
+  useHead(computed(() => {
+    const fullTitle = `${toValue(title)} | ${SITE_NAME}`
+    const descriptionText = toValue(description)
+    const url = `${SITE_URL}${toValue(path)}`
 
-  useHead({
-    title: fullTitle,
-    meta: [
-      { name: 'description', content: description },
-      { property: 'og:title', content: fullTitle },
-      { property: 'og:description', content: description },
-      { property: 'og:url', content: url },
-      { property: 'og:type', content: 'website' },
-      { property: 'og:site_name', content: SITE_NAME },
-      { name: 'twitter:card', content: 'summary' },
-      { name: 'twitter:title', content: fullTitle },
-      { name: 'twitter:description', content: description },
-    ],
-    link: [
-      { rel: 'canonical', href: url },
-    ],
-  })
+    return {
+      title: fullTitle,
+      meta: [
+        { name: 'description', content: descriptionText },
+        { property: 'og:title', content: fullTitle },
+        { property: 'og:description', content: descriptionText },
+        { property: 'og:url', content: url },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:site_name', content: SITE_NAME },
+        { name: 'twitter:card', content: 'summary' },
+        { name: 'twitter:title', content: fullTitle },
+        { name: 'twitter:description', content: descriptionText },
+      ],
+      link: [
+        { rel: 'canonical', href: url },
+      ],
+    }
+  }))
 }
 
 /**

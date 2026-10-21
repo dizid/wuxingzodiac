@@ -4,6 +4,7 @@ import { useRoute, useRouter, RouterLink } from 'vue-router'
 import CompatibilityPicker from '@/components/compatibility/CompatibilityPicker.vue'
 import CompatibilityResults from '@/components/compatibility/CompatibilityResults.vue'
 import PageCTA from '@/components/ui/PageCTA.vue'
+import ReadingCTA from '@/components/readings/ReadingCTA.vue'
 import { getProfileBySlug } from '@/lib/sign-content/profiles'
 import {
   getEnhancedCompatibility,
@@ -13,7 +14,14 @@ import {
 import { useAnalytics } from '@/composables/useAnalytics'
 import { usePageSeo } from '@/composables/useSignSeo'
 import { useCompatibilitySeo } from '@/composables/useCompatibilitySeo'
+import { READING_LIVE } from '@/lib/reading-offer'
 import type { SignProfile, EnhancedCompatibilityResult } from '@/types'
+
+// Soft pointer to the /reading waitlist (no promised date). Hidden once the
+// reading is on sale, because /reading then shows the order form, not the waitlist.
+const relationshipReadingNote = READING_LIVE
+  ? undefined
+  : "Hoping for a reading for two people? Join the waitlist on the reading page and we'll keep you posted."
 
 const route = useRoute()
 const router = useRouter()
@@ -126,6 +134,14 @@ const popularPairs = [
         :result="result"
         :element-interaction="elementInteraction"
       />
+
+      <!-- Personal reading (relationship reading is only mentioned, never a button) -->
+      <div class="mt-8">
+        <ReadingCTA
+          placement="compatibility_result"
+          :note="relationshipReadingNote"
+        />
+      </div>
 
       <!-- CTA Funnel -->
       <div class="mt-8">

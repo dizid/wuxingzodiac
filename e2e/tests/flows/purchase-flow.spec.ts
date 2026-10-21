@@ -4,11 +4,12 @@ import { waitForApp, goto } from '../../helpers/test-app'
 import { clearAllStorage } from '../../helpers/storage'
 import type { Page, Route } from '@playwright/test'
 
-// Open the Personal Reading intake form on a sign page
+// The reading is ordered on /reading. These specs need a build with READING_LIVE=true
+// (set in e2e/playwright.config.ts); without it /reading shows the launch waitlist.
 async function openIntakeForm(page: Page) {
-  await page.waitForSelector('text=Your Personal Reading', { timeout: 15_000 })
-  await page.locator('button', { hasText: /Get Your Personal Reading/i }).first().click()
-  await expect(page.locator('#reading-name')).toBeVisible()
+  await goto(page, '/reading')
+  await page.locator('button', { hasText: /Get your reading/i }).first().click()
+  await expect(page.locator('#reading-name')).toBeVisible({ timeout: 15_000 })
 }
 
 async function fillIntakeForm(page: Page) {
@@ -23,7 +24,7 @@ test.describe('Personal reading purchase flow', () => {
     await clearAllStorage(page)
   })
 
-  test('1. Sign page → open intake form → submit → create-checkout receives reading details', async ({ page }) => {
+  test('1. /reading → open intake form → submit → create-checkout receives reading details', async ({ page }) => {
     let checkoutBody: Record<string, unknown> | null = null
     await page.route('**/api/create-checkout', async (route: Route) => {
       checkoutBody = route.request().postDataJSON()
@@ -36,7 +37,6 @@ test.describe('Personal reading purchase flow', () => {
       })
     })
 
-    await goto(page, '/zodiac/fire-horse')
     await openIntakeForm(page)
     await fillIntakeForm(page)
 
@@ -65,7 +65,6 @@ test.describe('Personal reading purchase flow', () => {
       })
     })
 
-    await goto(page, '/zodiac/fire-horse')
     await openIntakeForm(page)
     await fillIntakeForm(page)
 
@@ -93,7 +92,6 @@ test.describe('Personal reading purchase flow', () => {
     // Override stripe checkout mock with a 500 error
     await mockStripeCheckout(page, { status: 500 })
 
-    await goto(page, '/zodiac/fire-horse')
     await openIntakeForm(page)
     await fillIntakeForm(page)
     await page.locator('button', { hasText: /Continue to Payment/i }).click()
@@ -112,7 +110,6 @@ test.describe('Personal reading purchase flow', () => {
       await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ url: 'https://checkout.stripe.com/test' }) })
     })
 
-    await goto(page, '/zodiac/fire-horse')
     await openIntakeForm(page)
     await page.locator('#reading-name').fill('<script>')
     await page.locator('#reading-birthdate').fill('1984-06-12')
@@ -206,17 +203,18 @@ test.describe('Personal reading purchase flow', () => {
     await expect(page.locator('h1', { hasText: /Your Blueprint is Ready/i })).toBeVisible({ timeout: 10_000 })
   })
 
-  test('7. Reading CTA present on sign page AND result page', async ({ page }) => {
-    // Check sign page
+  test('7. Sign page and result page link to /reading, where the order button is', async ({ page }) => {
+    // Sign page: reading CTA links to the landing page
     await goto(page, '/zodiac/fire-horse')
-    await page.waitForSelector('text=Your Personal Reading', { timeout: 15_000 })
-    await expect(page.locator('text=Your Personal Reading').first()).toBeVisible()
-    await expect(page.locator('button', { hasText: /Get Your Personal Reading/i }).first()).toBeVisible()
+    await expect(page.locator('a[href="/reading"]', { hasText: /See what.s inside/i }).first()).toBeVisible({ timeout: 15_000 })
 
-    // Check result page
+    // Result page: same
     await goto(page, '/result/fire-horse')
-    await expect(page.locator('text=Your Personal Reading').first()).toBeVisible()
-    await expect(page.locator('button', { hasText: /Get Your Personal Reading/i }).first()).toBeVisible()
+    await expect(page.locator('a[href="/reading"]', { hasText: /See what.s inside/i }).first()).toBeVisible()
+
+    // /reading sells it
+    await goto(page, '/reading')
+    await expect(page.locator('button', { hasText: /Get your reading.*\$9\.90/i }).first()).toBeVisible()
   })
 
   test('8. Analytics tracked during purchase flow (verify no console errors)', async ({ page }) => {
@@ -227,7 +225,6 @@ test.describe('Personal reading purchase flow', () => {
       }
     })
 
-    await goto(page, '/zodiac/fire-horse')
     await openIntakeForm(page)
     await fillIntakeForm(page)
 

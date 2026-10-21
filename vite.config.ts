@@ -13,6 +13,9 @@ const isDev = process.env.NODE_ENV !== 'production'
 
 export default defineConfig({
   plugins: [vue(), tailwindcss(), ...(isDev ? [netlify()] : [])],
+  // Expose the READING_LIVE feature flag (build-time env var, see src/lib/reading-offer.ts)
+  // to client code next to the usual VITE_* vars.
+  envPrefix: ['VITE_', 'READING_LIVE'],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -64,7 +67,11 @@ export default defineConfig({
       return allPaths
     },
     onFinished() {
-      generateSitemap({ hostname: 'https://wuxingzodiac.me' })
+      generateSitemap({
+        hostname: 'https://wuxingzodiac.me',
+        // Private post-purchase page (noindex), still pre-rendered but not listed
+        exclude: ['/report/download'],
+      })
     },
   },
 })
