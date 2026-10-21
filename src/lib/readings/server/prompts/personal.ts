@@ -54,8 +54,11 @@ function str(description: string) {
   return { type: 'string', description }
 }
 
+// minItems: 1 is the only array count structured outputs enforces (0 or 1).
+// Without it the model can return [] (seen in production testing for
+// blindSpots); the exact counts are checked in parsePersonalContent().
 function strArray(description: string) {
-  return { type: 'array', description, items: { type: 'string' } }
+  return { type: 'array', description, minItems: 1, items: { type: 'string' } }
 }
 
 function obj(properties: Record<string, unknown>) {
@@ -66,6 +69,7 @@ function pointArray(description: string) {
   return {
     type: 'array',
     description,
+    minItems: 1,
     items: obj({
       title: str('2–5 word heading'),
       detail: str('One or two sentences, max 35 words'),
