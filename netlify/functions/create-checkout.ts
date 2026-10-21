@@ -1,12 +1,6 @@
 import type { Context } from "@netlify/functions"
 import Stripe from 'stripe'
-import {
-  validateReadingInput,
-  toStripeMetadata,
-  hasWithdrawalWaiver,
-  READING_TYPES,
-  WITHDRAWAL_WAIVER_ERROR,
-} from '../../src/lib/readings/types'
+import { validateReadingInput, toStripeMetadata, READING_TYPES } from '../../src/lib/readings/types'
 import { getSignForBirthDate } from '../../src/lib/readings/sign'
 
 function jsonResponse(body: Record<string, unknown>, status: number) {
@@ -43,20 +37,12 @@ export default async (req: Request, _context: Context) => {
   const plugaffRef = cookies['plugaff_ref'] || ''
 
   try {
-    // Body: { readingType, names[], birthDates[], email, isGift, recipientName?, giftMessage?, withdrawalWaiver }
+    // Body: { readingType, names[], birthDates[], email, isGift, recipientName?, giftMessage? }
     const body: unknown = await req.json().catch(() => null)
     const validation = validateReadingInput(body)
     if (!validation.ok) {
       return jsonResponse({ error: validation.error }, 400)
     }
-
-    // No refunds, so the buyer must waive the EU 14-day right of withdrawal
-    // (digital content delivered immediately) before we start a checkout
-    if (!hasWithdrawalWaiver(body)) {
-      return jsonResponse({ error: WITHDRAWAL_WAIVER_ERROR }, 400)
-    }
-    // Server time, so the recorded consent can't be backdated by the browser
-    const withdrawalWaiverAt = new Date().toISOString()
 
     const input = validation.input
     if (!READING_TYPES[input.type].available) {
@@ -78,15 +64,11 @@ export default async (req: Request, _context: Context) => {
         ...toStripeMetadata(input, sign.slug),
         plugaff_ref: plugaffRef,
         plugaff_app: 'wuxingzodiac',
-        // Proof of consent (report_orders has no column for it; no migration needed)
-        withdrawal_waiver: 'accepted',
-        withdrawal_waiver_at: withdrawalWaiverAt,
       },
-      // Shown above the pay button: honest about what the reading is based on,
-      // and the withdrawal waiver the buyer already ticked on the order form
+      // Shown above the pay button: honest about what the reading is based on
       custom_text: {
         submit: {
-          message: `Your ${READING_TYPES[input.type].label} is based on your birth-year sign (${sign.name}) and the five elements, written for you by name, and emailed to you as a PDF. It is delivered immediately, so you waive your 14-day right of withdrawal and all sales are final.`,
+          message: `Your ${READING_TYPES[input.type].label} is based on your birth-year sign (${sign.name}) and the five elements, written for you by name, and emailed to you as a PDF.`,
         },
       },
       success_url: `${siteUrl}/report/download?session_id={CHECKOUT_SESSION_ID}`,

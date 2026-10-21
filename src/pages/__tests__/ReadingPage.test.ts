@@ -101,11 +101,13 @@ describe('ReadingPage (/reading)', () => {
     expect(text).toContain('$9.90')
     expect(text).toContain('delivered by email')
     expect(text).toContain("What isn't it?")
-    // No refunds (Marc, 2026-10-21): the FAQ says so, and nothing promises one
+    // No refunds (Marc, 2026-10-21): the FAQ answer is exactly the one policy line
     expect(text).toContain('Can I get a refund?')
+    expect(READING_REFUND_POLICY).toBe(
+      "All sales are final. If something is wrong with your file, reply to the email and we'll fix it.",
+    )
     expect(text).toContain(READING_REFUND_POLICY)
-    expect(text).toContain('all sales are final')
-    expect(text).not.toMatch(/full refund|money[- ]back/i)
+    expect(text).not.toMatch(/withdrawal|waiver|waive|14-day|full refund|money[- ]back/i)
     expect(text).toContain('for entertainment and self-reflection')
     expect(text).toContain(BIRTH_CHART_DISCLAIMER)
     expect(text.replace(BIRTH_CHART_DISCLAIMER, '')).not.toMatch(BANNED_COPY)

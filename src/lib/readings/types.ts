@@ -48,21 +48,6 @@ export interface CheckoutRequestBody {
   isGift: boolean
   recipientName?: string
   giftMessage?: string
-  /** EU right-of-withdrawal waiver checkbox: the server refuses a checkout unless it's true */
-  withdrawalWaiver: boolean
-}
-
-/** Shown when the withdrawal-waiver box isn't ticked (form and server) */
-export const WITHDRAWAL_WAIVER_ERROR =
-  'Please tick the box to confirm your reading is delivered immediately and you give up your 14-day right of withdrawal.'
-
-/**
- * True only when the buyer explicitly ticked the withdrawal-waiver box
- * (exactly `true`, never a truthy string). Checked separately from
- * validateReadingInput, which also re-validates Stripe metadata.
- */
-export function hasWithdrawalWaiver(raw: unknown): boolean {
-  return !!raw && typeof raw === 'object' && (raw as Record<string, unknown>).withdrawalWaiver === true
 }
 
 // Field limits — also keep Stripe metadata values under its 500-char cap

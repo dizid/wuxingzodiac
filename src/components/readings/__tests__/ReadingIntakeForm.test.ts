@@ -2,10 +2,10 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 import { flushPromises, mount, RouterLinkStub } from '@vue/test-utils'
 import ReadingIntakeForm from '@/components/readings/ReadingIntakeForm.vue'
 
-// No refunds (Marc, 2026-10-21): buyers must waive the EU 14-day right of
-// withdrawal with a real, unticked-by-default checkbox before checkout.
-const WAIVER_LABEL =
-  'I agree that my reading is delivered immediately and I give up my 14-day right of withdrawal. See Terms.'
+// No consent box (Marc, 2026-10-21): the order form is name, birth date, email
+// and the gift option, and the pay button only waits for a submit in progress.
+// Policy wording that must never come back on the form:
+const BANNED_POLICY_COPY = /withdrawal|waiver|waive|14-day|full refund/i
 
 async function mountFilledForm() {
   const wrapper = mount(ReadingIntakeForm, {
@@ -26,60 +26,65 @@ function mockCheckoutFetch() {
   return fetchMock
 }
 
-describe('ReadingIntakeForm withdrawal waiver', () => {
+describe('ReadingIntakeForm without a consent box', () => {
   afterEach(() => {
     vi.unstubAllGlobals()
   })
 
-  it('is a required, unticked checkbox with a label linking to the Terms', async () => {
+  it('has no consent checkbox: the gift option is the only checkbox, and no policy wording', async () => {
     const wrapper = await mountFilledForm()
-    const checkbox = wrapper.find<HTMLInputElement>('#reading-withdrawal-waiver')
 
-    expect(checkbox.attributes('type')).toBe('checkbox')
-    expect(checkbox.attributes('required')).toBeDefined()
-    expect(checkbox.element.checked).toBe(false)
-
-    const label = wrapper.find('label[for="reading-withdrawal-waiver"]')
-    expect(label.text().replace(/\s+/g, ' ')).toBe(WAIVER_LABEL)
-    const termsLink = label.findComponent(RouterLinkStub)
-    expect(termsLink.props('to')).toBe('/terms')
-    expect(termsLink.text()).toBe('Terms')
+    const checkboxes = wrapper.findAll('input[type="checkbox"]')
+    expect(checkboxes).toHaveLength(1)
+    expect(checkboxes[0]!.element.closest('label')?.textContent).toContain('This is a gift')
+    expect(wrapper.find('#reading-withdrawal-waiver').exists()).toBe(false)
+    expect(wrapper.text()).not.toMatch(BANNED_POLICY_COPY)
   })
 
-  it('blocks submit until the box is ticked, even with every field valid', async () => {
-    const fetchMock = mockCheckoutFetch()
-    const wrapper = await mountFilledForm()
+  it('enables the pay button without ticking anything', async () => {
+    const wrapper = mount(ReadingIntakeForm, {
+      global: { stubs: { RouterLink: RouterLinkStub } },
+    })
     const submitButton = wrapper.find('button[type="submit"]')
+    expect(submitButton.attributes('disabled')).toBeUndefined()
 
-    expect(submitButton.attributes('disabled')).toBeDefined()
-
-    // Any other submit path (e.g. Enter) is refused too, with a clear message
-    await wrapper.find('form').trigger('submit')
-    await flushPromises()
-    expect(fetchMock).not.toHaveBeenCalled()
-    expect(wrapper.find('[role="alert"]').text()).toContain('14-day right of withdrawal')
-
-    await wrapper.find('#reading-withdrawal-waiver').setValue(true)
+    await wrapper.find('#reading-name').setValue('Anna')
+    await wrapper.find('#reading-birthdate').setValue('1990-05-14')
+    await wrapper.find('#reading-email').setValue('anna@example.com')
     expect(submitButton.attributes('disabled')).toBeUndefined()
   })
 
-  it('sends withdrawalWaiver: true to create-checkout once ticked', async () => {
+  it('disables the pay button only while the checkout is being created', async () => {
+    // Never resolves, so the form stays in its submitting state
+    vi.stubGlobal('fetch', vi.fn(() => new Promise<Response>(() => {})))
+    const wrapper = await mountFilledForm()
+
+    await wrapper.find('form').trigger('submit')
+    await flushPromises()
+
+    const submitButton = wrapper.find('button[type="submit"]')
+    expect(submitButton.attributes('disabled')).toBeDefined()
+    expect(submitButton.text()).toBe('Redirecting to checkout...')
+  })
+
+  it('sends the order to create-checkout with no consent field', async () => {
     const fetchMock = mockCheckoutFetch()
     const wrapper = await mountFilledForm()
 
-    await wrapper.find('#reading-withdrawal-waiver').setValue(true)
     await wrapper.find('form').trigger('submit')
     await flushPromises()
 
     expect(fetchMock).toHaveBeenCalledTimes(1)
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit]
     expect(url).toBe('/api/create-checkout')
-    expect(JSON.parse(init.body as string)).toMatchObject({
+    const sentBody = JSON.parse(init.body as string)
+    expect(sentBody).toMatchObject({
       readingType: 'personal',
       names: ['Anna'],
       birthDates: ['1990-05-14'],
       email: 'anna@example.com',
-      withdrawalWaiver: true,
+      isGift: false,
     })
+    expect(sentBody).not.toHaveProperty('withdrawalWaiver')
   })
 })

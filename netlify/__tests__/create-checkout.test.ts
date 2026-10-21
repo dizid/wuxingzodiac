@@ -29,8 +29,10 @@ const validReading = {
   birthDates: ['1990-05-14'],
   email: 'anna@example.com',
   isGift: false,
-  withdrawalWaiver: true,
 }
+
+// No consent box (Marc, 2026-10-21): this policy wording must never come back
+const BANNED_POLICY_COPY = /withdrawal|waiver|waive|14-day|full refund/i
 
 beforeEach(() => {
   createSession.mockReset()
@@ -90,33 +92,40 @@ describe('create-checkout function', () => {
       expect(params.success_url).toBe('https://wuxingzodiac.me/report/download?session_id={CHECKOUT_SESSION_ID}')
     })
 
-    it('records the withdrawal waiver with a server timestamp and repeats it above the pay button', async () => {
+    it('needs no consent field: the order body alone starts a checkout (no 400)', async () => {
       createSession.mockResolvedValue({ url: 'https://checkout.stripe.com/c/pay/cs_test_123' })
-      const before = Date.now()
+
+      expect(validReading).not.toHaveProperty('withdrawalWaiver')
+      const res = await createCheckout(post(validReading), context)
+
+      expect(res.status).toBe(200)
+      expect(createSession).toHaveBeenCalledTimes(1)
+    })
+
+    it('stores no consent keys in the Stripe metadata, only the order details', async () => {
+      createSession.mockResolvedValue({ url: 'https://checkout.stripe.com/c/pay/cs_test_123' })
 
       await createCheckout(post(validReading), context)
 
-      const params = createSession.mock.calls[0]![0]
-      expect(params.metadata.withdrawal_waiver).toBe('accepted')
-      const consentAt = Date.parse(params.metadata.withdrawal_waiver_at)
-      expect(new Date(consentAt).toISOString()).toBe(params.metadata.withdrawal_waiver_at)
-      expect(consentAt).toBeGreaterThanOrEqual(before)
-      expect(consentAt).toBeLessThanOrEqual(Date.now())
-      expect(params.custom_text.submit.message).toContain('delivered immediately')
-      expect(params.custom_text.submit.message).toContain('14-day right of withdrawal')
-      expect(params.custom_text.submit.message).toContain('all sales are final')
+      const { metadata } = createSession.mock.calls[0]![0]
+      expect(metadata).not.toHaveProperty('withdrawal_waiver')
+      expect(metadata).not.toHaveProperty('withdrawal_waiver_at')
+      expect(Object.keys(metadata).filter(key => /withdrawal|waiver/i.test(key))).toEqual([])
+      expect(metadata.reading_type).toBe('personal')
+      expect(metadata.email).toBe('anna@example.com')
+      expect(metadata.plugaff_app).toBe('wuxingzodiac')
     })
 
-    it.each([
-      ['missing', undefined],
-      ['false', false],
-      ['a string instead of true', 'true'],
-    ])('refuses a checkout when the withdrawal waiver is %s (400, no Stripe call)', async (_label, waiver) => {
-      const res = await createCheckout(post({ ...validReading, withdrawalWaiver: waiver }), context)
+    it('keeps a plain delivery note above the pay button, without policy wording', async () => {
+      createSession.mockResolvedValue({ url: 'https://checkout.stripe.com/c/pay/cs_test_123' })
 
-      expect(res.status).toBe(400)
-      expect((await res.json()).error).toContain('14-day right of withdrawal')
-      expect(createSession).not.toHaveBeenCalled()
+      await createCheckout(post(validReading), context)
+
+      const message: string = createSession.mock.calls[0]![0].custom_text.submit.message
+      expect(message).toBe(
+        'Your Personal Reading is based on your birth-year sign (Metal Horse) and the five elements, written for you by name, and emailed to you as a PDF.',
+      )
+      expect(message).not.toMatch(BANNED_POLICY_COPY)
     })
   })
 })
