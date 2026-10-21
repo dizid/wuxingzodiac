@@ -132,7 +132,8 @@ Replaces the static per-sign Elemental Blueprint PDFs (legacy orders still downl
 - **Server code imports:** shared `src/` files used by functions must use relative runtime imports — the `@/` alias only works in Vite (type-only `@/` imports are fine)
 - **Sample PDF:** `npx tsx scripts/generate-sample-reading.ts --name "Marc" --date 1984-06-12 [--send-to you@example.com]` (`--from-json` re-renders saved text without calling Claude). Output in `scripts/sample-readings/` (gitignored)
 - **Env vars:** `ANTHROPIC_API_KEY`, `RESEND_API_KEY` (send-only, wuxingzodiac.me), `SUPPORT_EMAIL` (alerts + reply-to), `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID`, `STRIPE_WEBHOOK_SECRET`, `DATABASE_URL`, optional `CHROMIUM_PACK_URL`
-- **Testing on Netlify without real money:** draft deploy with per-deploy Stripe test env — `npx netlify-cli@27 deploy --alias readings-test --env STRIPE_SECRET_KEY=sk_test_… --env STRIPE_PRICE_ID=<test price> --env STRIPE_WEBHOOK_SECRET=<stripe listen --print-secret> --env SITE_URL=https://readings-test--wuxingzodiac.netlify.app`, then `stripe listen --forward-to <draft>/api/stripe-webhook` and pay with card 4242 4242 4242 4242. Note: the draft still uses the production `DATABASE_URL`
+- **On/off switch:** `READING_LIVE=true` (Netlify env, builds + functions; set 2026-10-21) shows the order form on `/reading` and lets `create-checkout` start a checkout. Unset = `/reading` shows the launch waitlist and `create-checkout` returns 410. Needs a redeploy after changing. The reading is only sold on `/reading` (sign/calculator/result pages link there via `ReadingCTA`)
+- **Testing on Netlify without real money:** draft deploy with per-deploy Stripe test env — `npx netlify-cli@27 deploy --alias readings-test --env STRIPE_SECRET_KEY=sk_test_… --env STRIPE_PRICE_ID=<test price> --env STRIPE_WEBHOOK_SECRET=<stripe listen --print-secret> --env SITE_URL=https://readings-test--wuxingzodiac.netlify.app`, then `stripe listen --forward-to <draft>/api/stripe-webhook` and pay with card 4242 4242 4242 4242. Note: the draft still uses the production `DATABASE_URL`. Add `--env READING_LIVE=true` and build with `READING_LIVE=true` in the shell. As of 2026-10-21 every local Stripe test key (`.env`, Stripe CLI login) had expired, and a per-deploy `--env STRIPE_WEBHOOK_SECRET` did not reach the draft's webhook function (the other overrides did)
 
 ### SEO
 
@@ -163,9 +164,9 @@ Each sign page must link to:
 ## Deployment
 
 - **Domain:** https://wuxingzodiac.me (Netlify DNS zone `6993c75e0d1a62592643d6ce`)
-- **Netlify:** site `wuxingzodiac`, ID `d2d7189e-e380-4f0d-8abf-9bf7c739260a`, team `dizid`; functions region us-east-2; env vars set for all contexts (non-secret)
+- **Netlify:** site `wuxingzodiac`, ID `d2d7189e-e380-4f0d-8abf-9bf7c739260a`, team `dizid` (account ID `5a893ecd48769b7222157c43`); functions region us-east-2; env vars set for all contexts (non-secret)
 - **GitHub:** https://github.com/dizid/wuxingzodiac (branch `main` auto-deploys)
-- **Neon:** project `still-resonance-44574632` (name `wuxingzodiac`, aws-us-east-2), database `neondb`, endpoint `ep-sparkling-sky-ajhsmw8w` — dedicated to this site (`blog_posts`, `report_orders`)
-- **Stripe:** account `acct_1STUbg8gBja0qkMx` (Dizid, shared with other projects); live webhook `we_1T1oI88gBja0qkMxcYlrrl3F` → `/api/stripe-webhook` (events: `checkout.session.completed`, `checkout.session.async_payment_succeeded`); live price `price_1T1o9B8gBja0qkMxsDGlLY57` ($9.90); test price `price_1UQ2vm8gBja0qkMxWMghpgi8`
+- **Neon:** project `still-resonance-44574632` (name `wuxingzodiac`, aws-us-east-2), branch `br-royal-river-ajv8s3ss` (main), database `neondb`, role `neondb_owner`, endpoint `ep-sparkling-sky-ajhsmw8w` (pooled) — dedicated to this site (`blog_posts`, `report_orders`). Password rotated 2026-10-21; `DATABASE_URL` is the only Netlify var using it (plus local `.env`)
+- **Stripe:** account `acct_1STUbg8gBja0qkMx` (Dizid, shared with other projects); live webhook `we_1T1oI88gBja0qkMxcYlrrl3F` → `/api/stripe-webhook` (events: `checkout.session.completed`, `checkout.session.async_payment_succeeded`); product `prod_TznkMqLSwRJh4g` ("WuXing Personal Reading"), live price `price_1T1o9B8gBja0qkMxsDGlLY57` ($9.90); test price `price_1UQ2vm8gBja0qkMxWMghpgi8`
 - **Resend:** domain `wuxingzodiac.me` (ID `718db53b-ea69-480b-b367-6675b95baa0a`, eu-west-1, verified); sender `readings@wuxingzodiac.me`; API key `wuxingzodiac-readings` is send-only for this domain
 - **GA4:** `G-5M7CY55LL8`
