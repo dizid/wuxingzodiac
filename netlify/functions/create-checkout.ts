@@ -1,15 +1,18 @@
 import type { Context } from "@netlify/functions"
 import Stripe from 'stripe'
+import { validateReadingInput, toStripeMetadata, READING_TYPES } from '../../src/lib/readings/types'
+import { getSignForBirthDate } from '../../src/lib/readings/sign'
 
-const VALID_ELEMENTS = ['wood', 'fire', 'earth', 'metal', 'water']
-const VALID_ANIMALS = ['rat', 'ox', 'tiger', 'rabbit', 'dragon', 'snake', 'horse', 'goat', 'monkey', 'rooster', 'dog', 'pig']
+function jsonResponse(body: Record<string, unknown>, status: number) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' }
+  })
+}
 
 export default async (req: Request, _context: Context) => {
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json' }
-    })
+    return jsonResponse({ error: 'Method not allowed' }, 405)
   }
 
   // Read PlugAff affiliate ref from cookie
@@ -22,23 +25,20 @@ export default async (req: Request, _context: Context) => {
   const plugaffRef = cookies['plugaff_ref'] || ''
 
   try {
-    const { slug } = await req.json()
-
-    if (!slug || typeof slug !== 'string') {
-      return new Response(JSON.stringify({ error: 'Missing or invalid slug' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      })
+    // Body: { readingType, names[], birthDates[], email, isGift, recipientName?, giftMessage? }
+    const body: unknown = await req.json().catch(() => null)
+    const validation = validateReadingInput(body)
+    if (!validation.ok) {
+      return jsonResponse({ error: validation.error }, 400)
     }
 
-    // Validate slug format: element-animal
-    const parts = slug.split('-')
-    if (parts.length !== 2 || !VALID_ELEMENTS.includes(parts[0]) || !VALID_ANIMALS.includes(parts[1])) {
-      return new Response(JSON.stringify({ error: 'Invalid zodiac sign slug' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      })
+    const input = validation.input
+    if (!READING_TYPES[input.type].available) {
+      return jsonResponse({ error: 'This reading is not available yet' }, 400)
     }
+
+    // Sign is always computed server-side from the birth date
+    const sign = getSignForBirthDate(input.birthDates[0]!)
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
@@ -47,22 +47,27 @@ export default async (req: Request, _context: Context) => {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
-      metadata: { sign_slug: slug, product: 'elemental_blueprint', plugaff_ref: plugaffRef, plugaff_app: 'wuxingzodiac' },
-      success_url: `${siteUrl}/report/download?session={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl}/zodiac/${slug}?purchase=cancelled`,
+      customer_email: input.email,
+      metadata: {
+        ...toStripeMetadata(input, sign.slug),
+        plugaff_ref: plugaffRef,
+        plugaff_app: 'wuxingzodiac',
+      },
+      // Shown above the pay button: honest about what the reading is based on
+      custom_text: {
+        submit: {
+          message: `Your ${READING_TYPES[input.type].label} is based on your birth-year sign (${sign.name}) and the five elements, written for you by name, and emailed to you as a PDF.`,
+        },
+      },
+      success_url: `${siteUrl}/report/download?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${siteUrl}/zodiac/${sign.slug}?purchase=cancelled`,
     })
 
-    return new Response(JSON.stringify({ url: session.url }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    })
+    return jsonResponse({ url: session.url }, 200)
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error'
     console.error('Checkout creation error:', message)
-    return new Response(JSON.stringify({ error: 'Failed to create checkout session' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    })
+    return jsonResponse({ error: 'Failed to create checkout session' }, 500)
   }
 }
 

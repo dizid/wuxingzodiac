@@ -1,0 +1,30 @@
+{
+  "extends": "@tsconfig/node24/tsconfig.json",
+  "include": [
+    "src/lib/readings/**/*.ts",
+    "netlify/functions/create-checkout.ts",
+    "netlify/functions/stripe-webhook.ts",
+    "netlify/functions/download-report.ts",
+    "netlify/functions/generate-reading-background.ts",
+    "scripts/generate-sample-reading.ts"
+  ],
+  "exclude": ["src/**/__tests__/*"],
+  "compilerOptions": {
+    "noEmit": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.server.tsbuildinfo",
+
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["node"],
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noUncheckedIndexedAccess": true,
+
+    // Type-only `@/` imports in shared src/ files (runtime imports must stay relative)
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

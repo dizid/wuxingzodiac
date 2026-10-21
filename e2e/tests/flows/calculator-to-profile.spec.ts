@@ -181,12 +181,12 @@ test.describe('Calculator → Result → Profile flow', () => {
 
     await expect(page.locator('h2').filter({ hasText: /Metal Horse/i })).toBeVisible()
 
-    // Blueprint CTA should be visible in the result section
-    const blueprintCta = page.locator('text=Your Elemental Blueprint').first()
-    await expect(blueprintCta).toBeVisible()
+    // Personal Reading CTA should be visible in the result section
+    const readingCta = page.locator('text=Your Personal Reading').first()
+    await expect(readingCta).toBeVisible()
 
     // The purchase button should also be visible
-    const purchaseBtn = page.locator('button', { hasText: /Get Your Blueprint/i }).first()
+    const purchaseBtn = page.locator('button', { hasText: /Get Your Personal Reading/i }).first()
     await expect(purchaseBtn).toBeVisible()
   })
 })

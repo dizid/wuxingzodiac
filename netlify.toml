@@ -5,6 +5,12 @@
 [dev]
   command = "npm run dev"
 
+# Personalized reading generator: Playwright + Lambda-compatible Chromium.
+# Shipped as node_modules (not bundled by esbuild). chromium-min downloads the
+# Chromium pack at cold start — see src/lib/readings/server/render-pdf.ts.
+[functions."generate-reading-background"]
+  external_node_modules = ["@sparticuz/chromium-min", "playwright-core"]
+
 [[headers]]
   for = "/*"
   [headers.values]

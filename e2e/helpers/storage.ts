@@ -22,5 +22,8 @@ export async function clearUserSign(page: Page) {
 // ============================================
 
 export async function clearAllStorage(page: Page) {
+  // Before the first navigation the page is about:blank, where Chromium denies
+  // localStorage access. Each test gets a fresh context, so storage is already empty.
+  if (page.url() === 'about:blank') return
   await page.evaluate(() => localStorage.clear())
 }

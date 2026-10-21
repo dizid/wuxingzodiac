@@ -108,6 +108,7 @@ interface DownloadReportMockOptions {
   signName?: string
   signSlug?: string
   failCount?: number // Number of 404s before succeeding (for race condition testing)
+  delayMs?: number // Delay every response so transient states (loading, downloading) are observable
 }
 
 export async function mockDownloadReport(page: Page, opts?: DownloadReportMockOptions) {
@@ -115,9 +116,13 @@ export async function mockDownloadReport(page: Page, opts?: DownloadReportMockOp
   const signName = opts?.signName ?? 'Fire Horse'
   const signSlug = opts?.signSlug ?? 'fire-horse'
 
-  await page.route('**/api/download-report**', (route: Route) => {
+  await page.route('**/api/download-report**', async (route: Route) => {
     const url = new URL(route.request().url())
     const action = url.searchParams.get('action')
+
+    if (opts?.delayMs) {
+      await new Promise((resolve) => setTimeout(resolve, opts.delayMs))
+    }
 
     if (failsRemaining > 0) {
       failsRemaining--

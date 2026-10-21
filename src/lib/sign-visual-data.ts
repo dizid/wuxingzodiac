@@ -13,7 +13,8 @@
 // ============================================
 
 import type { ZodiacElement, ZodiacAnimal, SignVisualData, ElementPercentages, TraitScores } from '@/types'
-import { GENERATES, DESTROYS } from '@/lib/wuxing-cycles'
+// Relative import: this file is also bundled into Netlify functions (no `@/` alias there)
+import { GENERATES, DESTROYS } from './wuxing-cycles'
 
 // ============================================
 // ANIMAL BASE TRAITS (0-100)

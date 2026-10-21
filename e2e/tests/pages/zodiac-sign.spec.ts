@@ -105,14 +105,13 @@ test.describe('ZodiacSignPage — /zodiac/fire-horse', () => {
     expect(challengingCount).toBeGreaterThanOrEqual(3)
   })
 
-  // ── 10. Blueprint CTA renders ─────────────────────────────────────────────
-  test('Elemental Blueprint CTA renders with purchase button', async ({ page }) => {
-    const blueprintHeading = page.locator('h3', { hasText: /Elemental Blueprint/i })
-    await expect(blueprintHeading).toBeVisible()
+  // ── 10. Personal Reading CTA renders ──────────────────────────────────────
+  test('Personal Reading CTA renders with purchase button', async ({ page }) => {
+    const readingHeading = page.locator('h3', { hasText: /Personal Reading/i })
+    await expect(readingHeading).toBeVisible()
 
     // Purchase button shows the price
-    const purchaseBtn = page.locator('button', { hasText: /Blueprint.*\$9\.99|\$9\.99.*Blueprint/i })
-      .or(page.locator('button', { hasText: /Get Your Blueprint/i }))
+    const purchaseBtn = page.locator('button', { hasText: /Get Your Personal Reading.*\$9\.90/i })
     await expect(purchaseBtn).toBeVisible()
   })
 
@@ -138,12 +137,10 @@ test.describe('ZodiacSignPage — /zodiac/fire-horse', () => {
     expect(animalCount).toBe(4)
   })
 
-  // ── 12. Sign Shop section renders ────────────────────────────────────────
-  test('Sign Shop section renders with product links', async ({ page }) => {
-    // SignShop renders Amazon affiliate links
+  // ── 12. No Amazon affiliate links (removed) ──────────────────────────────
+  test('does not render Amazon affiliate links', async ({ page }) => {
     const amazonLinks = page.locator('a[href*="amazon"]')
-    const count = await amazonLinks.count()
-    expect(count).toBeGreaterThan(0)
+    await expect(amazonLinks).toHaveCount(0)
   })
 
   // ── 13. Loading state (skeleton) appears before content loads ─────────────

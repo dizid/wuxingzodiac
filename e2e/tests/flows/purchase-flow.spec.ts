@@ -2,49 +2,61 @@ import { test, expect } from '@playwright/test'
 import { mockAllApis, mockStripeCheckout, mockDownloadReport } from '../../helpers/api-mocks'
 import { waitForApp, goto } from '../../helpers/test-app'
 import { clearAllStorage } from '../../helpers/storage'
-import type { Route } from '@playwright/test'
+import type { Page, Route } from '@playwright/test'
 
-test.describe('Blueprint purchase flow', () => {
+// Open the Personal Reading intake form on a sign page
+async function openIntakeForm(page: Page) {
+  await page.waitForSelector('text=Your Personal Reading', { timeout: 15_000 })
+  await page.locator('button', { hasText: /Get Your Personal Reading/i }).first().click()
+  await expect(page.locator('#reading-name')).toBeVisible()
+}
+
+async function fillIntakeForm(page: Page) {
+  await page.locator('#reading-name').fill('Marc')
+  await page.locator('#reading-birthdate').fill('1984-06-12')
+  await page.locator('#reading-email').fill('marc@example.com')
+}
+
+test.describe('Personal reading purchase flow', () => {
   test.beforeEach(async ({ page }) => {
     await mockAllApis(page)
     await clearAllStorage(page)
   })
 
-  test('1. Sign page → Click Blueprint CTA → mock create-checkout → verify redirect URL set', async ({ page }) => {
-    const expectedCheckoutUrl = 'https://checkout.stripe.com/test-session-fire-horse'
-
-    // Override the checkout mock with a specific URL
-    await mockStripeCheckout(page, { checkoutUrl: expectedCheckoutUrl })
-
-    // Track navigation attempts (redirect to external URL)
-    let redirectTarget = ''
-    page.on('request', (req) => {
-      if (req.url().includes('checkout.stripe.com')) {
-        redirectTarget = req.url()
-      }
+  test('1. Sign page → open intake form → submit → create-checkout receives reading details', async ({ page }) => {
+    let checkoutBody: Record<string, unknown> | null = null
+    await page.route('**/api/create-checkout', async (route: Route) => {
+      checkoutBody = route.request().postDataJSON()
+      // Small delay so the loading state is observable before the redirect
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ url: 'https://checkout.stripe.com/test-session-fire-horse' }),
+      })
     })
 
     await goto(page, '/zodiac/fire-horse')
+    await openIntakeForm(page)
+    await fillIntakeForm(page)
 
-    // Wait for the sign page content to load
-    await page.waitForSelector('text=Your Elemental Blueprint', { timeout: 15_000 })
+    await page.locator('button', { hasText: /Continue to Payment/i }).click()
 
-    // Click the Blueprint purchase button
-    const purchaseBtn = page.locator('button', { hasText: /Get Your Blueprint/i }).first()
-    await expect(purchaseBtn).toBeEnabled()
-    await purchaseBtn.click()
-
-    // The button should show loading state
+    // Button switches to loading state while redirecting to Stripe
     await expect(page.locator('button', { hasText: /Redirecting to checkout/i })).toBeVisible()
-
-    // The API route should have been called — verify the mock intercepted it
-    // (redirect to external URL is blocked in test env; we verify the button state transition)
-    await expect(page.locator('button', { hasText: /Redirecting to checkout|Get Your Blueprint/i })).toBeVisible()
+    await expect.poll(() => checkoutBody).toMatchObject({
+      readingType: 'personal',
+      names: ['Marc'],
+      birthDates: ['1984-06-12'],
+      email: 'marc@example.com',
+      isGift: false,
+    })
   })
 
-  test('2. Checkout loading state on button', async ({ page }) => {
-    // Delay the checkout response to observe loading state
+  test('2. Gift option sends recipient + message and shows the computed sign', async ({ page }) => {
+    let checkoutBody: Record<string, unknown> | null = null
     await page.route('**/api/create-checkout', async (route: Route) => {
+      checkoutBody = route.request().postDataJSON()
       await new Promise((resolve) => setTimeout(resolve, 500))
       await route.fulfill({
         status: 200,
@@ -54,14 +66,27 @@ test.describe('Blueprint purchase flow', () => {
     })
 
     await goto(page, '/zodiac/fire-horse')
-    await page.waitForSelector('text=Your Elemental Blueprint', { timeout: 15_000 })
+    await openIntakeForm(page)
+    await fillIntakeForm(page)
 
-    const purchaseBtn = page.locator('button', { hasText: /Get Your Blueprint/i }).first()
-    await purchaseBtn.click()
+    // 12 June 1984 → Wood Rat (preview helps buyers confirm their sign)
+    await expect(page.locator('text=Wood Rat')).toBeVisible()
+
+    await page.locator('label', { hasText: /This is a gift/i }).click()
+    await page.locator('#reading-recipient').fill('Sam')
+    await page.locator('#reading-message').fill('Happy birthday!')
+
+    const submitBtn = page.locator('button[type="submit"]')
+    await submitBtn.click()
 
     // Loading state should appear
     await expect(page.locator('button', { hasText: /Redirecting to checkout/i })).toBeVisible()
-    await expect(purchaseBtn).toBeDisabled()
+    await expect(submitBtn).toBeDisabled()
+    await expect.poll(() => checkoutBody).toMatchObject({
+      isGift: true,
+      recipientName: 'Sam',
+      giftMessage: 'Happy birthday!',
+    })
   })
 
   test('3. Checkout error state (mock 500)', async ({ page }) => {
@@ -69,20 +94,38 @@ test.describe('Blueprint purchase flow', () => {
     await mockStripeCheckout(page, { status: 500 })
 
     await goto(page, '/zodiac/fire-horse')
-    await page.waitForSelector('text=Your Elemental Blueprint', { timeout: 15_000 })
+    await openIntakeForm(page)
+    await fillIntakeForm(page)
+    await page.locator('button', { hasText: /Continue to Payment/i }).click()
 
-    const purchaseBtn = page.locator('button', { hasText: /Get Your Blueprint/i }).first()
-    await purchaseBtn.click()
-
-    // Error message should appear in the BlueprintCTA component
+    // Error message should appear in the intake form
     await expect(page.locator('text=Failed to create checkout session')).toBeVisible({ timeout: 10_000 })
 
     // Button should be re-enabled after error
-    await expect(page.locator('button', { hasText: /Get Your Blueprint/i })).toBeEnabled({ timeout: 5_000 })
+    await expect(page.locator('button', { hasText: /Continue to Payment/i })).toBeEnabled({ timeout: 5_000 })
+  })
+
+  test('3b. Client-side validation blocks invalid details without calling checkout', async ({ page }) => {
+    let checkoutCalls = 0
+    await page.route('**/api/create-checkout', async (route: Route) => {
+      checkoutCalls++
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ url: 'https://checkout.stripe.com/test' }) })
+    })
+
+    await goto(page, '/zodiac/fire-horse')
+    await openIntakeForm(page)
+    await page.locator('#reading-name').fill('<script>')
+    await page.locator('#reading-birthdate').fill('1984-06-12')
+    await page.locator('#reading-email').fill('marc@example.com')
+    await page.locator('button', { hasText: /Continue to Payment/i }).click()
+
+    await expect(page.locator('[role="alert"]')).toContainText(/letters/i)
+    expect(checkoutCalls).toBe(0)
   })
 
   test('4. Full download flow: /report/download?session=test → check → ready → click download → mock PDF', async ({ page }) => {
-    await mockDownloadReport(page, { signName: 'Fire Horse', signSlug: 'fire-horse' })
+    // Delay so the loading and "Downloading..." states are observable before the mock answers
+    await mockDownloadReport(page, { signName: 'Fire Horse', signSlug: 'fire-horse', delayMs: 800 })
 
     await goto(page, '/report/download?session=cs_test_abc123')
 
@@ -112,6 +155,7 @@ test.describe('Blueprint purchase flow', () => {
       signName: 'Fire Horse',
       signSlug: 'fire-horse',
       failCount: 2,
+      delayMs: 800,
     })
 
     await goto(page, '/report/download?session=cs_test_race')
@@ -162,17 +206,17 @@ test.describe('Blueprint purchase flow', () => {
     await expect(page.locator('h1', { hasText: /Your Blueprint is Ready/i })).toBeVisible({ timeout: 10_000 })
   })
 
-  test('7. Blueprint CTA present on sign page AND result page', async ({ page }) => {
+  test('7. Reading CTA present on sign page AND result page', async ({ page }) => {
     // Check sign page
     await goto(page, '/zodiac/fire-horse')
-    await page.waitForSelector('text=Your Elemental Blueprint', { timeout: 15_000 })
-    await expect(page.locator('text=Your Elemental Blueprint').first()).toBeVisible()
-    await expect(page.locator('button', { hasText: /Get Your Blueprint/i }).first()).toBeVisible()
+    await page.waitForSelector('text=Your Personal Reading', { timeout: 15_000 })
+    await expect(page.locator('text=Your Personal Reading').first()).toBeVisible()
+    await expect(page.locator('button', { hasText: /Get Your Personal Reading/i }).first()).toBeVisible()
 
     // Check result page
     await goto(page, '/result/fire-horse')
-    await expect(page.locator('text=Your Elemental Blueprint').first()).toBeVisible()
-    await expect(page.locator('button', { hasText: /Get Your Blueprint/i }).first()).toBeVisible()
+    await expect(page.locator('text=Your Personal Reading').first()).toBeVisible()
+    await expect(page.locator('button', { hasText: /Get Your Personal Reading/i }).first()).toBeVisible()
   })
 
   test('8. Analytics tracked during purchase flow (verify no console errors)', async ({ page }) => {
@@ -184,11 +228,11 @@ test.describe('Blueprint purchase flow', () => {
     })
 
     await goto(page, '/zodiac/fire-horse')
-    await page.waitForSelector('text=Your Elemental Blueprint', { timeout: 15_000 })
+    await openIntakeForm(page)
+    await fillIntakeForm(page)
 
-    // Click purchase button
-    const purchaseBtn = page.locator('button', { hasText: /Get Your Blueprint/i }).first()
-    await purchaseBtn.click()
+    // Submit the intake form
+    await page.locator('button', { hasText: /Continue to Payment/i }).click()
 
     // Wait briefly for any async operations
     await page.waitForTimeout(500)
@@ -204,5 +248,52 @@ test.describe('Blueprint purchase flow', () => {
     )
 
     expect(criticalErrors).toHaveLength(0)
+  })
+
+  test('9. Personalized reading: ?session_id= polls while generating, then shows it was emailed', async ({ page }) => {
+    let checks = 0
+    await page.route('**/api/download-report**', async (route: Route) => {
+      const url = new URL(route.request().url())
+      expect(url.searchParams.get('session_id')).toBe('cs_test_reading')
+      expect(url.searchParams.get('action')).toBe('check')
+
+      checks++
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          status: checks < 2 ? 'generating' : 'delivered',
+          productName: 'Personal Reading',
+          signName: 'Wood Rat',
+          signSlug: 'wood-rat',
+          email: 'm•••@example.com',
+        }),
+      })
+    })
+
+    await goto(page, '/report/download?session_id=cs_test_reading')
+
+    // First check says "generating" → page keeps polling and names the inbox
+    await expect(page.locator('h1', { hasText: /Writing Your Reading/i })).toBeVisible({ timeout: 10_000 })
+    await expect(page.locator('text=m•••@example.com').first()).toBeVisible()
+
+    // Second check says "delivered" — no download button, the PDF is emailed
+    await expect(page.locator('h1', { hasText: /in Your Inbox/i })).toBeVisible({ timeout: 15_000 })
+    await expect(page.locator('button', { hasText: /Download PDF/i })).toHaveCount(0)
+  })
+
+  test('10. Failed reading tells the buyer it will still be emailed', async ({ page }) => {
+    await page.route('**/api/download-report**', (route: Route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 'failed', productName: 'Personal Reading', signName: 'Wood Rat', email: 'm•••@example.com' }),
+      }),
+    )
+
+    await goto(page, '/report/download?session_id=cs_test_failed')
+
+    await expect(page.locator('h1', { hasText: /Something Went Wrong/i })).toBeVisible({ timeout: 10_000 })
+    await expect(page.locator('text=no need to order again')).toBeVisible()
   })
 })

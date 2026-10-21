@@ -46,7 +46,7 @@ src/
     ui/      ElementGlassCard.vue, NewsletterForm.vue, ShareButtons.vue
     zodiac/  SignHero, SignTraits, SignCompatibility, SignCareer, SignLove,
              SignHealth, SignLucky, SignFamous, SignCulture, SignHoroscope,
-             SignNavTabs, SignShop, MonetizationSlot
+             SignNavTabs, BlueprintCTA
     blog/    BlogCard.vue
     compatibility/  CompatibilityPicker.vue, CompatibilityResults.vue
   composables/
@@ -61,8 +61,6 @@ src/
       <slug>.ts                   # 60 individual sign content files
     zodiac-data.ts                # Animals, elements, year mappings
     compatibility-matrix.ts       # Pre-computed 60x60 compatibility scores
-    affiliate-config.ts           # Affiliate product configurations
-    sign-shop.ts                  # Auto-generated shop categories per sign
     db.ts                         # Neon PostgreSQL connection
     markdown.ts                   # Markdown rendering utility
   types/index.ts                  # All shared TypeScript interfaces
@@ -103,19 +101,38 @@ Router guards in `router/index.ts` validate all dynamic params against known slu
 
 ### Monetization
 
-- `MonetizationSlot` component handles three types: `'ad'`, `'affiliate'`, `'premium'`
-- `SignShop` component renders personalized product recommendations per sign
-- Affiliate config in `lib/affiliate-config.ts`, shop logic in `lib/sign-shop.ts`
-- Amazon Associates ID: `wuxing20-20`
-- Ad slots sit between sign page sections 3-4 and 7-8. Keep monetization non-intrusive.
+- Personalized PDF reading via Stripe Checkout (see Personalized Readings below)
+- Fourthwall merch (`SignMerchCTA`, `/shop`)
+- Promoten/PlugAff inbound affiliate tracking (`index.html`, `netlify.toml` CSP, `create-checkout.ts` cookie → Stripe metadata)
+- No outbound affiliate links or ads (Amazon Associates removed 2026-10-13). Keep monetization non-intrusive.
 
 ### API Layer
 
 Netlify Functions in `netlify/functions/`:
 - `blog-posts.ts` — Blog CRUD API (Neon PostgreSQL)
 - `newsletter-subscribe.ts` — Newsletter subscription endpoint
+- `create-checkout.ts` — Validates reading intake, creates Stripe Checkout session (all inputs in metadata)
+- `stripe-webhook.ts` — Records order in `report_orders`, queues reading generation, GA4 purchase event
+- `generate-reading-background.ts` — Background function: Claude text → Playwright PDF → emailed via Resend (nothing stored)
+- `download-report.ts` — Status for `/report/download?session_id=` (reading: generating/delivered/failed) + legacy Blueprint PDF download (`?session=`)
 
 Do NOT use `netlify dev`; the Vite plugin (`@netlify/vite-plugin`) handles function emulation.
+
+### Personalized Readings
+
+Replaces the static per-sign Elemental Blueprint PDFs (legacy orders still download them).
+
+- **Flow:** `BlueprintCTA` → `ReadingIntakeForm` (name, birth date, email, gift) → `create-checkout` → Stripe → `stripe-webhook` (paid) → `generate-reading-background` → PDF emailed to the buyer. `/report/download` just shows status ("in your inbox")
+- **Nothing is stored:** inputs live in Stripe session metadata; the PDF exists only in memory until Resend sends it. `report_orders` tracks delivery state only (`reading_status` queued/generating/delivered/failed, `reading_attempts`, `reading_error`, `delivered_at` — migration `scripts/migrations/002-reading-delivery.sql`). `reading_status IS NULL` = legacy Blueprint order
+- **Engine:** `src/lib/readings/` — `types.ts` + `sign.ts` are browser-safe (validation, Stripe metadata codec, birth date → sign). `server/` is Node-only (excluded from the app tsconfig, checked by `tsconfig.server.json`): context, Claude call (`claude-sonnet-5-5`, effort `medium`, structured outputs, streaming), HTML templates, Playwright render, `orders.ts` (DB state), `email.ts` (Resend)
+- **Reading types:** one `server/prompts/<type>.ts` + `server/templates/<type>.ts` per type, registered in `server/registry.ts`. Only `personal` is live; `relationship`, `year-2027`, `child` are declared in `types.ts` with `available: false`
+- **Safety / cost:** background function re-verifies payment with Stripe and atomically claims the order (max 3 attempts, retried in-process 30 s apart — Netlify does NOT reliably retry background functions). Final failure emails `SUPPORT_EMAIL`. See `AI-COST-RISK.md`. All text is HTML-escaped; rendering only allows Google Fonts requests
+- **Element chart:** element "percentages" from `sign-visual-data.ts` are independent 0–100 strength scores (same as the site's pentagon), shown as `/100` — never as shares
+- **Chromium on Netlify:** `@sparticuz/chromium-min` (the full package exceeds Lambda's 50 MB zipped limit) downloads the pack from GitHub on cold start; override with `CHROMIUM_PACK_URL`. Keep `playwright-core` and `@sparticuz/chromium-min` versions pinned together
+- **Server code imports:** shared `src/` files used by functions must use relative runtime imports — the `@/` alias only works in Vite (type-only `@/` imports are fine)
+- **Sample PDF:** `npx tsx scripts/generate-sample-reading.ts --name "Marc" --date 1984-06-12 [--send-to you@example.com]` (`--from-json` re-renders saved text without calling Claude). Output in `scripts/sample-readings/` (gitignored)
+- **Env vars:** `ANTHROPIC_API_KEY`, `RESEND_API_KEY` (send-only, wuxingzodiac.me), `SUPPORT_EMAIL` (alerts + reply-to), `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID`, `STRIPE_WEBHOOK_SECRET`, `DATABASE_URL`, optional `CHROMIUM_PACK_URL`
+- **Testing on Netlify without real money:** draft deploy with per-deploy Stripe test env — `npx netlify-cli@27 deploy --alias readings-test --env STRIPE_SECRET_KEY=sk_test_… --env STRIPE_PRICE_ID=<test price> --env STRIPE_WEBHOOK_SECRET=<stripe listen --print-secret> --env SITE_URL=https://readings-test--wuxingzodiac.netlify.app`, then `stripe listen --forward-to <draft>/api/stripe-webhook` and pay with card 4242 4242 4242 4242. Note: the draft still uses the production `DATABASE_URL`
 
 ### SEO
 
@@ -137,8 +154,18 @@ Each sign page must link to:
 ## Key Patterns
 
 - Sign content files must conform to the `SignContent` interface in `types/index.ts`
-- Each sign page has 10+ sections rendered as tab-navigable components (SignHero → SignHoroscope + SignShop)
+- Each sign page has 10+ sections rendered as tab-navigable components (SignHero → SignMatchesV2 → BlueprintCTA → SignMerchCTA)
 - All pages must be pre-renderable (no client-only data fetching for SEO-critical content)
 - Pages are lazy-loaded via Vue Router
 - Sign content loaded via `import.meta.glob` for proper Vite chunk splitting
 - Do NOT use Neon Netlify extension — use manual `DATABASE_URL` env var
+
+## Deployment
+
+- **Domain:** https://wuxingzodiac.me (Netlify DNS zone `6993c75e0d1a62592643d6ce`)
+- **Netlify:** site `wuxingzodiac`, ID `d2d7189e-e380-4f0d-8abf-9bf7c739260a`, team `dizid`; functions region us-east-2; env vars set for all contexts (non-secret)
+- **GitHub:** https://github.com/dizid/wuxingzodiac (branch `main` auto-deploys)
+- **Neon:** project `still-resonance-44574632` (name `wuxingzodiac`, aws-us-east-2), database `neondb`, endpoint `ep-sparkling-sky-ajhsmw8w` — dedicated to this site (`blog_posts`, `report_orders`)
+- **Stripe:** account `acct_1STUbg8gBja0qkMx` (Dizid, shared with other projects); live webhook `we_1T1oI88gBja0qkMxcYlrrl3F` → `/api/stripe-webhook` (events: `checkout.session.completed`, `checkout.session.async_payment_succeeded`); live price `price_1T1o9B8gBja0qkMxsDGlLY57` ($9.90); test price `price_1UQ2vm8gBja0qkMxWMghpgi8`
+- **Resend:** domain `wuxingzodiac.me` (ID `718db53b-ea69-480b-b367-6675b95baa0a`, eu-west-1, verified); sender `readings@wuxingzodiac.me`; API key `wuxingzodiac-readings` is send-only for this domain
+- **GA4:** `G-5M7CY55LL8`

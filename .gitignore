@@ -54,3 +54,6 @@ test-results/
 
 # Merch artwork (large PNGs)
 artwork/
+
+# Local sample readings (scripts/generate-sample-reading.ts) — contain personal data
+scripts/sample-readings/

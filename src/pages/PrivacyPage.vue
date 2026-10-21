@@ -14,7 +14,7 @@ usePageSeo(
       <h1 class="font-display text-4xl md:text-5xl font-bold text-ash-100 mb-4">
         Privacy Policy
       </h1>
-      <p class="text-ash-500 mb-10">Last updated: February 2026</p>
+      <p class="text-ash-500 mb-10">Last updated: October 2026</p>
 
       <div class="space-y-8 text-ash-300 leading-relaxed">
         <section>
@@ -30,7 +30,8 @@ usePageSeo(
           <p class="mb-3">We collect minimal data to operate this site:</p>
           <ul class="list-disc list-inside space-y-2 text-ash-400">
             <li><strong class="text-ash-200">Analytics data:</strong> We use Google Analytics 4 (GA4) to understand site usage. This includes anonymous page views, session duration, and general location data. No personally identifiable information is collected through analytics.</li>
-            <li><strong class="text-ash-200">Email address:</strong> If you subscribe to our newsletter via Buttondown, your email is stored by Buttondown for email delivery purposes only. If you purchase an Elemental Blueprint report, your email is collected by Stripe for payment processing and receipt delivery.</li>
+            <li><strong class="text-ash-200">Email address:</strong> If you subscribe to our newsletter via Buttondown, your email is stored by Buttondown for email delivery purposes only. If you purchase a reading, your email is collected by Stripe for payment processing and receipt delivery.</li>
+            <li><strong class="text-ash-200">Reading details:</strong> If you buy a personalized reading, we collect the first name and birth date you enter (and the recipient name and gift message, if it is a gift). These are kept with your order at Stripe and used only to write your reading. The finished PDF is emailed to you; we don't keep a copy.</li>
             <li><strong class="text-ash-200">Payment information:</strong> All payment processing is handled by Stripe. We never store, see, or have access to your credit card details.</li>
           </ul>
         </section>
@@ -59,6 +60,8 @@ usePageSeo(
             <li><strong class="text-ash-200">Stripe:</strong> Secure payment processing for digital product purchases.</li>
             <li><strong class="text-ash-200">Buttondown:</strong> Newsletter subscription management and email delivery.</li>
             <li><strong class="text-ash-200">Netlify:</strong> Website hosting and serverless function execution.</li>
+            <li><strong class="text-ash-200">Anthropic (Claude API):</strong> Writes the text of personalized readings from the name and birth date you provide.</li>
+            <li><strong class="text-ash-200">Resend:</strong> Emails your personalized reading to you.</li>
           </ul>
           <p class="mt-3">
             Each of these services has their own privacy policy governing how they handle your data.
