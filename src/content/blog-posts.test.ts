@@ -5,6 +5,17 @@ import { getAnimalForYear, getElementForYear, getLunarYear, getZodiacFromBirthda
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
+/**
+ * Outside hosts the code posts may link to (https only): the pages the T-0317 post cites.
+ * Other open branches add their own list; a rebase merges them.
+ */
+const CITED_SOURCE_HOSTS = new Set([
+  'www.chinahighlights.com',
+  'www.travelchinaguide.com',
+  'news.ubc.ca',
+  'www.hko.gov.hk',
+])
+
 /** Internal routes the posts may link to (src/router/index.ts) */
 const KNOWN_ROUTE = /^\/(zodiac(\/(animal|element)\/[a-z]+|\/[a-z]+-[a-z]+)?|blog(\/[a-z0-9-]+)?|calculator|compatibility(\/[a-z-]+\/[a-z-]+)?|reading|about|privacy|terms)$/
 
@@ -28,11 +39,14 @@ describe('code blog posts', () => {
     }
   })
 
-  it('only link to pages that exist on the site', () => {
+  it('only link to pages that exist on the site, or to the cited outside pages', () => {
     for (const post of CODE_BLOG_POSTS) {
-      const hrefs = [...post.content.matchAll(/href="([^"]+)"/g)].map(match => match[1])
+      const hrefs = [...post.content.matchAll(/href="([^"]+)"/g)].map(match => match[1]!)
       expect(hrefs.length).toBeGreaterThan(0)
-      for (const href of hrefs) expect(href).toMatch(KNOWN_ROUTE)
+      for (const href of hrefs) {
+        if (href.startsWith('https://')) expect(CITED_SOURCE_HOSTS.has(new URL(href).host), href).toBe(true)
+        else expect(href).toMatch(KNOWN_ROUTE)
+      }
     }
   })
 
