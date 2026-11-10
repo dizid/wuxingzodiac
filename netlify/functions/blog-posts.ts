@@ -4,7 +4,7 @@ import { neon } from '@neondatabase/serverless'
 import { CODE_BLOG_POSTS, getCodeBlogPost, mergeBlogPosts } from '../../src/content/blog-posts'
 
 /** Posts per page (the blog pages use the same number) */
-const PAGE_SIZE = 12
+const PAGE_SIZE = 24
 
 function json(body: unknown, status: number) {
   return new Response(JSON.stringify(body), {

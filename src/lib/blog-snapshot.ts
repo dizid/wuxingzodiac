@@ -28,7 +28,7 @@ const snapshotPosts: BlogPost[] = mergeBlogPosts(
 )
 
 /** Posts per page, same as the blog API */
-export const BLOG_PAGE_SIZE = 12
+export const BLOG_PAGE_SIZE = 24
 
 /** All snapshot posts, newest first */
 export function getSnapshotPosts(): BlogPost[] {
