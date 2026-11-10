@@ -111,6 +111,7 @@ Router guards in `router/index.ts` validate all dynamic params against known slu
 Netlify Functions in `netlify/functions/`:
 - `blog-posts.ts` — Blog CRUD API (Neon PostgreSQL)
 - **Code posts** (T-0292, Nov 2026): posts can also live in `src/content/blog-posts.ts` (no database row, so no live DB change to publish). `blog-posts.ts` merges them with the published `blog_posts` rows (newest first; a code post wins over a DB post with the same slug); `src/lib/blog-snapshot.ts` and `vite.config.ts` include them, so they're prerendered and in the sitemap from the first deploy. Add the post to `public/llms.txt` too. Tests: `src/content/blog-posts.test.ts` (fields, internal links, dates), `netlify/function-tests/blog-posts.test.ts` (API with a mocked DB; function tests must stay outside `netlify/functions/`, where every file becomes a function)
+- **IndexNow** (T-0292): key file `public/40a3488069b7279c17ddf2d6fd62b9a7.txt` (public by design). After a production deploy that adds or changes pages: `npm run indexnow -- /blog/<slug>` (only those pages) or `npm run indexnow` (every URL in the live sitemap). It refuses to submit until the key file is live
 - `newsletter-subscribe.ts` — Newsletter subscription endpoint
 - `create-checkout.ts` — Validates reading intake, creates Stripe Checkout session (all inputs in metadata)
 - `stripe-webhook.ts` — Records order in `report_orders`, queues reading generation, GA4 purchase event

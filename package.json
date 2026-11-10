@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "node scripts/blog-snapshot.mjs && vue-tsc -b && vite-ssg build",
+    "indexnow": "node scripts/indexnow.mjs",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
