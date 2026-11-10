@@ -10,8 +10,10 @@ const KNOWN_ROUTE = /^\/(zodiac(\/(animal|element)\/[a-z]+|\/[a-z]+-[a-z]+)?|blo
 
 /** Outside https hosts the code posts may cite (each post links its sources; merged from the post branches) */
 const CITED_SOURCE_HOSTS = [
-  'www.travelchinaguide.com',
   'www.chinahighlights.com',
+  'www.travelchinaguide.com',
+  'news.ubc.ca',
+  'www.hko.gov.hk',
   'language.chinadaily.com.cn',
   'global.chinadaily.com.cn',
   'my.weather.gov.hk',
@@ -21,7 +23,6 @@ const CITED_SOURCE_HOSTS = [
   'globerove.com',
   'birthcharthoroscopes.com',
   'easternfate.com',
-  'www.hko.gov.hk',
   'onlineexhibits.library.yale.edu',
 ]
 
