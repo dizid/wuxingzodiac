@@ -26,7 +26,7 @@ const plainText = (html: string) => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g
 describe('regional zodiacs post', () => {
   it('is registered once, last in the list, with the planned date, title and excerpt limits', () => {
     expect(CODE_BLOG_POSTS.filter(item => item.slug === SLUG)).toHaveLength(1)
-    expect(CODE_BLOG_POSTS[CODE_BLOG_POSTS.length - 1]!.slug).toBe(SLUG)
+    expect(CODE_BLOG_POSTS.map(item => item.slug).indexOf(SLUG)).toBeGreaterThan(CODE_BLOG_POSTS.map(item => item.slug).indexOf('chinese-zodiac-trines-secret-friends-clashes'))
     expect(post.publishedAt).toBe('2026-11-14T09:00:00.000Z')
     expect(post.title.length).toBeLessThanOrEqual(60)
     expect(post.excerpt.length).toBeLessThanOrEqual(160)

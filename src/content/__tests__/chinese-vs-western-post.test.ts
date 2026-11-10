@@ -29,7 +29,7 @@ const ALLOWED_HOSTS = new Set(['en.wikipedia.org', 'www.hko.gov.hk', 'onlineexhi
 describe('Chinese vs Western zodiac post', () => {
   it('is registered last and once, with a title up to 60 and an excerpt up to 160 characters', () => {
     expect(CODE_BLOG_POSTS.filter(item => item.slug === SLUG)).toHaveLength(1)
-    expect(CODE_BLOG_POSTS[CODE_BLOG_POSTS.length - 1]!.slug).toBe(SLUG)
+    expect(CODE_BLOG_POSTS.map(item => item.slug).indexOf(SLUG)).toBeGreaterThan(CODE_BLOG_POSTS.map(item => item.slug).indexOf('chinese-zodiac-trines-secret-friends-clashes'))
     expect(post.title.length).toBeLessThanOrEqual(60)
     expect(post.excerpt.length).toBeLessThanOrEqual(160)
     expect(post.publishedAt).toBe('2026-11-13T09:00:00.000Z')

@@ -53,6 +53,9 @@ async function get(query: string) {
 
 const codePost = CODE_BLOG_POSTS[0]!
 const TOTAL = CODE_BLOG_POSTS.length + databaseRows.length
+/** Same page size as netlify/functions/blog-posts.ts */
+const PAGE_SIZE = 24
+const TOTAL_PAGES = Math.max(1, Math.ceil(TOTAL / PAGE_SIZE))
 /** Code posts are all newer than the two database rows above */
 const codeSlugsNewestFirst = [...CODE_BLOG_POSTS]
   .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
@@ -66,31 +69,40 @@ describe('blog-posts function', () => {
   it('lists database and code posts together, newest first, without full text', async () => {
     const { status, body } = await get('?page=1')
     expect(status).toBe(200)
-    expect(body.posts.map((post: { slug: string }) => post.slug)).toEqual([
-      ...codeSlugsNewestFirst,
-      '2026-year-of-the-fire-horse',
-      'five-elements-explained',
-    ])
+    const allSlugs = [...codeSlugsNewestFirst, '2026-year-of-the-fire-horse', 'five-elements-explained']
+    expect(body.posts.map((post: { slug: string }) => post.slug)).toEqual(allSlugs.slice(0, PAGE_SIZE))
     expect(body.total).toBe(TOTAL)
     expect(body.page).toBe(1)
-    expect(body.totalPages).toBe(1)
+    expect(body.totalPages).toBe(TOTAL_PAGES)
     for (const post of body.posts) expect(post).not.toHaveProperty('content')
-    // Database fields keep the API's camelCase names
-    expect(body.posts[CODE_BLOG_POSTS.length]).toMatchObject({ id: 'bp-001', authorName: 'Wu Xing Zodiac', readTime: 7 })
+    // Every page together lists every post once, in the same order
+    const listed: string[] = []
+    for (let page = 1; page <= TOTAL_PAGES; page += 1) {
+      const { body: pageBody } = await get(`?page=${page}`)
+      for (const post of pageBody.posts) {
+        expect(post).not.toHaveProperty('content')
+        listed.push(post.slug)
+      }
+    }
+    expect(listed).toEqual(allSlugs)
+    // Database fields keep the API's camelCase names (the first database row follows the code posts)
+    const firstDatabaseIndex = CODE_BLOG_POSTS.length
+    const { body: dbPage } = await get(`?page=${Math.floor(firstDatabaseIndex / PAGE_SIZE) + 1}`)
+    expect(dbPage.posts[firstDatabaseIndex % PAGE_SIZE]).toMatchObject({ id: 'bp-001', authorName: 'Wu Xing Zodiac', readTime: 7 })
   })
 
   it('treats a missing or broken page number as page 1', async () => {
     for (const query of ['', '?page=abc', '?page=0']) {
       const { body } = await get(query)
       expect(body.page).toBe(1)
-      expect(body.posts).toHaveLength(TOTAL)
+      expect(body.posts).toHaveLength(Math.min(TOTAL, PAGE_SIZE))
     }
   })
 
   it('returns an empty page past the end', async () => {
-    const { body } = await get('?page=2')
+    const { body } = await get(`?page=${TOTAL_PAGES + 1}`)
     expect(body.posts).toEqual([])
-    expect(body.totalPages).toBe(1)
+    expect(body.totalPages).toBe(TOTAL_PAGES)
   })
 
   it('serves a code post by slug without asking the database', async () => {

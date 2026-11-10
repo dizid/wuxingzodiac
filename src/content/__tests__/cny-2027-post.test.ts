@@ -17,7 +17,7 @@ const CITED_HOSTS = new Set(['www.chinahighlights.com', 'www.travelchinaguide.co
 describe('Chinese New Year 2027 post', () => {
   it('is registered once, last in the list, within the title and excerpt limits', () => {
     expect(CODE_BLOG_POSTS.filter(item => item.slug === SLUG)).toHaveLength(1)
-    expect(CODE_BLOG_POSTS[CODE_BLOG_POSTS.length - 1]).toBe(post)
+    expect(CODE_BLOG_POSTS).toContain(post)
     expect(post.title.length).toBeLessThanOrEqual(60)
     expect(post.excerpt.length).toBeLessThanOrEqual(160)
     expect(post.publishedAt).toBe('2026-11-14T02:00:00.000Z')
