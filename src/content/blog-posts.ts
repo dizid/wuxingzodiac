@@ -17,6 +17,7 @@ import { ELEMENT_BY_LAST_DIGIT_POST } from './posts/chinese-element-by-birth-yea
 import { BEN_MING_NIAN_POST } from './posts/ben-ming-nian-your-zodiac-year'
 import { BIRTH_HOUR_POST } from './posts/chinese-zodiac-birth-hour-animal'
 import { SIXTY_CYCLE_POST } from './posts/sixty-year-chinese-zodiac-cycle'
+import { BABY_2027_POST } from './posts/baby-born-2027-fire-horse-or-fire-goat'
 
 export const CODE_BLOG_POSTS: BlogPost[] = [
   {
@@ -87,6 +88,7 @@ export const CODE_BLOG_POSTS: BlogPost[] = [
   BEN_MING_NIAN_POST,
   BIRTH_HOUR_POST,
   SIXTY_CYCLE_POST,
+  BABY_2027_POST,
 ]
 
 /**
