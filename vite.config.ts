@@ -31,11 +31,12 @@ export default defineConfig({
     },
   },
   ssgOptions: {
-    // vite-ssg's critical-CSS step (beasties) preloads every @font-face it finds by default.
-    // With self-hosted fonts that is all subsets of every weight (43 files, ~580 KB) on each
-    // page. Keep the @font-face rules inlined, but let the browser fetch only the fonts the
-    // page actually uses.
-    beastiesOptions: { preloadFonts: false },
+    // No critical-CSS step (beasties), same as the other Dizid sites. It moved the full
+    // stylesheet to the end of <body> and its inlined "critical" subset missed most
+    // Tailwind utilities (spacing, font sizes, widths), so phones first drew pages
+    // half-styled and then jumped when the stylesheet arrived (/reading: CLS 0.68).
+    // The one stylesheet (~15 KB gzipped) now loads normally in <head>.
+    beastiesOptions: false,
     includedRoutes(paths) {
       // Start with auto-discovered static routes, excluding dynamic/template routes
       const allPaths = paths.filter(p => !p.includes(':'))
