@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { CODE_BLOG_POSTS, getCodeBlogPost, mergeBlogPosts } from './blog-posts'
 import { getSnapshotPost, getSnapshotPosts } from '@/lib/blog-snapshot'
-import { getAnimalForYear, getElementForYear, lunarNewYearDates } from '@/lib/zodiac-data'
+import { getAnimalForYear, getElementForYear, getLunarYear, getZodiacFromBirthdate, lunarNewYearDates } from '@/lib/zodiac-data'
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
@@ -104,5 +104,56 @@ describe('mergeBlogPosts', () => {
       [{ slug: 'code', publishedAt: '2026-11-10T18:00:00.000Z' }],
     )
     expect(merged.map(item => item.slug)).toEqual(['db', 'code'])
+  })
+})
+
+describe('January/February birthday post', () => {
+  const post = getCodeBlogPost('chinese-zodiac-january-february-birthday')!
+  const rows = [...post.content.matchAll(/<tr><td>(\d{4})<\/td><td>(\d+) (January|February)<\/td><td><a href="\/zodiac\/([a-z]+-[a-z]+)">([A-Za-z]+ [A-Za-z]+)<\/a><\/td><\/tr>/g)]
+
+  it('has one table row per year in the site data, oldest first', () => {
+    const years = Object.keys(lunarNewYearDates).map(Number).sort((a, b) => a - b)
+    expect(rows.map(row => Number(row[1]))).toEqual(years)
+  })
+
+  it('agrees with the calculator for every year: the date starts the sign shown, the day before is the year before', () => {
+    const MONTH = { January: 1, February: 2 } as const
+    for (const [, yearText, dayText, monthName, slug, name] of rows) {
+      const year = Number(yearText)
+      const month = MONTH[monthName as keyof typeof MONTH]
+      const day = Number(dayText)
+      const onTheDay = getZodiacFromBirthdate(year, month, day)
+      expect(`${onTheDay.element}-${onTheDay.animal}`).toBe(slug)
+      expect(name!.toLowerCase().replace(' ', '-')).toBe(slug)
+      expect(onTheDay.lunarYear).toBe(year)
+      const dayBefore = new Date(Date.UTC(year, month - 1, day - 1))
+      expect(getLunarYear(year, dayBefore.getUTCMonth() + 1, dayBefore.getUTCDate())).toBe(year - 1)
+    }
+  })
+
+  it('states the real range of Lunar New Year dates', () => {
+    const dates = Object.values(lunarNewYearDates).map(([month, day]) => month * 100 + day)
+    expect(Math.min(...dates)).toBe(121) // 21 January
+    expect(Math.max(...dates)).toBe(220) // 20 February
+    expect(post.content).toContain('falls anywhere from 21 January to 20 February')
+    expect(post.excerpt).toContain('between 21 January and 20 February')
+  })
+
+  it('gets its worked examples right', () => {
+    const sign = (y: number, m: number, d: number) => {
+      const result = getZodiacFromBirthdate(y, m, d)
+      return `${result.element}-${result.animal}`
+    }
+    expect(lunarNewYearDates[1990]).toEqual([1, 27])
+    expect(sign(1990, 1, 20)).toBe('earth-snake')
+    expect(sign(1990, 2, 1)).toBe('metal-horse')
+    expect(lunarNewYearDates[2026]).toEqual([2, 17])
+    expect(sign(2027, 2, 4)).toBe('fire-horse')
+    expect(sign(2027, 2, 6)).toBe('fire-goat')
+    expect(post.content).toContain('born on 20 January 1990 still belongs to the 1989 year, so their sign is the <a href="/zodiac/earth-snake">Earth Snake</a>')
+    expect(post.content).toContain('born on 4 February 2027 is a <a href="/zodiac/fire-horse">Fire Horse</a>, like everyone born since 17 February 2026')
+    // The sign before the table's first year
+    expect(post.content).toContain('before 5 February 1924, that is the <a href="/zodiac/water-pig">Water Pig</a>')
+    expect(sign(1924, 2, 4)).toBe('water-pig')
   })
 })

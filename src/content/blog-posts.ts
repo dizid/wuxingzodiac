@@ -11,6 +11,7 @@
  * (a code post wins over a database post with the same slug).
  */
 import type { BlogPost } from '../types'
+import { LUNAR_NEW_YEAR_DATES_POST } from './posts/lunar-new-year-dates'
 
 export const CODE_BLOG_POSTS: BlogPost[] = [
   {
@@ -75,6 +76,7 @@ export const CODE_BLOG_POSTS: BlogPost[] = [
 <p>If you want that, the <a href="/reading">personal reading</a> is a PDF for $9.90 based on your sign. Orders from 1 January 2027 cover the Fire Goat year ahead, from 6 February 2027. Orders before then cover the rest of the Fire Horse year, until 5 February 2027. It is written for reflection and entertainment, and it makes no promises about what will happen.</p>
 <p>Whatever you choose, we hope the Fire Goat year gives you something to think about. Warm, creative and a little sensitive: it may be a good year to look after your own flame.</p>`,
   },
+  LUNAR_NEW_YEAR_DATES_POST,
 ]
 
 /**

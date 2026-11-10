@@ -52,6 +52,11 @@ async function get(query: string) {
 }
 
 const codePost = CODE_BLOG_POSTS[0]!
+const TOTAL = CODE_BLOG_POSTS.length + databaseRows.length
+/** Code posts are all newer than the two database rows above */
+const codeSlugsNewestFirst = [...CODE_BLOG_POSTS]
+  .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+  .map(post => post.slug)
 
 beforeEach(() => {
   queries.length = 0
@@ -62,23 +67,23 @@ describe('blog-posts function', () => {
     const { status, body } = await get('?page=1')
     expect(status).toBe(200)
     expect(body.posts.map((post: { slug: string }) => post.slug)).toEqual([
-      codePost.slug,
+      ...codeSlugsNewestFirst,
       '2026-year-of-the-fire-horse',
       'five-elements-explained',
     ])
-    expect(body.total).toBe(3)
+    expect(body.total).toBe(TOTAL)
     expect(body.page).toBe(1)
     expect(body.totalPages).toBe(1)
     for (const post of body.posts) expect(post).not.toHaveProperty('content')
     // Database fields keep the API's camelCase names
-    expect(body.posts[1]).toMatchObject({ id: 'bp-001', authorName: 'Wu Xing Zodiac', readTime: 7 })
+    expect(body.posts[CODE_BLOG_POSTS.length]).toMatchObject({ id: 'bp-001', authorName: 'Wu Xing Zodiac', readTime: 7 })
   })
 
   it('treats a missing or broken page number as page 1', async () => {
     for (const query of ['', '?page=abc', '?page=0']) {
       const { body } = await get(query)
       expect(body.page).toBe(1)
-      expect(body.posts).toHaveLength(3)
+      expect(body.posts).toHaveLength(TOTAL)
     }
   })
 
