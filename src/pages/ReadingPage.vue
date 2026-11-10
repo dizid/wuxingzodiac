@@ -170,16 +170,19 @@ const faqs = [
         aria-label="Sample pages"
       >
         <figure
-          v-for="page in samplePages"
+          v-for="(page, index) in samplePages"
           :key="page.src"
           class="w-[75%] shrink-0 snap-center sm:w-auto"
         >
+          <!-- The cover is the page's largest element on phones (Lighthouse LCP):
+               load it right away with high priority; the other samples stay lazy. -->
           <img
             :src="page.src"
             :alt="page.alt"
             width="640"
             height="906"
-            loading="lazy"
+            :loading="index === 0 ? 'eager' : 'lazy'"
+            :fetchpriority="index === 0 ? 'high' : undefined"
             class="w-full h-auto rounded-xl ring-1 ring-ash-800 shadow-lg"
           />
           <figcaption class="text-ash-400 text-sm text-center mt-3">{{ page.caption }}</figcaption>
