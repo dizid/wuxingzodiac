@@ -5,8 +5,10 @@
  * The pages still refresh from /api/blog/posts in the browser.
  *
  * The file is generated (gitignored). When it's missing (dev without a build, tests) the
- * glob below returns nothing and the blog behaves as before: loaded in the browser only.
+ * glob below returns nothing: database posts then load in the browser only, code posts
+ * still render right away.
  */
+import { CODE_BLOG_POSTS, mergeBlogPosts } from '@/content/blog-posts'
 import type { BlogPost } from '@/types'
 
 interface BlogSnapshotFile {
@@ -18,7 +20,12 @@ const snapshotFiles = import.meta.glob<BlogSnapshotFile>('../generated/blog-snap
   import: 'default',
 })
 
-const snapshotPosts: BlogPost[] = Object.values(snapshotFiles)[0]?.posts ?? []
+// Code posts (src/content/blog-posts.ts) are always included, also when the snapshot
+// is missing or was taken from an API that didn't have them yet (the first deploy).
+const snapshotPosts: BlogPost[] = mergeBlogPosts(
+  Object.values(snapshotFiles)[0]?.posts ?? [],
+  CODE_BLOG_POSTS,
+)
 
 /** Posts per page, same as the blog API */
 export const BLOG_PAGE_SIZE = 12

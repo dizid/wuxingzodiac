@@ -8,10 +8,13 @@
 - The 12 animals: /zodiac/animal/<animal>, e.g. [Horse](https://wuxingzodiac.me/zodiac/animal/horse).
 - The 5 elements: /zodiac/element/<element>, e.g. [Fire](https://wuxingzodiac.me/zodiac/element/fire).
 - [Compatibility](https://wuxingzodiac.me/compatibility): a page for every pair of the 60 signs. The score starts from the traditional animal pairings (trines, secret friends, clashes, harms) and is adjusted by the five-element generating and controlling cycles. URL pattern: /compatibility/<element>-<animal>/<element>-<animal>, e.g. [Fire Horse and Wood Tiger](https://wuxingzodiac.me/compatibility/fire-horse/wood-tiger).
-- [Blog](https://wuxingzodiac.me/blog): articles on the elements, signs and the 2026 Fire Horse year, e.g. [The five elements explained](https://wuxingzodiac.me/blog/five-elements-explained), [Compatibility by element](https://wuxingzodiac.me/blog/zodiac-compatibility-by-element), [2026: Year of the Fire Horse](https://wuxingzodiac.me/blog/2026-year-of-the-fire-horse).
+- [Blog](https://wuxingzodiac.me/blog): articles on the elements, signs, the 2026 Fire Horse year and the 2027 Fire Goat year, e.g. [The five elements explained](https://wuxingzodiac.me/blog/five-elements-explained), [Compatibility by element](https://wuxingzodiac.me/blog/zodiac-compatibility-by-element), [2026: Year of the Fire Horse](https://wuxingzodiac.me/blog/2026-year-of-the-fire-horse), [2027: Year of the Fire Goat](https://wuxingzodiac.me/blog/2027-year-of-the-fire-goat).
 
 ## 2026: Year of the Fire Horse
 - The Fire Horse year starts at the Lunar New Year on 17 February 2026. Fire Horse comes round once every 60 years (previously 1966).
+
+## 2027: Year of the Fire Goat
+- The Fire Goat year (丁未, yin fire) runs from the Lunar New Year on 6 February 2027 to 25 January 2028; the previous one began on 9 February 1967. [What it traditionally means for each animal and element](https://wuxingzodiac.me/blog/2027-year-of-the-fire-goat); the [Fire Goat profile](https://wuxingzodiac.me/zodiac/fire-goat) is The Passionate Creator.
 
 ## Paid: WuXing Personal Reading ($9.90, once)
 - [Order page](https://wuxingzodiac.me/reading). An 8-page PDF written to the buyer by name, based on the Chinese zodiac sign of their birth year (element and animal) through the five elements: element balance and how to strengthen the weakest one, personality, strengths and blind spots, love, career and money, the year ahead until the next Lunar New Year, and five practical moves for the next 90 days.

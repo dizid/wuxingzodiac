@@ -7,17 +7,23 @@ import vue from '@vitejs/plugin-vue'
 import tailwindcss from '@tailwindcss/vite'
 import netlify from '@netlify/vite-plugin'
 import generateSitemap from 'vite-ssg-sitemap'
+import { CODE_BLOG_POSTS } from './src/content/blog-posts'
 
 const ANIMALS = ['rat', 'ox', 'tiger', 'rabbit', 'dragon', 'snake', 'horse', 'goat', 'monkey', 'rooster', 'dog', 'pig']
 const ELEMENTS = ['wood', 'fire', 'earth', 'metal', 'water']
 const isDev = process.env.NODE_ENV !== 'production'
 
-/** Slugs in src/generated/blog-snapshot.json; none when the snapshot is missing. */
+/**
+ * Blog slugs to prerender: src/generated/blog-snapshot.json (database posts) plus the
+ * code posts in src/content/blog-posts.ts, once each.
+ */
 function readBlogSnapshotSlugs(): string[] {
   const file = fileURLToPath(new URL('./src/generated/blog-snapshot.json', import.meta.url))
-  if (!existsSync(file)) return []
-  const snapshot = JSON.parse(readFileSync(file, 'utf8')) as { posts?: { slug: string }[] }
-  return (snapshot.posts ?? []).map(post => post.slug).filter(slug => /^[a-z0-9-]+$/.test(slug))
+  const snapshot: { posts?: { slug: string }[] } = existsSync(file)
+    ? JSON.parse(readFileSync(file, 'utf8'))
+    : {}
+  const slugs = [...(snapshot.posts ?? []), ...CODE_BLOG_POSTS].map(post => post.slug)
+  return [...new Set(slugs)].filter(slug => /^[a-z0-9-]+$/.test(slug))
 }
 
 export default defineConfig({
