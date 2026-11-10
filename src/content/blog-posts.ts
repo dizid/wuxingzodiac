@@ -21,6 +21,7 @@ import { BABY_2027_POST } from './posts/baby-born-2027-fire-horse-or-fire-goat'
 import { CHINESE_VS_WESTERN_POST } from './posts/chinese-zodiac-vs-western-zodiac-differences'
 import { CNY_2027_POST } from './posts/chinese-new-year-2027-date-animal-traditions'
 import { GREAT_RACE_POST } from './posts/chinese-zodiac-great-race-why-rat-is-first'
+import { REGIONAL_ZODIACS_POST } from './posts/vietnamese-japanese-korean-zodiac-differences'
 
 export const CODE_BLOG_POSTS: BlogPost[] = [
   {
@@ -95,6 +96,7 @@ export const CODE_BLOG_POSTS: BlogPost[] = [
   CHINESE_VS_WESTERN_POST,
   CNY_2027_POST,
   GREAT_RACE_POST,
+  REGIONAL_ZODIACS_POST,
 ]
 
 /**

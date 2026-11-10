@@ -27,6 +27,10 @@ const CITED_SOURCE_HOSTS = [
   'en.chinaculture.org',
   'dlp.lib.miamioh.edu',
   'www.hawaiipublicradio.org',
+  'www.nippon.com',
+  'leiden.wereldmuseum.nl',
+  'www.cbc.ca',
+  'www.bl.uk',
 ]
 
 describe('code blog posts', () => {
