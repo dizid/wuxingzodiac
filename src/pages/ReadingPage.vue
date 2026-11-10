@@ -192,16 +192,26 @@ const faqs = computed(() => [
           class="w-[75%] shrink-0 snap-center sm:w-auto"
         >
           <!-- The cover is the page's largest element on phones (Lighthouse LCP):
-               load it right away with high priority; the other samples stay lazy. -->
-          <img
-            :src="page.src"
-            :alt="page.alt"
-            width="640"
-            height="906"
-            :loading="index === 0 ? 'eager' : 'lazy'"
-            :fetchpriority="index === 0 ? 'high' : undefined"
-            class="w-full h-auto rounded-xl ring-1 ring-ash-800 shadow-lg"
-          />
+               load it right away with high priority; the other samples stay lazy.
+               WebP copies (400w/640w, ~35-70% smaller) in public/reading/; the JPG
+               stays as fallback and as the structured-data image. Shown at ~75vw on
+               phones, one of three ~320px columns from sm up (max-w-5xl). -->
+          <picture class="block">
+            <source
+              type="image/webp"
+              :srcset="`${page.src.replace(/\.jpg$/, '-400.webp')} 400w, ${page.src.replace(/\.jpg$/, '-640.webp')} 640w`"
+              sizes="(min-width: 640px) 320px, 75vw"
+            />
+            <img
+              :src="page.src"
+              :alt="page.alt"
+              width="640"
+              height="906"
+              :loading="index === 0 ? 'eager' : 'lazy'"
+              :fetchpriority="index === 0 ? 'high' : undefined"
+              class="w-full h-auto rounded-xl ring-1 ring-ash-800 shadow-lg"
+            />
+          </picture>
           <figcaption class="text-ash-400 text-sm text-center mt-3">{{ page.caption }}</figcaption>
         </figure>
       </div>
