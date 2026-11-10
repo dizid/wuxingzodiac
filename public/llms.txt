@@ -1,0 +1,22 @@
+# Wu Xing Zodiac
+
+> Wu Xing Zodiac (https://wuxingzodiac.me) explains the Chinese zodiac through the five elements (Wu Xing): Wood, Fire, Earth, Metal and Water. Each of the 12 animal signs meets each element once in the 60-year cycle, giving 60 element-animal profiles (for example Metal Horse, Water Rabbit). Free sign calculator, profiles and compatibility pages; one optional paid product, a personal PDF reading. Made by Dizid (https://dizid.com). For entertainment and self-reflection.
+
+## Free tools and reference pages
+- [Sign calculator](https://wuxingzodiac.me/calculator): enter a birth date and get your element-animal sign. It accounts for the Lunar New Year, so people born in January or February get the right year.
+- [All 60 signs](https://wuxingzodiac.me/zodiac): one profile per combination, e.g. [Fire Horse](https://wuxingzodiac.me/zodiac/fire-horse), [Metal Horse](https://wuxingzodiac.me/zodiac/metal-horse), [Water Rabbit](https://wuxingzodiac.me/zodiac/water-rabbit). URL pattern: /zodiac/<element>-<animal>.
+- The 12 animals: /zodiac/animal/<animal>, e.g. [Horse](https://wuxingzodiac.me/zodiac/animal/horse).
+- The 5 elements: /zodiac/element/<element>, e.g. [Fire](https://wuxingzodiac.me/zodiac/element/fire).
+- [Compatibility](https://wuxingzodiac.me/compatibility): a page for every pair of the 60 signs. The score starts from the traditional animal pairings (trines, secret friends, clashes, harms) and is adjusted by the five-element generating and controlling cycles. URL pattern: /compatibility/<element>-<animal>/<element>-<animal>, e.g. [Fire Horse and Wood Tiger](https://wuxingzodiac.me/compatibility/fire-horse/wood-tiger).
+- [Blog](https://wuxingzodiac.me/blog): articles on the elements, signs and the 2026 Fire Horse year.
+
+## 2026: Year of the Fire Horse
+- The Fire Horse year starts at the Lunar New Year on 17 February 2026. Fire Horse comes round once every 60 years (previously 1966).
+
+## Paid: WuXing Personal Reading ($9.90, once)
+- [Order page](https://wuxingzodiac.me/reading). An 8-page PDF written to the buyer by name, based on the Chinese zodiac sign of their birth year (element and animal) through the five elements: element balance and how to strengthen the weakest one, personality, strengths and blind spots, love, career and money, the year ahead until the next Lunar New Year, and five practical moves for the next 90 days.
+- Delivered by email as a PDF, usually within a few minutes after paying through Stripe. Inputs: first name, birth date, email.
+- It is not a full birth chart (no birth time), not a prediction or guarantee, and not medical, financial, legal or psychological advice.
+
+## About
+- [About](https://wuxingzodiac.me/about), [Privacy](https://wuxingzodiac.me/privacy), [Terms](https://wuxingzodiac.me/terms).
