@@ -162,7 +162,7 @@ function findSign() {
         </h2>
         <div class="text-ash-400 text-lg mb-1">{{ result.chineseName }}</div>
         <div class="text-ash-300 italic mb-4">{{ result.tagline }}</div>
-        <div class="text-ash-500 text-sm mb-6">
+        <div class="text-ash-450 text-sm mb-6">
           Years: {{ result.years.join(', ') }}
         </div>
       </div>

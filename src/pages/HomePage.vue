@@ -54,7 +54,7 @@ const howItWorks = [
         :data-element="userSign.element"
         class="glass element-glow rounded-2xl p-6 text-center"
       >
-        <p class="text-ash-500 text-sm uppercase tracking-widest mb-1">Welcome back</p>
+        <p class="text-ash-450 text-sm uppercase tracking-widest mb-1">Welcome back</p>
         <h2 class="element-text font-display text-2xl md:text-3xl font-bold mb-1">
           {{ userSign.name }}
         </h2>
@@ -85,7 +85,7 @@ const howItWorks = [
         >
           <div class="text-4xl mb-2">{{ el.emoji }}</div>
           <div class="element-text font-display font-bold text-lg">{{ el.name }}</div>
-          <div class="text-ash-500 text-sm mt-1">{{ el.chinese }}</div>
+          <div class="text-ash-450 text-sm mt-1">{{ el.chinese }}</div>
           <div class="text-ash-400 text-xs mt-2">12 Signs &rarr;</div>
         </RouterLink>
       </div>
@@ -151,7 +151,7 @@ const howItWorks = [
         >
           <div class="text-4xl mb-2">{{ a.emoji }}</div>
           <div class="font-display font-bold text-ash-100">{{ a.name }}</div>
-          <div class="text-ash-500 text-sm">{{ a.chinese }}</div>
+          <div class="text-ash-450 text-sm">{{ a.chinese }}</div>
         </RouterLink>
       </div>
     </section>
@@ -180,7 +180,7 @@ const howItWorks = [
           :key="item.step"
           class="glass rounded-xl p-6 text-center"
         >
-          <div class="text-3xl font-display font-bold text-ash-500 mb-3">{{ item.step }}</div>
+          <div class="text-3xl font-display font-bold text-ash-450 mb-3">{{ item.step }}</div>
           <h3 class="font-display font-bold text-ash-100 text-lg mb-2">{{ item.title }}</h3>
           <p class="text-ash-400 text-sm">{{ item.description }}</p>
         </div>

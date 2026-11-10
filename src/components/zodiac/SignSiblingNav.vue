@@ -38,7 +38,7 @@ const sameAnimalSigns = computed(() =>
 
     <!-- Same element section -->
     <div class="mb-5">
-      <p class="text-xs font-semibold uppercase tracking-widest text-ash-500 mb-3">
+      <p class="text-xs font-semibold uppercase tracking-widest text-ash-450 mb-3">
         Other {{ cap(element) }} Signs
       </p>
       <div class="flex flex-wrap gap-2">
@@ -58,7 +58,7 @@ const sameAnimalSigns = computed(() =>
 
     <!-- Same animal section -->
     <div>
-      <p class="text-xs font-semibold uppercase tracking-widest text-ash-500 mb-3">
+      <p class="text-xs font-semibold uppercase tracking-widest text-ash-450 mb-3">
         Other {{ cap(animal) }} Signs
       </p>
       <div class="flex flex-wrap gap-2">

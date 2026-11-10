@@ -11,7 +11,7 @@ defineProps<{
     <!-- Placeholder when no horoscope data -->
     <div v-if="!horoscope" class="glass rounded-xl p-8 text-center">
       <p class="text-ash-400 text-lg mb-2">Horoscope Coming Soon</p>
-      <p class="text-ash-500 text-sm">Daily, monthly, and yearly readings will be available in a future update.</p>
+      <p class="text-ash-450 text-sm">Daily, monthly, and yearly readings will be available in a future update.</p>
     </div>
 
     <!-- Horoscope content -->

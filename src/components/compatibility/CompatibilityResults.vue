@@ -133,7 +133,7 @@ const shareDescription = computed(() => {
       >
         <div class="text-ash-400 text-sm mb-1">{{ profileA.chineseName }}</div>
         <div class="font-display text-lg font-semibold text-ash-100">{{ profileA.name }}</div>
-        <div class="text-ash-500 text-sm mt-1">{{ profileA.tagline }}</div>
+        <div class="text-ash-450 text-sm mt-1">{{ profileA.tagline }}</div>
         <div class="text-ash-400 text-sm mt-3">View Profile &rarr;</div>
       </RouterLink>
       <RouterLink
@@ -142,7 +142,7 @@ const shareDescription = computed(() => {
       >
         <div class="text-ash-400 text-sm mb-1">{{ profileB.chineseName }}</div>
         <div class="font-display text-lg font-semibold text-ash-100">{{ profileB.name }}</div>
-        <div class="text-ash-500 text-sm mt-1">{{ profileB.tagline }}</div>
+        <div class="text-ash-450 text-sm mt-1">{{ profileB.tagline }}</div>
         <div class="text-ash-400 text-sm mt-3">View Profile &rarr;</div>
       </RouterLink>
     </div>

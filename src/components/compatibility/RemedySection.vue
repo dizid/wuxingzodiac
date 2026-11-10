@@ -128,7 +128,7 @@ const DEFAULT_STYLE: ElementStyle = {
   border: 'border-ash-700/50',
   bg: 'bg-ash-900/60',
   heading: 'text-ash-200',
-  label: 'text-ash-500',
+  label: 'text-ash-450',
   elementName: 'text-ash-300',
   iconBg: 'bg-ash-800/50',
   iconBorder: 'border-ash-600/50',

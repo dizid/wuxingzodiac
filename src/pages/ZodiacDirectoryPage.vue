@@ -115,7 +115,7 @@ function formatYearsPreview(years: number[]): string {
       </select>
 
       <!-- Count -->
-      <span class="text-ash-500 text-sm">
+      <span class="text-ash-450 text-sm">
         {{ filteredProfiles.length }} signs
       </span>
     </div>
@@ -133,9 +133,9 @@ function formatYearsPreview(years: number[]): string {
           <span class="text-xl">{{ elementEmoji[profile.element] }}</span>
           <span class="element-text font-display font-bold text-lg">{{ profile.name }}</span>
         </div>
-        <div class="text-ash-500 text-sm mb-1">{{ profile.chineseName }}</div>
+        <div class="text-ash-450 text-sm mb-1">{{ profile.chineseName }}</div>
         <div class="text-ash-400 text-sm italic mb-2">{{ profile.tagline }}</div>
-        <div class="text-ash-600 text-xs">{{ formatYearsPreview(profile.years) }}</div>
+        <div class="text-ash-450 text-xs">{{ formatYearsPreview(profile.years) }}</div>
       </RouterLink>
     </div>
   </div>

@@ -197,7 +197,7 @@ const popularPairs = [
             <div class="text-ash-100 font-display font-semibold">
               {{ pair.labelA }}
             </div>
-            <div class="text-ash-500 text-sm my-1">vs</div>
+            <div class="text-ash-450 text-sm my-1">vs</div>
             <div class="text-ash-100 font-display font-semibold">
               {{ pair.labelB }}
             </div>

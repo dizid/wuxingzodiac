@@ -118,7 +118,7 @@ function capitalize(s: string): string {
       <h1 class="element-text font-display text-4xl md:text-5xl font-bold mb-2">
         {{ elementData.name }} Element
       </h1>
-      <div class="text-ash-500 text-2xl mb-4">{{ elementData.chinese }}</div>
+      <div class="text-ash-450 text-2xl mb-4">{{ elementData.chinese }}</div>
       <p class="text-ash-400 max-w-2xl mx-auto leading-relaxed">
         {{ elementInfo.description }}
       </p>
@@ -131,31 +131,31 @@ function capitalize(s: string): string {
       </h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div class="bg-ash-900/50 rounded-xl p-4">
-          <div class="text-ash-500 text-sm mb-1">Generates</div>
+          <div class="text-ash-450 text-sm mb-1">Generates</div>
           <div class="text-ash-200 font-medium">
             {{ elementEmoji[elementInfo.generates] }} {{ capitalize(elementInfo.generates) }}
           </div>
-          <div class="text-ash-500 text-xs mt-1">{{ elementInfo.generatesLabel }}</div>
+          <div class="text-ash-450 text-xs mt-1">{{ elementInfo.generatesLabel }}</div>
         </div>
         <div class="bg-ash-900/50 rounded-xl p-4">
-          <div class="text-ash-500 text-sm mb-1">Overcomes</div>
+          <div class="text-ash-450 text-sm mb-1">Overcomes</div>
           <div class="text-ash-200 font-medium">
             {{ elementEmoji[elementInfo.overcomes] }} {{ capitalize(elementInfo.overcomes) }}
           </div>
-          <div class="text-ash-500 text-xs mt-1">{{ elementInfo.overcomesLabel }}</div>
+          <div class="text-ash-450 text-xs mt-1">{{ elementInfo.overcomesLabel }}</div>
         </div>
       </div>
       <div class="grid grid-cols-3 gap-4">
         <div class="bg-ash-900/50 rounded-xl p-4 text-center">
-          <div class="text-ash-500 text-xs mb-1">Color</div>
+          <div class="text-ash-450 text-xs mb-1">Color</div>
           <div class="text-ash-200 text-sm font-medium">{{ elementInfo.color }}</div>
         </div>
         <div class="bg-ash-900/50 rounded-xl p-4 text-center">
-          <div class="text-ash-500 text-xs mb-1">Season</div>
+          <div class="text-ash-450 text-xs mb-1">Season</div>
           <div class="text-ash-200 text-sm font-medium">{{ elementInfo.season }}</div>
         </div>
         <div class="bg-ash-900/50 rounded-xl p-4 text-center">
-          <div class="text-ash-500 text-xs mb-1">Direction</div>
+          <div class="text-ash-450 text-xs mb-1">Direction</div>
           <div class="text-ash-200 text-sm font-medium">{{ elementInfo.direction }}</div>
         </div>
       </div>
@@ -177,9 +177,9 @@ function capitalize(s: string): string {
           <span class="text-2xl">{{ animalEmoji[profile.animal] }}</span>
           <span class="element-text font-display font-bold">{{ profile.name }}</span>
         </div>
-        <div class="text-ash-500 text-sm mb-1">{{ profile.chineseName }}</div>
+        <div class="text-ash-450 text-sm mb-1">{{ profile.chineseName }}</div>
         <div class="text-ash-400 text-sm italic mb-2">{{ profile.tagline }}</div>
-        <div class="text-ash-600 text-xs">
+        <div class="text-ash-450 text-xs">
           {{ profile.years.join(', ') }}
         </div>
       </RouterLink>

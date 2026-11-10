@@ -60,7 +60,7 @@ const animalDescriptions: Record<ZodiacAnimal, string> = {
       <h1 class="font-display text-4xl md:text-5xl font-bold text-ash-100 mb-2">
         {{ animalData.name }}
       </h1>
-      <div class="text-ash-500 text-xl mb-4">{{ animalData.chinese }}</div>
+      <div class="text-ash-450 text-xl mb-4">{{ animalData.chinese }}</div>
       <p class="text-ash-400 max-w-2xl mx-auto leading-relaxed">
         {{ animalDescriptions[animal] }}
       </p>
@@ -82,9 +82,9 @@ const animalDescriptions: Record<ZodiacAnimal, string> = {
           <span class="text-2xl">{{ elementEmoji[profile.element] }}</span>
           <span class="element-text font-display font-bold text-xl">{{ profile.name }}</span>
         </div>
-        <div class="text-ash-500 text-sm mb-1">{{ profile.chineseName }}</div>
+        <div class="text-ash-450 text-sm mb-1">{{ profile.chineseName }}</div>
         <div class="text-ash-300 italic mb-3">{{ profile.tagline }}</div>
-        <div class="text-ash-600 text-xs">
+        <div class="text-ash-450 text-xs">
           Years: {{ profile.years.join(', ') }}
         </div>
       </RouterLink>

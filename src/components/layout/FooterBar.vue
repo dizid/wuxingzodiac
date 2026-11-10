@@ -49,7 +49,7 @@ const animalLinksCol2 = [
             <span class="text-xl">&#9775;</span>
             <span class="multi-element-text">Wu Xing Zodiac</span>
           </RouterLink>
-          <p class="mt-3 text-sm text-ash-500 leading-relaxed">
+          <p class="mt-3 text-sm text-ash-450 leading-relaxed">
             Explore the ancient wisdom of Chinese astrology through the lens of the Five Elements.
           </p>
           <!-- Cross-site link -->
@@ -72,7 +72,7 @@ const animalLinksCol2 = [
             <li v-for="link in exploreLinks" :key="link.to">
               <RouterLink
                 :to="link.to"
-                class="text-sm text-ash-500 hover:text-ash-200 transition-colors"
+                class="text-sm text-ash-450 hover:text-ash-200 transition-colors"
               >
                 {{ link.label }}
               </RouterLink>
@@ -108,7 +108,7 @@ const animalLinksCol2 = [
               <li v-for="link in animalLinksCol1" :key="link.to">
                 <RouterLink
                   :to="link.to"
-                  class="text-sm text-ash-500 hover:text-ash-200 transition-colors"
+                  class="text-sm text-ash-450 hover:text-ash-200 transition-colors"
                 >
                   {{ link.label }}
                 </RouterLink>
@@ -118,7 +118,7 @@ const animalLinksCol2 = [
               <li v-for="link in animalLinksCol2" :key="link.to">
                 <RouterLink
                   :to="link.to"
-                  class="text-sm text-ash-500 hover:text-ash-200 transition-colors"
+                  class="text-sm text-ash-450 hover:text-ash-200 transition-colors"
                 >
                   {{ link.label }}
                 </RouterLink>
@@ -130,15 +130,15 @@ const animalLinksCol2 = [
 
       <!-- Bottom bar -->
       <div class="mt-12 pt-6 border-t border-ash-800/50 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <p class="text-sm text-ash-600">
+        <p class="text-sm text-ash-450">
           &copy; {{ currentYear }} Wu Xing Zodiac
         </p>
         <div class="flex items-center gap-4">
-          <RouterLink to="/about" class="text-xs text-ash-600 hover:text-ash-400 transition-colors">About</RouterLink>
-          <RouterLink to="/privacy" class="text-xs text-ash-600 hover:text-ash-400 transition-colors">Privacy</RouterLink>
-          <RouterLink to="/terms" class="text-xs text-ash-600 hover:text-ash-400 transition-colors">Terms</RouterLink>
+          <RouterLink to="/about" class="text-xs text-ash-450 hover:text-ash-400 transition-colors">About</RouterLink>
+          <RouterLink to="/privacy" class="text-xs text-ash-450 hover:text-ash-400 transition-colors">Privacy</RouterLink>
+          <RouterLink to="/terms" class="text-xs text-ash-450 hover:text-ash-400 transition-colors">Terms</RouterLink>
         </div>
-        <p class="text-xs text-ash-700">
+        <p class="text-xs text-ash-450">
           Chinese astrology information is for entertainment purposes only.
         </p>
       </div>

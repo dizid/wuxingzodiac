@@ -44,7 +44,7 @@ const formattedPrice = new Intl.NumberFormat('en-US', {
       <h3 class="text-ash-100 font-semibold text-sm leading-tight mb-1 line-clamp-2">
         {{ product.title }}
       </h3>
-      <p class="text-ash-500 text-xs line-clamp-1 mb-3">
+      <p class="text-ash-450 text-xs line-clamp-1 mb-3">
         {{ product.description }}
       </p>
 
@@ -76,7 +76,7 @@ const formattedPrice = new Intl.NumberFormat('en-US', {
         <!-- Coming Soon — product not yet live on Fourthwall -->
         <span
           v-else
-          class="flex-shrink-0 px-3 py-1.5 text-xs font-medium text-ash-600 rounded-lg border border-ash-800 cursor-default"
+          class="flex-shrink-0 px-3 py-1.5 text-xs font-medium text-ash-450 rounded-lg border border-ash-800 cursor-default"
         >
           Coming Soon
         </span>

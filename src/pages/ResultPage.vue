@@ -81,14 +81,14 @@ onMounted(async () => {
 
       <!-- Hero -->
       <section class="text-center mb-10">
-        <p class="text-ash-500 text-sm uppercase tracking-widest mb-2">Your Chinese Zodiac Sign</p>
+        <p class="text-ash-450 text-sm uppercase tracking-widest mb-2">Your Chinese Zodiac Sign</p>
         <h1 class="element-text font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-3">
           {{ profile.name }}
         </h1>
         <p class="text-ash-300 text-xl md:text-2xl font-display mb-2">
           {{ profile.tagline }}
         </p>
-        <p class="text-ash-500 text-lg">{{ profile.chineseName }}</p>
+        <p class="text-ash-450 text-lg">{{ profile.chineseName }}</p>
       </section>
 
       <!-- At-a-Glance card -->
@@ -96,23 +96,23 @@ onMounted(async () => {
         <h2 class="font-display text-lg font-bold text-ash-100 mb-4">At a Glance</h2>
         <div class="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span class="text-ash-500 block">Element</span>
+            <span class="text-ash-450 block">Element</span>
             <span class="text-ash-100 font-semibold capitalize">{{ profile.element }}</span>
           </div>
           <div>
-            <span class="text-ash-500 block">Animal</span>
+            <span class="text-ash-450 block">Animal</span>
             <span class="text-ash-100 font-semibold capitalize">{{ profile.animal }}</span>
           </div>
           <div>
-            <span class="text-ash-500 block">Archetype</span>
+            <span class="text-ash-450 block">Archetype</span>
             <span class="text-ash-100 font-semibold">{{ profile.tagline }}</span>
           </div>
           <div>
-            <span class="text-ash-500 block">Years</span>
+            <span class="text-ash-450 block">Years</span>
             <span class="text-ash-100 font-semibold">{{ profile.years.join(', ') }}</span>
           </div>
           <div v-if="content?.atAGlance?.coreStrength" class="col-span-2">
-            <span class="text-ash-500 block">Core Strength</span>
+            <span class="text-ash-450 block">Core Strength</span>
             <span class="text-ash-100 font-semibold">{{ content.atAGlance.coreStrength }}</span>
           </div>
         </div>

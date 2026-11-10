@@ -16,7 +16,7 @@ usePageSeo(
       <h1 class="font-display text-4xl md:text-5xl font-bold text-ash-100 mb-4">
         Terms of Service
       </h1>
-      <p class="text-ash-500 mb-10">Last updated: October 21, 2026</p>
+      <p class="text-ash-450 mb-10">Last updated: October 21, 2026</p>
 
       <div class="space-y-8 text-ash-300 leading-relaxed">
         <section>

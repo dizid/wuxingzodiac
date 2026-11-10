@@ -20,7 +20,7 @@
       Overall compatibility
     </p>
     <p class="mt-1 font-display text-4xl font-bold" :class="scoreTextClass">
-      {{ props.overall }}<span class="text-lg font-normal text-ash-500">/100</span>
+      {{ props.overall }}<span class="text-lg font-normal text-ash-450">/100</span>
     </p>
 
     <!-- Score description band -->

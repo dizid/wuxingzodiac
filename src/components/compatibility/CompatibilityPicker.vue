@@ -132,7 +132,7 @@ const elementTextColors: Record<ZodiacElement, string> = {
           @click="elementA = el.element; animalA = null; emit('update:modelValueA', '')"
         >
           <span class="text-lg leading-none">{{ el.emoji }}</span>
-          <span class="text-[10px] leading-tight" :class="elementA === el.element ? elementTextColors[el.element] : 'text-ash-500'">{{ el.name }}</span>
+          <span class="text-[10px] leading-tight" :class="elementA === el.element ? elementTextColors[el.element] : 'text-ash-450'">{{ el.name }}</span>
         </button>
       </div>
 
@@ -185,7 +185,7 @@ const elementTextColors: Record<ZodiacElement, string> = {
           @click="elementB = el.element; animalB = null; emit('update:modelValueB', '')"
         >
           <span class="text-lg leading-none">{{ el.emoji }}</span>
-          <span class="text-[10px] leading-tight" :class="elementB === el.element ? elementTextColors[el.element] : 'text-ash-500'">{{ el.name }}</span>
+          <span class="text-[10px] leading-tight" :class="elementB === el.element ? elementTextColors[el.element] : 'text-ash-450'">{{ el.name }}</span>
         </button>
       </div>
 

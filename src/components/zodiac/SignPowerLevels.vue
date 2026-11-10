@@ -48,7 +48,7 @@ function scoreColor(val: number): string {
   if (val >= 85) return 'text-[var(--el-300)]'
   if (val >= 70) return 'text-[var(--el-400)]'
   if (val >= 50) return 'text-ash-300'
-  return 'text-ash-500'
+  return 'text-ash-450'
 }
 </script>
 

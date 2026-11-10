@@ -84,7 +84,7 @@ const features = computed(() => [
     </button>
 
     <!-- Trust signals -->
-    <p class="text-ash-600 text-xs text-center mt-4">
+    <p class="text-ash-450 text-xs text-center mt-4">
       Secure payment via Stripe &middot; Emailed to you in about 2 minutes &middot; Gift option
     </p>
   </div>

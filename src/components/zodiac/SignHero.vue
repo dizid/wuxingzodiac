@@ -32,7 +32,7 @@ const { config } = useElementTheme(elementRef)
     </p>
 
     <!-- Chinese name -->
-    <p class="text-3xl md:text-4xl text-ash-500 font-light mb-4 tracking-wider">
+    <p class="text-3xl md:text-4xl text-ash-450 font-light mb-4 tracking-wider">
       {{ profile.chineseName }}
     </p>
 

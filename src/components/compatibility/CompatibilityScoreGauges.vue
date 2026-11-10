@@ -20,7 +20,7 @@
             :style="{ width: chemistryWidth, backgroundImage: 'linear-gradient(to right, #22c55e, #34d399)' }"
           />
         </div>
-        <p class="mt-1.5 text-xs text-ash-500">Animal-to-animal magnetic pull</p>
+        <p class="mt-1.5 text-xs text-ash-450">Animal-to-animal magnetic pull</p>
       </div>
 
       <!-- Support gauge -->
@@ -37,7 +37,7 @@
             :style="{ width: supportWidth, backgroundImage: 'linear-gradient(to right, #3b82f6, #22d3ee)' }"
           />
         </div>
-        <p class="mt-1.5 text-xs text-ash-500">How much your elements nourish each other</p>
+        <p class="mt-1.5 text-xs text-ash-450">How much your elements nourish each other</p>
       </div>
 
       <!-- Friction gauge -->
@@ -54,7 +54,7 @@
             :style="{ width: frictionWidth, backgroundImage: 'linear-gradient(to right, #ef4444, #fb923c)' }"
           />
         </div>
-        <p class="mt-1.5 text-xs text-ash-500">Elemental tension and clash potential</p>
+        <p class="mt-1.5 text-xs text-ash-450">Elemental tension and clash potential</p>
       </div>
     </div>
   </div>

@@ -130,13 +130,13 @@ async function handleSubmit() {
         :disabled="submitting"
         :class="[inputClass, '[color-scheme:dark]']"
       />
-      <p class="text-xs text-ash-500 mt-1">
+      <p class="text-xs text-ash-450 mt-1">
         Your reading is based on your birth-year sign and the five elements. The day and month only matter
         if you were born in January or February, around the Lunar New Year.
       </p>
       <p v-if="signPreview" class="text-sm text-ash-400 mt-1.5" aria-live="polite">
         Sign: <span class="element-text font-semibold">{{ signPreview.name }}</span>
-        <span class="text-ash-500"> · {{ signPreview.archetype }}</span>
+        <span class="text-ash-450"> · {{ signPreview.archetype }}</span>
       </p>
     </div>
 
@@ -178,12 +178,12 @@ async function handleSubmit() {
           :disabled="submitting"
           :class="inputClass"
         />
-        <p class="text-xs text-ash-500 mt-1">Shown on the cover. Leave empty to use the name above.</p>
+        <p class="text-xs text-ash-450 mt-1">Shown on the cover. Leave empty to use the name above.</p>
       </div>
 
       <div>
         <label for="reading-message" class="block text-sm font-medium text-ash-200 mb-1.5">
-          Gift message <span class="text-ash-500 font-normal">(optional)</span>
+          Gift message <span class="text-ash-450 font-normal">(optional)</span>
         </label>
         <textarea
           id="reading-message"
@@ -194,7 +194,7 @@ async function handleSubmit() {
           :disabled="submitting"
           :class="[inputClass, 'resize-none']"
         />
-        <p class="text-xs text-ash-500 mt-1 text-right">{{ giftMessage.length }}/{{ READING_LIMITS.giftMessage }}</p>
+        <p class="text-xs text-ash-450 mt-1 text-right">{{ giftMessage.length }}/{{ READING_LIMITS.giftMessage }}</p>
       </div>
     </div>
 
@@ -211,7 +211,7 @@ async function handleSubmit() {
       {{ error }}
     </p>
 
-    <p class="text-ash-600 text-xs text-center">
+    <p class="text-ash-450 text-xs text-center">
       Your name and birth date are only used to write your reading.
       <RouterLink to="/privacy" class="underline hover:text-ash-400">Privacy</RouterLink>
     </p>

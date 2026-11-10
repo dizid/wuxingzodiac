@@ -192,7 +192,7 @@ onBeforeUnmount(() => {
         <div class="w-full bg-ash-800 rounded-full h-2 overflow-hidden">
           <div class="h-full bg-gradient-to-r from-ash-500 to-ash-300 rounded-full animate-pulse" style="width: 80%"></div>
         </div>
-        <p class="text-ash-600 text-sm mt-4">Attempt {{ retryCount }} of {{ MAX_RETRIES }}</p>
+        <p class="text-ash-450 text-sm mt-4">Attempt {{ retryCount }} of {{ MAX_RETRIES }}</p>
       </template>
 
       <!-- Generating: personalized reading is being written, then emailed -->
@@ -224,7 +224,7 @@ onBeforeUnmount(() => {
           We've emailed your {{ productName }} (<span class="font-semibold text-ash-100">{{ signName }}</span>)
           to <span class="font-semibold text-ash-100">{{ inbox }}</span> as a PDF.
         </p>
-        <p class="text-ash-500 text-sm">
+        <p class="text-ash-450 text-sm">
           Not there in a minute? Check your spam or promotions folder. Keep the email &mdash; it's your only copy.
         </p>
       </template>
@@ -248,7 +248,7 @@ onBeforeUnmount(() => {
         <button v-else class="btn-element w-full text-lg py-3 opacity-75 cursor-wait" disabled>
           Downloading...
         </button>
-        <p class="text-ash-600 text-xs mt-4">
+        <p class="text-ash-450 text-xs mt-4">
           Your download link is valid for 30 days.
         </p>
       </template>
@@ -266,7 +266,7 @@ onBeforeUnmount(() => {
         >
           Try Again
         </button>
-        <p class="text-ash-500 text-sm mt-4">
+        <p class="text-ash-450 text-sm mt-4">
           If the problem persists, please contact support with your session ID.
         </p>
       </template>
