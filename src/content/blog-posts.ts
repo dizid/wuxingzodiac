@@ -16,6 +16,7 @@ import { RELATIONS_POST } from './posts/chinese-zodiac-trines-secret-friends-cla
 import { ELEMENT_BY_LAST_DIGIT_POST } from './posts/chinese-element-by-birth-year-last-digit'
 import { BEN_MING_NIAN_POST } from './posts/ben-ming-nian-your-zodiac-year'
 import { BIRTH_HOUR_POST } from './posts/chinese-zodiac-birth-hour-animal'
+import { SIXTY_CYCLE_POST } from './posts/sixty-year-chinese-zodiac-cycle'
 
 export const CODE_BLOG_POSTS: BlogPost[] = [
   {
@@ -85,6 +86,7 @@ export const CODE_BLOG_POSTS: BlogPost[] = [
   ELEMENT_BY_LAST_DIGIT_POST,
   BEN_MING_NIAN_POST,
   BIRTH_HOUR_POST,
+  SIXTY_CYCLE_POST,
 ]
 
 /**
