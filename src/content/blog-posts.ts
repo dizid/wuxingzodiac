@@ -42,7 +42,7 @@ export const CODE_BLOG_POSTS: BlogPost[] = [
 <p>The element stays the same. It is still fire. But the animal changes from the restless Horse to the artistic, sensitive Goat. A fair way to read the change is this: the bold energy of 2026 settles into something more inward and creative. Some people will welcome that. Others will miss the speed.</p>
 <p>You can compare it with our <a href="/blog/2026-year-of-the-fire-horse">guide to the 2026 Fire Horse year</a>.</p>
 <h2>What the Year Means for Each Animal</h2>
-<p>Traditional Chinese astrology looks at how each animal relates to the animal of the year. Here is how the 2027 Goat year is read for all twelve. Remember that this is a tradition, and it is meant as entertainment and reflection.</p>
+<p>Traditional Chinese astrology looks at how each animal relates to the animal of the year. Here is how the 2027 Goat year is read for all twelve. Remember that this is a tradition, and it is meant as entertainment and reflection. For every animal's allies and clashes in any year, see <a href="/blog/chinese-zodiac-trines-secret-friends-clashes">Chinese Zodiac Trines, Secret Friends and Clashes</a>.</p>
 <ul><li><strong>Goat: Ben Ming Nian (本命年).</strong> This is your own zodiac year. Tradition sees it as a year of change and testing. It rewards caution and deliberate choices.</li>
 <li><strong>Ox: Clash (丑未冲).</strong> The Ox sits opposite the Goat. Expect disruption, movement and forced change. It can be a year to stay flexible.</li>
 <li><strong>Horse: Six Harmony (午未合).</strong> The Horse is the Goat's secret friend. This points to support through relationships.</li>
