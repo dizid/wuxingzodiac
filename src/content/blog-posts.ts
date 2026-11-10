@@ -12,6 +12,7 @@
  */
 import type { BlogPost } from '../types'
 import { LUNAR_NEW_YEAR_DATES_POST } from './posts/lunar-new-year-dates'
+import { RELATIONS_POST } from './posts/chinese-zodiac-trines-secret-friends-clashes'
 
 export const CODE_BLOG_POSTS: BlogPost[] = [
   {
@@ -77,6 +78,7 @@ export const CODE_BLOG_POSTS: BlogPost[] = [
 <p>Whatever you choose, we hope the Fire Goat year gives you something to think about. Warm, creative and a little sensitive: it may be a good year to look after your own flame.</p>`,
   },
   LUNAR_NEW_YEAR_DATES_POST,
+  RELATIONS_POST,
 ]
 
 /**
