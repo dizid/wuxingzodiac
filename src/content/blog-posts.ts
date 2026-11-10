@@ -15,6 +15,7 @@ import { LUNAR_NEW_YEAR_DATES_POST } from './posts/lunar-new-year-dates'
 import { RELATIONS_POST } from './posts/chinese-zodiac-trines-secret-friends-clashes'
 import { ELEMENT_BY_LAST_DIGIT_POST } from './posts/chinese-element-by-birth-year-last-digit'
 import { BEN_MING_NIAN_POST } from './posts/ben-ming-nian-your-zodiac-year'
+import { BIRTH_HOUR_POST } from './posts/chinese-zodiac-birth-hour-animal'
 
 export const CODE_BLOG_POSTS: BlogPost[] = [
   {
@@ -83,6 +84,7 @@ export const CODE_BLOG_POSTS: BlogPost[] = [
   RELATIONS_POST,
   ELEMENT_BY_LAST_DIGIT_POST,
   BEN_MING_NIAN_POST,
+  BIRTH_HOUR_POST,
 ]
 
 /**

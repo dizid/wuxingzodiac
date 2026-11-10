@@ -8,12 +8,19 @@ const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 /** Internal routes the posts may link to (src/router/index.ts) */
 const KNOWN_ROUTE = /^\/(zodiac(\/(animal|element)\/[a-z]+|\/[a-z]+-[a-z]+)?|blog(\/[a-z0-9-]+)?|calculator|compatibility(\/[a-z-]+\/[a-z-]+)?|reading|about|privacy|terms)$/
 
-/** Outside sources a post may cite (the ben ming nian customs) */
+/** Outside https hosts the code posts may cite (each post links its sources; merged from the post branches) */
 const CITED_SOURCE_HOSTS = [
   'www.travelchinaguide.com',
   'www.chinahighlights.com',
   'language.chinadaily.com.cn',
   'global.chinadaily.com.cn',
+  'my.weather.gov.hk',
+  'sites.duke.edu',
+  'en.wikipedia.org',
+  'thaat.tobulab.com',
+  'globerove.com',
+  'birthcharthoroscopes.com',
+  'easternfate.com',
 ]
 
 describe('code blog posts', () => {
