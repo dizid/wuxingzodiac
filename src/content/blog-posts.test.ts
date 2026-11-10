@@ -13,10 +13,6 @@ const CITED_SOURCE_HOSTS = new Set([
   'my.weather.gov.hk',
   'sites.duke.edu',
   'en.wikipedia.org',
-  'thaat.tobulab.com',
-  'globerove.com',
-  'birthcharthoroscopes.com',
-  'easternfate.com',
 ])
 
 describe('code blog posts', () => {
