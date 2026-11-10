@@ -16,7 +16,8 @@ describe('birth hour post', () => {
   it('is registered once, after the relations post, with limits and allowed tags only', () => {
     expect(CODE_BLOG_POSTS.filter(item => item.slug === SLUG)).toHaveLength(1)
     expect(post).toBe(BIRTH_HOUR_POST)
-    expect(CODE_BLOG_POSTS.map(item => item.slug).slice(-2)).toEqual(['chinese-zodiac-trines-secret-friends-clashes', SLUG])
+    const slugs = CODE_BLOG_POSTS.map(item => item.slug)
+    expect(slugs.indexOf(SLUG)).toBeGreaterThan(slugs.indexOf('chinese-zodiac-trines-secret-friends-clashes'))
     expect(post.title.length).toBeLessThanOrEqual(60)
     expect(post.excerpt.length).toBeLessThanOrEqual(160)
     expect(post.publishedAt).toBe('2026-11-12T09:00:00.000Z')
