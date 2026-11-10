@@ -13,6 +13,7 @@
 import type { BlogPost } from '../types'
 import { LUNAR_NEW_YEAR_DATES_POST } from './posts/lunar-new-year-dates'
 import { RELATIONS_POST } from './posts/chinese-zodiac-trines-secret-friends-clashes'
+import { CHINESE_VS_WESTERN_POST } from './posts/chinese-zodiac-vs-western-zodiac-differences'
 
 export const CODE_BLOG_POSTS: BlogPost[] = [
   {
@@ -79,6 +80,7 @@ export const CODE_BLOG_POSTS: BlogPost[] = [
   },
   LUNAR_NEW_YEAR_DATES_POST,
   RELATIONS_POST,
+  CHINESE_VS_WESTERN_POST,
 ]
 
 /**
