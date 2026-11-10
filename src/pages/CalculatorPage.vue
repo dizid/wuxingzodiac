@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { withArticle } from '@/lib/grammar'
 import { RouterLink } from 'vue-router'
 import { getZodiacFromBirthdate, getSignSlug } from '@/lib/zodiac-data'
 import { getProfileBySlug } from '@/lib/sign-content/profiles'
@@ -100,8 +101,9 @@ function findSign() {
       <div class="grid grid-cols-3 gap-4 mb-6">
         <!-- Year -->
         <div>
-          <label class="text-ash-400 text-sm block mb-2">Year</label>
+          <label for="calc-birth-year" class="text-ash-400 text-sm block mb-2">Year</label>
           <select
+            id="calc-birth-year"
             v-model.number="birthYear"
             class="w-full bg-ash-800 text-ash-100 border border-ash-700 rounded-lg px-3 py-3 text-sm focus:outline-none focus:border-ash-500"
             @change="clampDay"
@@ -113,8 +115,9 @@ function findSign() {
 
         <!-- Month -->
         <div>
-          <label class="text-ash-400 text-sm block mb-2">Month</label>
+          <label for="calc-birth-month" class="text-ash-400 text-sm block mb-2">Month</label>
           <select
+            id="calc-birth-month"
             v-model.number="birthMonth"
             class="w-full bg-ash-800 text-ash-100 border border-ash-700 rounded-lg px-3 py-3 text-sm focus:outline-none focus:border-ash-500"
             @change="clampDay"
@@ -125,8 +128,9 @@ function findSign() {
 
         <!-- Day -->
         <div>
-          <label class="text-ash-400 text-sm block mb-2">Day</label>
+          <label for="calc-birth-day" class="text-ash-400 text-sm block mb-2">Day</label>
           <select
+            id="calc-birth-day"
             v-model.number="birthDay"
             class="w-full bg-ash-800 text-ash-100 border border-ash-700 rounded-lg px-3 py-3 text-sm focus:outline-none focus:border-ash-500"
           >
@@ -158,7 +162,7 @@ function findSign() {
         </div>
 
         <h2 class="element-text font-display text-3xl md:text-4xl font-bold mb-2">
-          You are a {{ result.name }}!
+          You are {{ withArticle(result.name) }}!
         </h2>
         <div class="text-ash-400 text-lg mb-1">{{ result.chineseName }}</div>
         <div class="text-ash-300 italic mb-4">{{ result.tagline }}</div>

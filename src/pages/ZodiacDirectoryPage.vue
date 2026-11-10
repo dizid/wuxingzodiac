@@ -97,6 +97,7 @@ function formatYearsPreview(years: number[]): string {
       <!-- Animal filter -->
       <select
         v-model="selectedAnimal"
+        aria-label="Filter signs by animal"
         class="bg-ash-800 text-ash-200 border border-ash-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ash-500"
       >
         <option value="all">All Animals</option>
@@ -108,6 +109,7 @@ function formatYearsPreview(years: number[]): string {
       <!-- Sort -->
       <select
         v-model="sortBy"
+        aria-label="Sort signs"
         class="bg-ash-800 text-ash-200 border border-ash-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ash-500"
       >
         <option value="element">Sort by Element</option>

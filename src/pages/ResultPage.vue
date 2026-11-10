@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { useHead } from '@unhead/vue'
 import { getProfileBySlug, loadSignContent } from '@/lib/sign-content'
+import { withArticle } from '@/lib/grammar'
 import { useElementTheme } from '@/composables/useElementTheme'
 import type { SignContentV2, ZodiacElement } from '@/types'
 import ReadingCTA from '@/components/readings/ReadingCTA.vue'
@@ -28,17 +29,17 @@ const condensedPersonality = computed(() => {
 // SEO meta tags — static for SSG pre-rendering
 const siteUrl = 'https://wuxingzodiac.me'
 useHead({
-  title: `I'm a ${profile.name} — ${profile.tagline}`,
+  title: `I'm ${withArticle(profile.name)} — ${profile.tagline}`,
   meta: [
     { name: 'description', content: `Discover the ${profile.name} — ${profile.tagline}. Find your Chinese zodiac sign and element at Wu Xing Zodiac.` },
-    { property: 'og:title', content: `I'm a ${profile.name} — ${profile.tagline}` },
+    { property: 'og:title', content: `I'm ${withArticle(profile.name)} — ${profile.tagline}` },
     { property: 'og:description', content: `Discover the ${profile.name} — ${profile.tagline}. Find your Chinese zodiac sign and element at Wu Xing Zodiac.` },
     { property: 'og:image', content: `${siteUrl}/og/${sign}.png` },
     { property: 'og:url', content: `${siteUrl}/result/${sign}` },
     { property: 'og:type', content: 'article' },
     { property: 'og:site_name', content: 'Wu Xing Zodiac' },
     { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: `I'm a ${profile.name} — ${profile.tagline}` },
+    { name: 'twitter:title', content: `I'm ${withArticle(profile.name)} — ${profile.tagline}` },
     { name: 'twitter:description', content: `Discover the ${profile.name} — ${profile.tagline}. Find your Chinese zodiac sign and element at Wu Xing Zodiac.` },
     { name: 'twitter:image', content: `${siteUrl}/og/${sign}.png` },
   ],

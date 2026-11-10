@@ -65,9 +65,9 @@ const animalLinksCol2 = [
 
         <!-- Explore -->
         <div>
-          <h3 class="text-sm font-semibold text-ash-300 uppercase tracking-wider mb-3">
+          <h2 class="text-sm font-semibold text-ash-300 uppercase tracking-wider mb-3">
             Explore
-          </h3>
+          </h2>
           <ul class="space-y-2">
             <li v-for="link in exploreLinks" :key="link.to">
               <RouterLink
@@ -82,9 +82,9 @@ const animalLinksCol2 = [
 
         <!-- Elements -->
         <div>
-          <h3 class="text-sm font-semibold text-ash-300 uppercase tracking-wider mb-3">
+          <h2 class="text-sm font-semibold text-ash-300 uppercase tracking-wider mb-3">
             Elements
-          </h3>
+          </h2>
           <ul class="space-y-2">
             <li v-for="link in elementLinks" :key="link.to">
               <RouterLink
@@ -100,9 +100,9 @@ const animalLinksCol2 = [
 
         <!-- Animals (2 columns) -->
         <div class="col-span-2 md:col-span-1 lg:col-span-2">
-          <h3 class="text-sm font-semibold text-ash-300 uppercase tracking-wider mb-3">
+          <h2 class="text-sm font-semibold text-ash-300 uppercase tracking-wider mb-3">
             Animals
-          </h3>
+          </h2>
           <div class="grid grid-cols-2 gap-x-6">
             <ul class="space-y-2">
               <li v-for="link in animalLinksCol1" :key="link.to">
