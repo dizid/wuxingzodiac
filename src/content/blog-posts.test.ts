@@ -24,6 +24,9 @@ const CITED_SOURCE_HOSTS = [
   'birthcharthoroscopes.com',
   'easternfate.com',
   'onlineexhibits.library.yale.edu',
+  'en.chinaculture.org',
+  'dlp.lib.miamioh.edu',
+  'www.hawaiipublicradio.org',
 ]
 
 describe('code blog posts', () => {
