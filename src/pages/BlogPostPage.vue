@@ -4,12 +4,16 @@ import { useRoute, RouterLink } from 'vue-router'
 import { useHead } from '@unhead/vue'
 import { useAnalytics } from '@/composables/useAnalytics'
 import ReadingCTA from '@/components/readings/ReadingCTA.vue'
+import { formatBlogDate, getSnapshotPost } from '@/lib/blog-snapshot'
 import type { BlogPost } from '@/types'
 
 const { trackBlogRead } = useAnalytics()
 const route = useRoute()
-const post = ref<BlogPost | null>(null)
-const loading = ref(true)
+// First render (prerender + hydration) uses the build-time snapshot when the post is in
+// it; the API refresh in onMounted keeps it current and covers posts published later.
+const snapshotPost = getSnapshotPost(route.params.slug as string)
+const post = ref<BlogPost | null>(snapshotPost)
+const loading = ref(!snapshotPost)
 const error = ref<string | null>(null)
 
 const headData = computed(() => {
@@ -23,6 +27,8 @@ const headData = computed(() => {
   const title = `${post.value.title} | Wu Xing Zodiac`
   const description = post.value.excerpt
   const url = `https://wuxingzodiac.me/blog/${post.value.slug}`
+  // Same share image as the home page (posts have no cover images today)
+  const image = post.value.coverImage || 'https://wuxingzodiac.me/og/home.png'
 
   return {
     title,
@@ -33,9 +39,12 @@ const headData = computed(() => {
       { property: 'og:url', content: url },
       { property: 'og:type', content: 'article' },
       { property: 'og:site_name', content: 'Wu Xing Zodiac' },
+      { property: 'og:image', content: image },
+      { property: 'article:published_time', content: post.value.publishedAt },
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: title },
       { name: 'twitter:description', content: description },
+      { name: 'twitter:image', content: image },
     ],
     link: [
       { rel: 'canonical', href: url },
@@ -49,8 +58,11 @@ const headData = computed(() => {
           headline: post.value.title,
           description,
           url,
+          mainEntityOfPage: url,
+          image,
           datePublished: post.value.publishedAt,
-          author: { '@type': 'Person', name: post.value.authorName },
+          // The byline is the site itself ("Wu Xing Zodiac"), so an Organization, not a Person
+          author: { '@type': 'Organization', name: post.value.authorName, url: 'https://wuxingzodiac.me' },
           publisher: { '@type': 'Organization', name: 'Wu Xing Zodiac', url: 'https://wuxingzodiac.me' },
         }),
       },
@@ -60,16 +72,21 @@ const headData = computed(() => {
 
 useHead(headData)
 
-async function fetchPost() {
-  loading.value = true
+/**
+ * Load the post from the API. `quiet` = refresh the snapshot already on screen: no
+ * spinner, and only a 404 (post unpublished since the build) replaces it.
+ */
+async function fetchPost(quiet = false) {
+  if (!quiet) loading.value = true
   error.value = null
 
   try {
     const slug = route.params.slug as string
-    const response = await fetch(`/api/blog/posts?slug=${slug}`)
+    const response = await fetch(`/api/blog/posts?slug=${encodeURIComponent(slug)}`)
 
     if (!response.ok) {
       if (response.status === 404) {
+        post.value = null
         throw new Error('Post not found')
       }
       throw new Error('Failed to fetch post')
@@ -77,29 +94,29 @@ async function fetchPost() {
 
     post.value = await response.json()
   } catch (err) {
-    error.value = err instanceof Error ? err.message : 'An error occurred'
+    if (!quiet || !post.value) {
+      error.value = err instanceof Error ? err.message : 'An error occurred'
+    }
   } finally {
     loading.value = false
   }
 }
 
-// Track blog post view when loaded
-watch(post, (newPost) => {
-  if (newPost) {
-    trackBlogRead(newPost.slug, newPost.title)
+// Track one blog read per post shown (the quiet refresh doesn't count it twice)
+let trackedSlug: string | null = null
+function trackRead(shownPost: BlogPost | null) {
+  if (shownPost && shownPost.slug !== trackedSlug) {
+    trackedSlug = shownPost.slug
+    trackBlogRead(shownPost.slug, shownPost.title)
   }
-})
-
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
 }
+watch(post, trackRead)
+
+const formatDate = formatBlogDate
 
 onMounted(() => {
-  fetchPost()
+  trackRead(post.value)
+  fetchPost(Boolean(snapshotPost))
 })
 </script>
 

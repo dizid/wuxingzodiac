@@ -1,4 +1,5 @@
 /// <reference types="vite-ssg" />
+import { existsSync, readFileSync } from 'node:fs'
 import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
@@ -10,6 +11,14 @@ import generateSitemap from 'vite-ssg-sitemap'
 const ANIMALS = ['rat', 'ox', 'tiger', 'rabbit', 'dragon', 'snake', 'horse', 'goat', 'monkey', 'rooster', 'dog', 'pig']
 const ELEMENTS = ['wood', 'fire', 'earth', 'metal', 'water']
 const isDev = process.env.NODE_ENV !== 'production'
+
+/** Slugs in src/generated/blog-snapshot.json; none when the snapshot is missing. */
+function readBlogSnapshotSlugs(): string[] {
+  const file = fileURLToPath(new URL('./src/generated/blog-snapshot.json', import.meta.url))
+  if (!existsSync(file)) return []
+  const snapshot = JSON.parse(readFileSync(file, 'utf8')) as { posts?: { slug: string }[] }
+  return (snapshot.posts ?? []).map(post => post.slug).filter(slug => /^[a-z0-9-]+$/.test(slug))
+}
 
 export default defineConfig({
   plugins: [vue(), tailwindcss(), ...(isDev ? [netlify()] : [])],
@@ -67,6 +76,11 @@ export default defineConfig({
         for (let j = i; j < allSlugs.length; j++) {
           allPaths.push(`/compatibility/${allSlugs[i]}/${allSlugs[j]}`)
         }
+      }
+
+      // Blog posts from the build-time snapshot (scripts/blog-snapshot.mjs runs first)
+      for (const slug of readBlogSnapshotSlugs()) {
+        allPaths.push(`/blog/${slug}`)
       }
 
       return allPaths

@@ -1,18 +1,14 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { formatBlogDate } from '@/lib/blog-snapshot'
 import type { BlogPost } from '@/types'
 
 defineProps<{
   post: BlogPost
 }>()
 
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
+// UTC date, so the prerendered card and the browser show the same day
+const formatDate = formatBlogDate
 </script>
 
 <template>

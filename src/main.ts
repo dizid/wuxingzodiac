@@ -19,9 +19,10 @@ import './styles/main.css'
 // and rendering every page a second time in the browser (headline and images re-paint
 // after the JavaScript loads). Only when the HTML was prerendered for this exact path
 // (vite.config.ts stamps data-ssg-route) and the page's first render doesn't depend on
-// the browser: the blog loads its posts from the database in the browser, and the
-// report download page reads its query string.
-const NO_HYDRATION_ROUTES = /^\/(blog|report)(\/|$)/
+// the browser: the report download page reads its query string. The blog renders from
+// the build-time snapshot (src/lib/blog-snapshot.ts), the same data on server and
+// client, so it hydrates too; posts not in the snapshot aren't prerendered at all.
+const NO_HYDRATION_ROUTES = /^\/report(\/|$)/
 
 function shouldHydrate(): boolean {
   if (typeof document === 'undefined') return false

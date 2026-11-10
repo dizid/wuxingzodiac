@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import BlogCard from '@/components/blog/BlogCard.vue'
 import { usePageSeo } from '@/composables/useSignSeo'
+import { BLOG_PAGE_SIZE, getSnapshotPosts } from '@/lib/blog-snapshot'
 import type { BlogPost } from '@/types'
 
 usePageSeo(
@@ -10,14 +11,23 @@ usePageSeo(
   '/blog'
 )
 
-const posts = ref<BlogPost[]>([])
-const loading = ref(true)
+// First render (prerender + hydration) uses the build-time snapshot, so crawlers and
+// first-time visitors see the posts right away; the API refresh below keeps it current.
+const snapshotPosts = getSnapshotPosts()
+const hasSnapshot = snapshotPosts.length > 0
+
+const posts = ref<BlogPost[]>(snapshotPosts.slice(0, BLOG_PAGE_SIZE))
+const loading = ref(!hasSnapshot)
 const error = ref<string | null>(null)
 const currentPage = ref(1)
-const totalPages = ref(1)
+const totalPages = ref(Math.max(1, Math.ceil(snapshotPosts.length / BLOG_PAGE_SIZE)))
 
-async function fetchPosts(page: number = 1) {
-  loading.value = true
+/**
+ * Load a page of posts from the API. `quiet` = refresh what's already on screen:
+ * no spinner, and on failure the snapshot stays instead of an error message.
+ */
+async function fetchPosts(page: number = 1, quiet = false) {
+  if (!quiet) loading.value = true
   error.value = null
 
   try {
@@ -32,7 +42,7 @@ async function fetchPosts(page: number = 1) {
     currentPage.value = data.page
     totalPages.value = data.totalPages
   } catch (err) {
-    error.value = err instanceof Error ? err.message : 'An error occurred'
+    if (!quiet) error.value = err instanceof Error ? err.message : 'An error occurred'
   } finally {
     loading.value = false
   }
@@ -57,7 +67,7 @@ function prevPage() {
 }
 
 onMounted(() => {
-  fetchPosts()
+  fetchPosts(1, hasSnapshot)
 })
 </script>
 
