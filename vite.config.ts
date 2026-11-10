@@ -22,6 +22,11 @@ export default defineConfig({
     },
   },
   ssgOptions: {
+    // vite-ssg's critical-CSS step (beasties) preloads every @font-face it finds by default.
+    // With self-hosted fonts that is all subsets of every weight (43 files, ~580 KB) on each
+    // page. Keep the @font-face rules inlined, but let the browser fetch only the fonts the
+    // page actually uses.
+    beastiesOptions: { preloadFonts: false },
     includedRoutes(paths) {
       // Start with auto-discovered static routes, excluding dynamic/template routes
       const allPaths = paths.filter(p => !p.includes(':'))
