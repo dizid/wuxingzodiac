@@ -6,6 +6,9 @@ interface ImportMetaEnv {
   readonly READING_LIVE?: string
 }
 
+/** Build time as ISO, set by `define` in vite.config.ts */
+declare const __BUILD_DATE__: string
+
 // GA4 gtag global
 interface Window {
   dataLayer: Record<string, unknown>[]

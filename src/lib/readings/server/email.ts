@@ -73,8 +73,7 @@ export async function sendReadingEmail(to: string, ctx: ReadingContext, pdf: Buf
     : `Hi ${person.name}, your ${label} is attached as a PDF.`
 
   const summary = `${sign.name} (${sign.chineseName}) · ${sign.archetype} · born ${person.birthDateLabel}`
-  const contents =
-    'Inside: your element balance, core personality, strengths and blind spots, love, career and money, your 2026 Fire Horse outlook and 5 next steps.'
+  const contents = `Inside: your element balance, core personality, strengths and blind spots, love, career and money, your ${ctx.year.year} ${ctx.year.signName} outlook and 5 next steps.`
   const keep = "Keep this email — it's your copy. We don't store your reading."
 
   const html = `<!doctype html>

@@ -2,10 +2,11 @@
 // PERSONAL READING — prompt + content schema
 // ============================================
 // Claude returns structured JSON (structured outputs) matching
-// PERSONAL_SCHEMA; parsePersonalContent() enforces counts the JSON
+// buildPersonalSchema(); parsePersonalContent() enforces counts the JSON
 // schema can't express, so the template always gets a predictable shape.
 
 import type { ReadingContext } from '../context'
+import type { ReadingYear } from '../../reading-year'
 import type { TitledPoint } from '../templates/base'
 
 export interface PersonalReadingContent {
@@ -37,6 +38,7 @@ export interface PersonalReadingContent {
     moneyStyle: string
     moneyTips: string[]
   }
+  /** The outlook for the zodiac year the reading covers (ctx.year). Named after the first year sold; kept so the shape stays stable. */
   outlook2026: {
     summary: string
     theme: string
@@ -77,45 +79,55 @@ function pointArray(description: string) {
   }
 }
 
-export const PERSONAL_SCHEMA = obj({
-  opening: str('Warm, direct 2–3 sentence welcome that uses their first name and names their sign and archetype'),
-  elementBalance: obj({
-    summary: str('One-sentence takeaway about their element strengths that uses their first name, max 30 words'),
-    dominant: str('What their strongest element (as named in the data) gives them, 1–2 sentences'),
-    supporting: str('How their supporting element (as named in the data) supports or complicates it, 1–2 sentences'),
-    needsMore: str('What their weakest element (as named in the data) means for them, 1–2 sentences'),
-    balancingTips: strArray('Exactly 3 practical ways to bring in their weakest element (as named in the data) and only that element, each max 25 words'),
-  }),
-  corePersonality: obj({
-    summary: str('One sentence that captures who they are, uses their first name, max 30 words'),
-    intro: str('Short paragraph, max 80 words, uses their first name once'),
-    traits: pointArray('Exactly 4 defining traits'),
-  }),
-  strengths: pointArray('Exactly 4 strengths, each tied to their element or animal'),
-  blindSpots: pointArray('Exactly 4 blind spots, each detail ends with a concrete fix'),
-  love: obj({
-    summary: str('One-sentence love takeaway that uses their first name, max 30 words'),
-    howYouLove: strArray('Exactly 4 bullets on how they love, each max 25 words'),
-    whatYouNeed: strArray('Exactly 3 bullets on what they need from a partner, each max 25 words'),
-    watchOuts: strArray('Exactly 3 relationship watch-outs, each max 25 words'),
-    matchNote: str('1–2 sentences on why their best matches (given in the data) work for them'),
-  }),
-  careerMoney: obj({
-    summary: str('One-sentence career and money takeaway that uses their first name, max 30 words'),
-    thrivesIn: strArray('Exactly 4 roles or work environments where they thrive, each max 20 words'),
-    moneyStyle: str('Short paragraph on their money style, max 60 words'),
-    moneyTips: strArray('Exactly 3 money habits that suit their sign, each max 25 words (no investment advice)'),
-  }),
-  outlook2026: obj({
-    summary: str('One-sentence takeaway for their Fire Horse year that uses their first name, max 30 words'),
-    theme: str('Theme of their year in 2–5 words'),
-    opportunities: strArray('Exactly 3 opportunities, each max 25 words'),
-    cautions: strArray('Exactly 3 cautions, each max 25 words'),
-    focus: str('Paragraph, max 70 words: what to focus on in the months that remain of the Horse year, relative to the generation date'),
-  }),
-  actionTips: pointArray('Exactly 5 specific action steps for the next 90 days'),
-  closing: str('2–3 sentence sign-off that uses their first name'),
-})
+/** What the year-outlook "focus" paragraph covers: the rest of a year in progress, or a whole year that starts later. */
+function outlookFocusDescription(year: ReadingYear): string {
+  return year.started
+    ? `Paragraph, max 70 words: what to focus on in the months that remain of the ${year.animalName} year, relative to the generation date`
+    : `Paragraph, max 70 words: what to focus on in the ${year.animalName} year ahead, which starts on ${year.startLabel} (after the generation date)`
+}
+
+/** The JSON schema for a personal reading; the year outlook's wording follows the year the reading covers. */
+export function buildPersonalSchema(year: ReadingYear) {
+  return obj({
+    opening: str('Warm, direct 2–3 sentence welcome that uses their first name and names their sign and archetype'),
+    elementBalance: obj({
+      summary: str('One-sentence takeaway about their element strengths that uses their first name, max 30 words'),
+      dominant: str('What their strongest element (as named in the data) gives them, 1–2 sentences'),
+      supporting: str('How their supporting element (as named in the data) supports or complicates it, 1–2 sentences'),
+      needsMore: str('What their weakest element (as named in the data) means for them, 1–2 sentences'),
+      balancingTips: strArray('Exactly 3 practical ways to bring in their weakest element (as named in the data) and only that element, each max 25 words'),
+    }),
+    corePersonality: obj({
+      summary: str('One sentence that captures who they are, uses their first name, max 30 words'),
+      intro: str('Short paragraph, max 80 words, uses their first name once'),
+      traits: pointArray('Exactly 4 defining traits'),
+    }),
+    strengths: pointArray('Exactly 4 strengths, each tied to their element or animal'),
+    blindSpots: pointArray('Exactly 4 blind spots, each detail ends with a concrete fix'),
+    love: obj({
+      summary: str('One-sentence love takeaway that uses their first name, max 30 words'),
+      howYouLove: strArray('Exactly 4 bullets on how they love, each max 25 words'),
+      whatYouNeed: strArray('Exactly 3 bullets on what they need from a partner, each max 25 words'),
+      watchOuts: strArray('Exactly 3 relationship watch-outs, each max 25 words'),
+      matchNote: str('1–2 sentences on why their best matches (given in the data) work for them'),
+    }),
+    careerMoney: obj({
+      summary: str('One-sentence career and money takeaway that uses their first name, max 30 words'),
+      thrivesIn: strArray('Exactly 4 roles or work environments where they thrive, each max 20 words'),
+      moneyStyle: str('Short paragraph on their money style, max 60 words'),
+      moneyTips: strArray('Exactly 3 money habits that suit their sign, each max 25 words (no investment advice)'),
+    }),
+    outlook2026: obj({
+      summary: str(`One-sentence takeaway for their ${year.signName} year that uses their first name, max 30 words`),
+      theme: str('Theme of their year in 2–5 words'),
+      opportunities: strArray('Exactly 3 opportunities, each max 25 words'),
+      cautions: strArray('Exactly 3 cautions, each max 25 words'),
+      focus: str(outlookFocusDescription(year)),
+    }),
+    actionTips: pointArray('Exactly 5 specific action steps for the next 90 days'),
+    closing: str('2–3 sentence sign-off that uses their first name'),
+  })
+}
 
 // ── Validation ───────────────────────────────────
 
@@ -252,6 +264,13 @@ function formatMatches(matches: { name: string; reason: string }[]): string {
   return matches.map((m) => `- ${m.name}: ${m.reason}`).join('\n')
 }
 
+/** How to frame the outlook: the months left of a year in progress, or the whole year ahead (bought in January). */
+function outlookFraming(ctx: ReadingContext): string {
+  return ctx.year.started
+    ? `This reading is generated on ${ctx.generatedOnLabel}. Frame the outlook for the months that remain in the ${ctx.year.animalName} year from that date.`
+    : `This reading is generated on ${ctx.generatedOnLabel}, before this year begins. Frame the outlook for the whole ${ctx.year.animalName} year ahead, from its start on ${ctx.year.startLabel}.`
+}
+
 /** Build the user message with every fact the model needs. */
 export function buildPersonalUserMessage(ctx: ReadingContext): string {
   const person = ctx.people[0]!
@@ -298,12 +317,12 @@ Challenging matches:
 ${formatMatches(content.matches.worst)}
 </sign_profile>
 
-<year_2026>
+<year_${ctx.year.year}>
 The ${ctx.year.signName} year (${ctx.year.year}) runs ${ctx.year.period}.
 Element relationship: ${ctx.year.elementRelation}
 Animal relationship: ${ctx.year.animalRelation}
-This reading is generated on ${ctx.generatedOnLabel}. Frame the outlook for the months that remain in the Horse year from that date.
-</year_2026>
+${outlookFraming(ctx)}
+</year_${ctx.year.year}>
 
 Return the reading as JSON matching the schema.`
 }

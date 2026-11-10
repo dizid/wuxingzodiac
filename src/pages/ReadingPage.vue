@@ -2,12 +2,13 @@
 // /reading: the one landing page for the WuXing Personal Reading. Every CTA
 // and social post links here. READING_LIVE (src/lib/reading-offer.ts) decides
 // whether the main action is the launch waitlist or the order form.
-import { ref, nextTick, defineAsyncComponent, type Component } from 'vue'
+import { computed, ref, nextTick, defineAsyncComponent, type Component } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useHead } from '@unhead/vue'
 import NewsletterForm from '@/components/ui/NewsletterForm.vue'
 import { usePageSeo } from '@/composables/useSignSeo'
 import { useAnalytics } from '@/composables/useAnalytics'
+import { useReadingYear } from '@/composables/useReadingYear'
 import {
   READING_LIVE,
   READING_PRICE,
@@ -72,21 +73,30 @@ const samplePages = [
   { src: '/reading/sample-anna-love.jpg', caption: 'How you love', alt: 'Sample page "How You Love": love style, what Anna needs, her best matches and what to watch out for' },
 ]
 
-const insidePages = [
+// The zodiac year a reading bought today covers: the year in progress, or from
+// 1 January the coming one (src/lib/readings/reading-year.ts)
+const readingYear = useReadingYear()
+
+const insidePages = computed(() => [
   { title: 'Cover', detail: 'Your name, your sign and its Chinese characters.' },
   { title: 'Your five elements', detail: 'Your element balance, your strongest and weakest element, and how to bring in more of what you lack.' },
   { title: 'Core personality', detail: 'What defines you and how others experience you.' },
   { title: 'Strengths and blind spots', detail: 'Your edge, and the habits that hold you back.' },
   { title: 'How you love', detail: 'Your love style, what you need and your best matches.' },
   { title: 'Career and money', detail: 'Where you thrive and how you handle money.' },
-  { title: 'Your 2026 Fire Horse year', detail: 'Opportunities, cautions and what to focus on until the next Lunar New Year.' },
+  {
+    title: `Your ${readingYear.value.year} ${readingYear.value.signName} year`,
+    detail: readingYear.value.started
+      ? 'Opportunities, cautions and what to focus on until the next Lunar New Year.'
+      : `Opportunities, cautions and what to focus on in the year that starts on ${readingYear.value.startLabel}.`,
+  },
   { title: 'Your next steps', detail: 'Five practical moves for the next 90 days.' },
-]
+])
 
-const faqs = [
+const faqs = computed(() => [
   {
     question: 'What is the WuXing Personal Reading?',
-    answer: `An ${READING_PAGE_COUNT}-page PDF written to you by name. It looks at the Chinese zodiac sign of your birth year (your element and animal, for example Metal Horse) through the five elements, Wu Xing: your personality, strengths and blind spots, love, career and money, your 2026 outlook and five practical next steps. It costs ${READING_PRICE}, once.`,
+    answer: `An ${READING_PAGE_COUNT}-page PDF written to you by name. It looks at the Chinese zodiac sign of your birth year (your element and animal, for example Metal Horse) through the five elements, Wu Xing: your personality, strengths and blind spots, love, career and money, your ${readingYear.value.year} outlook and five practical next steps. It costs ${READING_PRICE}, once.`,
   },
   {
     question: "What isn't it?",
@@ -101,7 +111,7 @@ const faqs = [
     question: 'When can I get it?',
     answer: "It isn't on sale yet. Leave your email at the top of this page and we'll let you know when it launches.",
   }]),
-]
+])
 </script>
 
 <template>
