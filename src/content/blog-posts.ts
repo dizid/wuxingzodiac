@@ -14,6 +14,7 @@ import type { BlogPost } from '../types'
 import { LUNAR_NEW_YEAR_DATES_POST } from './posts/lunar-new-year-dates'
 import { RELATIONS_POST } from './posts/chinese-zodiac-trines-secret-friends-clashes'
 import { SIXTY_CYCLE_POST } from './posts/sixty-year-chinese-zodiac-cycle'
+import { BABY_2027_POST } from './posts/baby-born-2027-fire-horse-or-fire-goat'
 
 export const CODE_BLOG_POSTS: BlogPost[] = [
   {
@@ -81,6 +82,7 @@ export const CODE_BLOG_POSTS: BlogPost[] = [
   LUNAR_NEW_YEAR_DATES_POST,
   RELATIONS_POST,
   SIXTY_CYCLE_POST,
+  BABY_2027_POST,
 ]
 
 /**
