@@ -13,15 +13,13 @@ import {
   READING_PRICE,
   READING_PAGE_COUNT,
   READING_WAITLIST_TAG,
+  readingProductJsonLd,
 } from '@/lib/reading-offer'
 
 const siteUrl = 'https://wuxingzodiac.me'
+const pageDescription = `An ${READING_PAGE_COUNT}-page personalized PDF based on your birth-year Chinese zodiac sign and the five elements, written to you by name. ${READING_PRICE}, by email.`
 
-usePageSeo(
-  'WuXing Personal Reading',
-  `An ${READING_PAGE_COUNT}-page personalized PDF based on your birth-year Chinese zodiac sign and the five elements, written to you by name. ${READING_PRICE}, by email.`,
-  '/reading',
-)
+usePageSeo('WuXing Personal Reading', pageDescription, '/reading')
 
 // Social posts link here, so give link previews an image
 useHead({
@@ -42,6 +40,15 @@ const ReadingIntakeForm = loadIntakeForm ? defineAsyncComponent(loadIntakeForm) 
 // Sell only when the flag is on AND the form exists
 const orderForm = READING_LIVE ? ReadingIntakeForm : null
 const canOrder = orderForm !== null
+
+// Product + price for search results, only while the reading is on sale
+if (canOrder) {
+  useHead({
+    script: [
+      { type: 'application/ld+json', innerHTML: JSON.stringify(readingProductJsonLd(siteUrl, pageDescription)) },
+    ],
+  })
+}
 
 const showIntakeForm = ref(false)
 const actionSection = ref<HTMLElement | null>(null)

@@ -30,3 +30,27 @@ export const READING_FIX_PROMISE =
  * only accepts tags on its own allowlist, so keep the two in sync.
  */
 export const READING_WAITLIST_TAG = 'reading-waitlist'
+
+/**
+ * Product structured data (JSON-LD) for /reading, so search results can show the
+ * reading's name and price. Only used while the reading is on sale. The price is
+ * read from READING_PRICE ('$9.90'), so the page and the data can't drift apart.
+ */
+export function readingProductJsonLd(siteUrl: string, description: string): Record<string, unknown> {
+  const amount = READING_PRICE.replace(/^\$/, '')
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: 'WuXing Personal Reading',
+    description,
+    image: [`${siteUrl}/reading/sample-anna-cover.jpg`],
+    brand: { '@type': 'Brand', name: 'WuXing Zodiac' },
+    offers: {
+      '@type': 'Offer',
+      url: `${siteUrl}${READING_PATH}`,
+      price: amount,
+      priceCurrency: 'USD',
+      availability: 'https://schema.org/InStock',
+    },
+  }
+}
