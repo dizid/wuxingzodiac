@@ -1,9 +1,10 @@
 <script setup lang="ts">
 // Upsell card for the personalized PDF reading. The button reveals the
 // intake form (name, birth date, email, gift) which then starts checkout.
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { SignProfile } from '@/types'
 import { useAnalytics } from '@/composables/useAnalytics'
+import { useReadingYear } from '@/composables/useReadingYear'
 import ReadingIntakeForm from '@/components/readings/ReadingIntakeForm.vue'
 
 const props = defineProps<{
@@ -28,13 +29,14 @@ function openForm() {
 
 // Keep claims honest: the reading uses the birth-year sign + five elements + name
 // (day/month only set the Lunar New Year cutoff) — no birth chart, BaZi or Four Pillars.
-const features = [
+const readingYear = useReadingYear()
+const features = computed(() => [
   'Written for you by name',
   'Your element balance & core personality',
   'Strengths, blind spots, love, career & money',
-  'Your 2026 Fire Horse outlook',
+  `Your ${readingYear.value.year} ${readingYear.value.signName} outlook`,
   '5 personal action steps',
-]
+])
 </script>
 
 <template>

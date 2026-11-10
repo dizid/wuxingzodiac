@@ -3,8 +3,10 @@
 // one landing page (/reading), which handles waitlist vs. checkout.
 // Copy rules: honest facts only. No urgency or scarcity, and no birth-chart,
 // BaZi, expert or master claims.
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useAnalytics } from '@/composables/useAnalytics'
+import { useReadingYear } from '@/composables/useReadingYear'
 import { READING_PATH, READING_PRICE, READING_PAGE_COUNT } from '@/lib/reading-offer'
 
 const props = withDefaults(defineProps<{
@@ -26,12 +28,13 @@ function onClick() {
   trackReadingCtaClick(props.placement)
 }
 
-// Matches the sections of the reading PDF
-const highlights = [
+// Matches the sections of the reading PDF; the year is the one a reading bought today covers
+const readingYear = useReadingYear()
+const highlights = computed(() => [
   'Your five elements and core personality',
   'Strengths, blind spots, love, career and money',
-  'Your 2026 Fire Horse year and 5 next steps',
-]
+  `Your ${readingYear.value.year} ${readingYear.value.signName} year and 5 next steps`,
+])
 </script>
 
 <template>

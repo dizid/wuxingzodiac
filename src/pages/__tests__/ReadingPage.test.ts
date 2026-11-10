@@ -123,4 +123,34 @@ describe('ReadingPage (/reading)', () => {
       expect(statSync(file).size).toBeLessThan(200 * 1024)
     }
   })
+
+  // T-0224: from 1 January the reading covers the coming zodiac year, and the page says so
+  describe('year section', () => {
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    it('November 2026: the 2026 Fire Horse year until the next Lunar New Year', async () => {
+      vi.useFakeTimers({ toFake: ['Date'] })
+      vi.setSystemTime(new Date('2026-11-10T12:00:00Z'))
+      const wrapper = await mountReadingPage()
+      await flushPromises()
+      const text = wrapper.text()
+      expect(text).toContain('Your 2026 Fire Horse year')
+      expect(text).toContain('what to focus on until the next Lunar New Year.')
+      expect(text).toContain('your 2026 outlook')
+    })
+
+    it('January 2027: the 2027 Fire Goat year, from 6 February 2027', async () => {
+      vi.useFakeTimers({ toFake: ['Date'] })
+      vi.setSystemTime(new Date('2027-01-02T12:00:00Z'))
+      const wrapper = await mountReadingPage()
+      await flushPromises()
+      const text = wrapper.text()
+      expect(text).toContain('Your 2027 Fire Goat year')
+      expect(text).toContain('what to focus on in the year that starts on 6 February 2027.')
+      expect(text).toContain('your 2027 outlook')
+      expect(text).not.toContain('Fire Horse year')
+    })
+  })
 })

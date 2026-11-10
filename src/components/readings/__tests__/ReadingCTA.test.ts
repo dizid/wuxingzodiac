@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount, RouterLinkStub } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import ReadingCTA from '@/components/readings/ReadingCTA.vue'
 
 // Claims the reading copy must never make (order 003): no birth-chart, BaZi,
@@ -65,5 +66,25 @@ describe('ReadingCTA', () => {
     expect(wrapper.text()).toContain('A relationship reading for two people is coming soon.')
     expect(wrapper.findAllComponents(RouterLinkStub)).toHaveLength(1)
     expect(wrapper.find('button').exists()).toBe(false)
+  })
+
+  // T-0224: the year line follows the year a reading bought today covers (from 1 January the coming one)
+  describe('year line', () => {
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    it.each([
+      ['2026-11-10T12:00:00Z', 'Your 2026 Fire Horse year and 5 next steps'],
+      ['2026-12-31T20:00:00Z', 'Your 2026 Fire Horse year and 5 next steps'],
+      ['2027-01-02T12:00:00Z', 'Your 2027 Fire Goat year and 5 next steps'],
+      ['2027-06-01T12:00:00Z', 'Your 2027 Fire Goat year and 5 next steps'],
+    ])('on %s says "%s"', async (now, line) => {
+      vi.useFakeTimers({ toFake: ['Date'] })
+      vi.setSystemTime(new Date(now))
+      const wrapper = mountCta({ variant: 'full' })
+      await nextTick()
+      expect(wrapper.text()).toContain(line)
+    })
   })
 })

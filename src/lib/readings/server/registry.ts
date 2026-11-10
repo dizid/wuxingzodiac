@@ -10,7 +10,7 @@ import type { ReadingType } from '../types'
 import type { ReadingContext } from './context'
 import { generateStructured } from './generate-text'
 import {
-  PERSONAL_SCHEMA,
+  buildPersonalSchema,
   PERSONAL_SYSTEM_PROMPT,
   buildPersonalUserMessage,
   parsePersonalContent,
@@ -31,7 +31,7 @@ const DEFINITIONS: Partial<Record<ReadingType, ReadingDefinition>> = {
         {
           system: PERSONAL_SYSTEM_PROMPT,
           user: buildPersonalUserMessage(ctx),
-          schema: PERSONAL_SCHEMA,
+          schema: buildPersonalSchema(ctx.year),
           parse: parsePersonalContent,
         },
         client,

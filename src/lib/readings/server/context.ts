@@ -3,11 +3,13 @@
 // ============================================
 // Gathers every fact the prompt and template need for a reading:
 // computed sign, the site's sign content, element strength scores,
-// and how the current Fire Horse year interacts with the person's sign.
+// and how the zodiac year the reading covers (see ../reading-year.ts)
+// interacts with the person's sign.
 // Deterministic facts are computed here so the model never has to guess them.
 
 import type { ReadingInput } from '../types'
 import { getSignForBirthDate, formatIsoDate, type ReadingSign } from '../sign'
+import { getReadingYear, type ReadingYear } from '../reading-year'
 import { loadSignContentServer } from './sign-content-registry'
 import { getVisualData } from '../../sign-visual-data'
 import { GENERATES, DESTROYS, ELEMENT_LABELS } from '../../wuxing-cycles'
@@ -34,13 +36,8 @@ export interface PersonContext {
   elementBalance: ElementStrength[]
 }
 
-export interface YearInfluence {
-  year: number
-  signName: string          // 'Fire Horse'
-  element: ZodiacElement
-  animal: ZodiacAnimal
-  period: string            // '17 February 2026 – 5 February 2027'
-  endsLabel: string         // '5 February 2027'
+/** The zodiac year the reading covers ('Fire Horse', 17 February 2026 – 5 February 2027), plus how it meets the person's sign */
+export interface YearInfluence extends ReadingYear {
   /** Wu Xing relation between the year's element and the person's element (second person: shown in the PDF) */
   elementRelation: string
   /** Traditional animal relation between the year's animal and the person's animal (second person: shown in the PDF) */
@@ -56,18 +53,9 @@ export interface ReadingContext {
   year: YearInfluence
 }
 
-// The current zodiac year covered by the "2026 outlook" section
-const CURRENT_YEAR: Omit<YearInfluence, 'elementRelation' | 'animalRelation'> = {
-  year: 2026,
-  signName: 'Fire Horse',
-  element: 'fire',
-  animal: 'horse',
-  period: '17 February 2026 – 5 February 2027',
-  endsLabel: '5 February 2027',
-}
-
-// Traditional Horse-year animal relationships (三合 trine, 六合 harmony, 冲 clash, 害 harm).
+// Traditional animal relationships with the year's animal (三合 trine, 六合 harmony, 冲 clash, 害 harm).
 // Written to the reader ("your"): the template prints these as-is.
+// The Horse year keeps its original wording, so 2026 readings stay exactly as before.
 const HORSE_YEAR_ANIMAL_RELATIONS: Partial<Record<ZodiacAnimal, string>> = {
   horse: 'Ben Ming Nian (本命年) — this is your own zodiac year, traditionally a year of change and testing that rewards caution and deliberate choices',
   rat: 'Clash (子午冲) — your Rat sits opposite the Horse; expect disruption, movement and forced change',
@@ -75,6 +63,76 @@ const HORSE_YEAR_ANIMAL_RELATIONS: Partial<Record<ZodiacAnimal, string>> = {
   tiger: 'Trine ally (寅午戌) — your Tiger shares the Horse\'s fire trine; momentum and confidence come easily',
   dog: 'Trine ally (寅午戌) — your Dog shares the Horse\'s fire trine; loyal partnerships pay off',
   ox: 'Harm (丑午害) — your Ox and the Horse quietly undermine each other; watch for misunderstandings and hidden friction',
+}
+
+// The 12 earthly branches in their traditional order (rat 子 … pig 亥); pairs are written in this order (子午冲).
+const BRANCHES: { animal: ZodiacAnimal; name: string; char: string }[] = [
+  { animal: 'rat', name: 'Rat', char: '子' },
+  { animal: 'ox', name: 'Ox', char: '丑' },
+  { animal: 'tiger', name: 'Tiger', char: '寅' },
+  { animal: 'rabbit', name: 'Rabbit', char: '卯' },
+  { animal: 'dragon', name: 'Dragon', char: '辰' },
+  { animal: 'snake', name: 'Snake', char: '巳' },
+  { animal: 'horse', name: 'Horse', char: '午' },
+  { animal: 'goat', name: 'Goat', char: '未' },
+  { animal: 'monkey', name: 'Monkey', char: '申' },
+  { animal: 'rooster', name: 'Rooster', char: '酉' },
+  { animal: 'dog', name: 'Dog', char: '戌' },
+  { animal: 'pig', name: 'Pig', char: '亥' },
+]
+
+// The four trines (三合), each named after its element, in their traditional character order
+const TRINES: { animals: ZodiacAnimal[]; chars: string; element: string }[] = [
+  { animals: ['monkey', 'rat', 'dragon'], chars: '申子辰', element: 'water' },
+  { animals: ['pig', 'rabbit', 'goat'], chars: '亥卯未', element: 'wood' },
+  { animals: ['tiger', 'horse', 'dog'], chars: '寅午戌', element: 'fire' },
+  { animals: ['snake', 'rooster', 'ox'], chars: '巳酉丑', element: 'metal' },
+]
+
+// The six pairs for harmony (六合) and harm (害); a clash (冲) is the branch six places away
+const SIX_HARMONY_PAIRS: [ZodiacAnimal, ZodiacAnimal][] = [
+  ['rat', 'ox'], ['tiger', 'pig'], ['rabbit', 'dog'], ['dragon', 'rooster'], ['snake', 'monkey'], ['horse', 'goat'],
+]
+const HARM_PAIRS: [ZodiacAnimal, ZodiacAnimal][] = [
+  ['rat', 'goat'], ['ox', 'horse'], ['tiger', 'snake'], ['rabbit', 'dragon'], ['monkey', 'pig'], ['rooster', 'dog'],
+]
+
+function branchIndex(animal: ZodiacAnimal): number {
+  return BRANCHES.findIndex((b) => b.animal === animal)
+}
+
+/** The two branch characters in traditional order, e.g. rat + horse → '子午' */
+function pairChars(a: ZodiacAnimal, b: ZodiacAnimal): string {
+  const [first, second] = [branchIndex(a), branchIndex(b)].sort((x, y) => x - y)
+  return BRANCHES[first!]!.char + BRANCHES[second!]!.char
+}
+
+function isPair(pairs: [ZodiacAnimal, ZodiacAnimal][], a: ZodiacAnimal, b: ZodiacAnimal): boolean {
+  return pairs.some(([x, y]) => (x === a && y === b) || (x === b && y === a))
+}
+
+/** Same relation types and wording as the Horse year, for any year animal. */
+function describeAnimalRelationGeneric(yearAnimal: ZodiacAnimal, personAnimal: ZodiacAnimal): string {
+  const year = BRANCHES[branchIndex(yearAnimal)]!.name
+  const person = BRANCHES[branchIndex(personAnimal)]!.name
+
+  if (yearAnimal === personAnimal) {
+    return 'Ben Ming Nian (本命年) — this is your own zodiac year, traditionally a year of change and testing that rewards caution and deliberate choices'
+  }
+  if ((branchIndex(yearAnimal) + 6) % 12 === branchIndex(personAnimal)) {
+    return `Clash (${pairChars(yearAnimal, personAnimal)}冲) — your ${person} sits opposite the ${year}; expect disruption, movement and forced change`
+  }
+  if (isPair(SIX_HARMONY_PAIRS, yearAnimal, personAnimal)) {
+    return `Six Harmony (${pairChars(yearAnimal, personAnimal)}合) — your ${person} is the ${year}'s secret friend; support arrives through relationships`
+  }
+  const trine = TRINES.find((t) => t.animals.includes(yearAnimal) && t.animals.includes(personAnimal))
+  if (trine) {
+    return `Trine ally (${trine.chars}) — your ${person} shares the ${year}'s ${trine.element} trine; momentum and confidence come easily`
+  }
+  if (isPair(HARM_PAIRS, yearAnimal, personAnimal)) {
+    return `Harm (${pairChars(yearAnimal, personAnimal)}害) — your ${person} and the ${year} quietly undermine each other; watch for misunderstandings and hidden friction`
+  }
+  return `Neutral — your animal has no traditional clash or alliance with the ${year}; the element relationship sets the tone`
 }
 
 function describeElementRelation(yearElement: ZodiacElement, personElement: ZodiacElement): string {
@@ -96,11 +154,14 @@ function describeElementRelation(yearElement: ZodiacElement, personElement: Zodi
   return `Your ${person} controls the year's ${year} — a year of effort that converts into reward when you stay in charge of your energy`
 }
 
-function describeAnimalRelation(personAnimal: ZodiacAnimal): string {
-  return (
-    HORSE_YEAR_ANIMAL_RELATIONS[personAnimal] ??
-    'Neutral — your animal has no traditional clash or alliance with the Horse; the element relationship sets the tone'
-  )
+export function describeAnimalRelation(yearAnimal: ZodiacAnimal, personAnimal: ZodiacAnimal): string {
+  if (yearAnimal === 'horse') {
+    return (
+      HORSE_YEAR_ANIMAL_RELATIONS[personAnimal] ??
+      'Neutral — your animal has no traditional clash or alliance with the Horse; the element relationship sets the tone'
+    )
+  }
+  return describeAnimalRelationGeneric(yearAnimal, personAnimal)
 }
 
 function toElementBalance(percentages: ElementPercentages | undefined, fallback: ZodiacElement): ElementStrength[] {
@@ -131,6 +192,7 @@ export async function buildReadingContext(input: ReadingInput, now: Date = new D
   )
   const primary = people[0]!
   const generatedOn = now.toISOString().slice(0, 10)
+  const readingYear = getReadingYear(now)
 
   return {
     input,
@@ -138,9 +200,9 @@ export async function buildReadingContext(input: ReadingInput, now: Date = new D
     generatedOn,
     generatedOnLabel: formatIsoDate(generatedOn),
     year: {
-      ...CURRENT_YEAR,
-      elementRelation: describeElementRelation(CURRENT_YEAR.element, primary.sign.element),
-      animalRelation: describeAnimalRelation(primary.sign.animal),
+      ...readingYear,
+      elementRelation: describeElementRelation(readingYear.element, primary.sign.element),
+      animalRelation: describeAnimalRelation(readingYear.animal, primary.sign.animal),
     },
   }
 }

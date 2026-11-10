@@ -118,7 +118,7 @@ export function renderPersonalHtml(ctx: ReadingContext, c: PersonalReadingConten
       ${bulletList(c.careerMoney.moneyTips)}
     </section>`,
 
-    // 06 — 2026 Fire Horse outlook
+    // 06 — Year outlook (the zodiac year in ctx.year, e.g. 2026 Fire Horse)
     `<section class="section">
       ${sectionHeader(6, `${ctx.year.year} Outlook`, `Your ${ctx.year.signName} Year`)}
       <div class="theme">

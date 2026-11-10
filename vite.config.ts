@@ -25,6 +25,11 @@ export default defineConfig({
   // Expose the READING_LIVE feature flag (build-time env var, see src/lib/reading-offer.ts)
   // to client code next to the usual VITE_* vars.
   envPrefix: ['VITE_', 'READING_LIVE'],
+  // Build time, so pre-built pages and their first browser render agree on the
+  // reading's zodiac year (src/composables/useReadingYear.ts)
+  define: {
+    __BUILD_DATE__: JSON.stringify(new Date().toISOString()),
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
