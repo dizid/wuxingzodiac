@@ -21,6 +21,8 @@ const CITED_SOURCE_HOSTS = [
   'globerove.com',
   'birthcharthoroscopes.com',
   'easternfate.com',
+  'www.hko.gov.hk',
+  'onlineexhibits.library.yale.edu',
 ]
 
 describe('code blog posts', () => {
