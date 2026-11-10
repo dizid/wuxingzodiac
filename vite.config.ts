@@ -71,6 +71,14 @@ export default defineConfig({
 
       return allPaths
     },
+    // Stamp each prerendered page with its route; src/main.ts only hydrates when it
+    // matches the URL (the SPA fallback serves the home HTML for other paths).
+    onPageRendered(route: string, renderedHTML: string) {
+      return renderedHTML.replace(
+        '<div id="app" data-server-rendered="true">',
+        `<div id="app" data-server-rendered="true" data-ssg-route="${route.replace(/"/g, '&quot;')}">`,
+      )
+    },
     onFinished() {
       generateSitemap({
         hostname: 'https://wuxingzodiac.me',

@@ -6,7 +6,7 @@
 // SSR-safe: canvas/download logic gated in onMounted
 // ============================================
 
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, useId } from 'vue'
 import type { SignProfile, ZodiacElement } from '@/types'
 import { ELEMENT_CHART_COLORS } from '@/lib/wuxing-cycles'
 
@@ -56,7 +56,9 @@ const VW = 200
 const VH = 260
 
 // Gradient IDs — unique per instance to avoid SVG conflicts
-const uid = Math.random().toString(36).slice(2, 7)
+// useId(): the same id when prerendered and in the browser (Math.random gave a different
+// id on each side, which breaks hydration of the SVG gradient/marker references)
+const uid = useId()
 const gradId = `badge-border-${uid}`
 const bgGradId = `badge-bg-${uid}`
 

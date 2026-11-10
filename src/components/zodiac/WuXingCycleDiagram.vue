@@ -7,7 +7,7 @@
 // Active element highlighted; hover tooltip on nodes
 // ============================================
 
-import { computed, ref } from 'vue'
+import { computed, ref, useId } from 'vue'
 import type { ZodiacElement } from '@/types'
 import {
   ELEMENTS,
@@ -248,7 +248,9 @@ function onNodeClick(el: ZodiacElement) {
 // Arrow marker definitions
 // -------------------------------------------------------------------
 // Unique ID namespace to avoid SVG marker conflicts with multiple instances
-const uid = Math.random().toString(36).slice(2, 7)
+// useId(): the same id when prerendered and in the browser (Math.random gave a different
+// id on each side, which breaks hydration of the SVG gradient/marker references)
+const uid = useId()
 const markerId = (name: string) => `${uid}-${name}`
 </script>
 

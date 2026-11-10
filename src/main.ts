@@ -14,6 +14,21 @@ import '@fontsource/inter/600.css'
 import '@fontsource/inter/700.css'
 import './styles/main.css'
 
+// Hydrate (reuse the prerendered HTML) instead of vite-ssg's default of throwing it away
+// and rendering every page a second time in the browser (headline and images re-paint
+// after the JavaScript loads). Only when the HTML was prerendered for this exact path
+// (vite.config.ts stamps data-ssg-route) and the page's first render doesn't depend on
+// the browser: the blog loads its posts from the database in the browser, and the
+// report download page reads its query string.
+const NO_HYDRATION_ROUTES = /^\/(blog|report)(\/|$)/
+
+function shouldHydrate(): boolean {
+  if (typeof document === 'undefined') return false
+  const renderedFor = document.getElementById('app')?.dataset.ssgRoute
+  const path = window.location.pathname.replace(/\/+$/, '') || '/'
+  return renderedFor === path && !NO_HYDRATION_ROUTES.test(path)
+}
+
 export const createApp = ViteSSG(
   App,
   {
@@ -31,4 +46,5 @@ export const createApp = ViteSSG(
       }
     })
   },
+  { hydration: shouldHydrate() },
 )
