@@ -8,6 +8,14 @@ const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 /** Internal routes the posts may link to (src/router/index.ts) */
 const KNOWN_ROUTE = /^\/(zodiac(\/(animal|element)\/[a-z]+|\/[a-z]+-[a-z]+)?|blog(\/[a-z0-9-]+)?|calculator|compatibility(\/[a-z-]+\/[a-z-]+)?|reading|about|privacy|terms)$/
 
+/** Outside sources a post may cite (the ben ming nian customs) */
+const CITED_SOURCE_HOSTS = [
+  'www.travelchinaguide.com',
+  'www.chinahighlights.com',
+  'language.chinadaily.com.cn',
+  'global.chinadaily.com.cn',
+]
+
 describe('code blog posts', () => {
   it('have unique, URL-safe slugs and ids', () => {
     const slugs = CODE_BLOG_POSTS.map(post => post.slug)
@@ -28,11 +36,19 @@ describe('code blog posts', () => {
     }
   })
 
-  it('only link to pages that exist on the site', () => {
+  it('only link to pages that exist on the site, or to a cited source over https', () => {
     for (const post of CODE_BLOG_POSTS) {
-      const hrefs = [...post.content.matchAll(/href="([^"]+)"/g)].map(match => match[1])
-      expect(hrefs.length).toBeGreaterThan(0)
-      for (const href of hrefs) expect(href).toMatch(KNOWN_ROUTE)
+      const hrefs = [...post.content.matchAll(/href="([^"]+)"/g)].map(match => match[1]!)
+      expect(hrefs.filter(href => href.startsWith('/')).length).toBeGreaterThan(0)
+      for (const href of hrefs) {
+        if (href.startsWith('/')) {
+          expect(href).toMatch(KNOWN_ROUTE)
+        } else {
+          const url = new URL(href)
+          expect(url.protocol).toBe('https:')
+          expect(CITED_SOURCE_HOSTS).toContain(url.hostname)
+        }
+      }
     }
   })
 
