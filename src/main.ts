@@ -1,6 +1,7 @@
 import { ViteSSG } from 'vite-ssg'
 import App from './App.vue'
 import { routes } from './router'
+import { reloadOnStaleChunks } from './lib/stale-chunk-reload'
 // Fonts served from our own domain (were a render-blocking Google Fonts stylesheet,
 // which also sent every visitor's IP to Google). Same families and weights as before.
 import '@fontsource/cinzel/400.css'
@@ -37,14 +38,10 @@ export const createApp = ViteSSG(
       return savedPosition || { top: 0 }
     },
   },
-  ({ router }) => {
-    // Reload on chunk load failure (stale cache after deploy)
-    router.onError((error, to) => {
-      if (error.message.includes('Failed to fetch dynamically imported module') ||
-          error.message.includes('Loading chunk')) {
-        window.location.href = to.fullPath
-      }
-    })
+  ({ router, isClient }) => {
+    // Reload on chunk load failure (stale cache after deploy): Chrome, Safari and Firefox
+    // error texts, at most once per 10 s (see src/lib/stale-chunk-reload.ts)
+    if (isClient) reloadOnStaleChunks(router)
   },
   { hydration: shouldHydrate() },
 )
