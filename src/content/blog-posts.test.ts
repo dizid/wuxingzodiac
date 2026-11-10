@@ -8,6 +8,18 @@ const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 /** Internal routes the posts may link to (src/router/index.ts) */
 const KNOWN_ROUTE = /^\/(zodiac(\/(animal|element)\/[a-z]+|\/[a-z]+-[a-z]+)?|blog(\/[a-z0-9-]+)?|calculator|compatibility(\/[a-z-]+\/[a-z-]+)?|reading|about|privacy|terms)$/
 
+/**
+ * Outside https hosts the posts may cite. Other open branches add their own list;
+ * a rebase merges them.
+ */
+const CITED_SOURCE_HOSTS = new Set([
+  'en.wikipedia.org',
+  'www.nippon.com',
+  'leiden.wereldmuseum.nl',
+  'www.cbc.ca',
+  'www.bl.uk',
+])
+
 describe('code blog posts', () => {
   it('have unique, URL-safe slugs and ids', () => {
     const slugs = CODE_BLOG_POSTS.map(post => post.slug)
@@ -32,7 +44,10 @@ describe('code blog posts', () => {
     for (const post of CODE_BLOG_POSTS) {
       const hrefs = [...post.content.matchAll(/href="([^"]+)"/g)].map(match => match[1])
       expect(hrefs.length).toBeGreaterThan(0)
-      for (const href of hrefs) expect(href).toMatch(KNOWN_ROUTE)
+      for (const href of hrefs) {
+        if (href!.startsWith('https://')) expect(CITED_SOURCE_HOSTS).toContain(new URL(href!).hostname)
+        else expect(href).toMatch(KNOWN_ROUTE)
+      }
     }
   })
 
