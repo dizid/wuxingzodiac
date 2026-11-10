@@ -4,8 +4,8 @@
  * The table is built here from the branch order of the trines post (BRANCH_ORDER, Rat to Pig,
  * which the tests pin to the year order in src/lib/zodiac-data.ts). Rat starts at 23:00 and each
  * next animal starts two hours later, wrapping at 24:00. The cultural facts (double hours, the
- * 23:00 Rat start, the four pillars, "secret animal", local solar time) are linked and quoted
- * from outside sources; the tests pin each quote and each link. What the site does and does not
+ * 23:00 Rat start, the four pillars, "secret animal", the sun as the basis) are linked and quoted
+ * from outside sources (reputable ones only, no astrology sites); the tests pin each quote and each link. What the site does and does not
  * use (birth year only, never birth time) comes from src/pages/ReadingPage.vue.
  * Server code imports this file: relative imports only.
  */
@@ -41,10 +41,7 @@ export const SOURCES = {
   duke: 'https://sites.duke.edu/destinyofrebirth/chinese-zodiac-time/',
   wikipediaTime: 'https://en.wikipedia.org/wiki/Traditional_Chinese_timekeeping',
   wikipediaZodiac: 'https://en.wikipedia.org/wiki/Chinese_zodiac',
-  thaat: 'https://thaat.tobulab.com/how-bazi-is-calculated',
-  globerove: 'https://globerove.com/china/chinese-zodiac-hours/',
-  birthChart: 'https://birthcharthoroscopes.com/chinese-astrology/secret-animal/',
-  easternFate: 'https://easternfate.com/blog/true-solar-time-bazi',
+  wikipediaPillars: 'https://en.wikipedia.org/wiki/Four_Pillars_of_Destiny',
 } as const
 
 /** Exact phrases quoted in the post, with the page each one comes from */
@@ -53,17 +50,9 @@ export const QUOTES: { source: keyof typeof SOURCES; quote: string }[] = [
   { source: 'duke', quote: 'a two-hour period' },
   { source: 'duke', quote: 'starts from 11 PM and ends at 1 AM' },
   { source: 'wikipediaTime', quote: 'traditionally occurred from 23:00 to 01:00' },
-  { source: 'thaat', quote: 'four pillars: one each for the year, month, day and hour of birth' },
-  { source: 'globerove', quote: 'four pillars: year, month, day, and hour' },
+  { source: 'wikipediaTime', quote: 'derived from the position of the sun' },
+  { source: 'wikipediaPillars', quote: 'the year, month, day, and hour of the birth date' },
   { source: 'wikipediaZodiac', quote: 'secret animals' },
-  { source: 'birthChart', quote: 'Your secret animal is the animal that rules the double-hour of your birth' },
-  { source: 'thaat', quote: 'the average solar time of the time zone' },
-  { source: 'thaat', quote: '4 minutes for every degree east or west of the zone meridian' },
-  { source: 'easternFate', quote: 'Anyone born near the boundary of a two-hour period can see a different Hour Pillar' },
-  { source: 'easternFate', quote: 'four minutes per degree' },
-  { source: 'easternFate', quote: 'Daylight saving is removed' },
-  { source: 'birthChart', quote: 'near a boundary, or during daylight saving time, can land in the neighboring' },
-  { source: 'thaat', quote: 'look at both neighbouring hour pillars' },
 ]
 
 const link = (source: keyof typeof SOURCES, text: string) => `<a href="${SOURCES[source]}" rel="noopener">${text}</a>`
@@ -88,15 +77,14 @@ ${hoursTable()}
 <p>The animals always come in one order: ${DOUBLE_HOURS.map(hour => hour.animal).join(', ')}. The years use that order. So do the hours. If you have read our post on <a href="/blog/chinese-zodiac-trines-secret-friends-clashes">trines, secret friends and clashes</a>, this is the same clock face with the Rat at the top.</p>
 <p>Notice the Rat. Its hour does not start at midnight. It is centered on midnight. ${link('wikipediaTime', 'Wikipedia')} says the first double hour "traditionally occurred from 23:00 to 01:00." If you were born at 23:30, your hour animal is the Rat, even though the clock says it is still the day before.</p>
 <h2>What Is the Hour Animal?</h2>
-<p>In BaZi, also called the Four Pillars, a birth chart has one pillar for each part of your birth time. One guide describes a chart as ${link('thaat', '"four pillars: one each for the year, month, day and hour of birth"')}. Another lists the same four: ${link('globerove', '"four pillars: year, month, day, and hour"')}. Your year animal comes from the year pillar. Your hour animal comes from the hour pillar.</p>
-<p>Some popular guides give the hour animal a nickname. The ${link('wikipediaZodiac', 'Wikipedia article on the Chinese zodiac')} lists hours as "secret animals." Another site says it directly: ${link('birthChart', '"Your secret animal is the animal that rules the double-hour of your birth"')}.</p>
+<p>In BaZi, also called the ${link('wikipediaPillars', 'Four Pillars of Destiny')}, a birth chart draws on "the year, month, day, and hour of the birth date," in Wikipedia's words. Each of the four is a pillar. Your year animal comes from the year pillar. Your hour animal comes from the hour pillar.</p>
+<p>Some popular guides give the hour animal a nickname. The ${link('wikipediaZodiac', 'Wikipedia article on the Chinese zodiac')} lists the hour animals as "secret animals."</p>
 <p>Names for these layers are not the same everywhere, so we use plain words. Year animal. Hour animal. We will not tell you what your hour animal says about you. Different guides say different things, and we cannot check them.</p>
 <h2>How to Find Your Hour Animal</h2>
 <p>The steps are short. First, find your birth time. Your birth certificate is the usual place to look in many countries. Hospital or family records can also help. Second, find that time in the table above. Third, read the animal in the first column.</p>
 <h2>Close to a Boundary? Check Both Hours</h2>
-<p>Here is the catch. Traditional practice reads the sun, not the clock. One guide explains that clock time is ${link('thaat', '"the average solar time of the time zone"')} at its central meridian. That means your local solar time can differ from your watch.</p>
-<p>The same guide gives a simple rule: ${link('thaat', '"4 minutes for every degree east or west of the zone meridian"')}. Another site, ${link('easternFate', 'Eastern Fate')}, uses the same figure of four minutes per degree. It also says that ${link('easternFate', '"Daylight saving is removed"')} before the correction. A third, ${link('birthChart', 'Birth Chart Horoscopes')}, says a birth "near a boundary, or during daylight saving time, can land in the neighboring" double hour.</p>
-<p>The warning is the same everywhere: ${link('easternFate', '"Anyone born near the boundary of a two-hour period can see a different Hour Pillar"')}. If you were born within about 30 minutes of a boundary, our advice is simple. Read both neighboring animals. One of the guides says the same: ${link('thaat', '"look at both neighbouring hour pillars"')}.</p>
+<p>Here is the catch. The old hours come from the sun, not from a clock. ${link('wikipediaTime', 'Wikipedia')} says the traditional system is "derived from the position of the sun." Your birth time, on the other hand, was written down in clock time. Clock time follows a time zone, and in many places daylight saving time moves the clock one hour ahead in summer. So the clock and the sun do not always agree.</p>
+<p>Most of the time this does not matter. Near the edge of a double hour it can. Our advice is simple: if you were born within about 30 minutes of a boundary, or during daylight saving time, read both neighboring animals and see which one feels closer.</p>
 <h2>What This Site Uses</h2>
 <p>We want to be clear here. The WuXing calculator, the 60 sign profiles and the personal reading are all based on your birth <strong>year</strong>. Your birth day and month matter only for the Lunar New Year cutoff, if you were born in January or February. They never use your birth time. Our reading page says so too: it "isn't a full birth chart and doesn't use your birth time."</p>
 <p>That means your hour animal is a layer we do not calculate. You can use the table above to find it yourself, then read it next to your sign.</p>
