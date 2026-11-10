@@ -20,7 +20,7 @@ const content: SignContentV2 = {
       "coreStrength": "Patient Innovation",
       "shadow": "Stubborn Righteousness",
       "bestMatch": "fire-snake",
-      "worstMatch": "metal-rooster",
+      "worstMatch": "metal-goat",
       "luckyColor": "Jade Green"
   },
   personality: {
@@ -55,19 +55,19 @@ const content: SignContentV2 = {
       ],
       "worst": [
           {
-              "slug": "metal-rooster",
-              "name": "Metal Rooster",
-              "reason": "Metal chops Wood—their cutting precision and rigid schedules clash with your patient, organic growth approach, creating constant friction."
+              "slug": "metal-goat",
+              "name": "Metal Goat",
+              "reason": "A clash pair (丑未冲), and Metal overcomes Wood: opposite rhythms with constant pressure."
           },
           {
-              "slug": "metal-monkey",
-              "name": "Metal Monkey",
-              "reason": "Metal axes Wood while Monkey chaos opposes Ox stability—they'll dismantle your carefully built systems for fun, triggering your worst rigidity."
+              "slug": "earth-goat",
+              "name": "Earth Goat",
+              "reason": "A clash pair (丑未冲), and Wood overcomes Earth: opposite rhythms with constant pressure."
           },
           {
-              "slug": "fire-horse",
-              "name": "Fire Horse",
-              "reason": "Your Wood feeds their Fire but they burn too hot and fast—they'll consume your patient cultivation energy with unsustainable demands."
+              "slug": "metal-horse",
+              "name": "Metal Horse",
+              "reason": "A harm pair (丑午害), and Metal overcomes Wood: hidden friction with constant pressure."
           }
       ]
   },

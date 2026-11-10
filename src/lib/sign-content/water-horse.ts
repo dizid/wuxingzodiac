@@ -20,7 +20,7 @@ const content: SignContentV2 = {
       "coreStrength": "Fluid independence",
       "shadow": "Directionless drifting",
       "bestMatch": "wood-tiger",
-      "worstMatch": "fire-horse",
+      "worstMatch": "earth-rat",
       "luckyColor": "Midnight blue"
   },
   personality: {
@@ -55,19 +55,19 @@ const content: SignContentV2 = {
       ],
       "worst": [
           {
-              "slug": "fire-horse",
-              "name": "Fire Horse",
-              "reason": "Water controls Fire — you dampen their intensity while they evaporate your depth, creating frustrating mutual nullification."
+              "slug": "earth-rat",
+              "name": "Earth Rat",
+              "reason": "A clash pair (子午冲), and Earth overcomes Water: opposite rhythms with constant pressure."
+          },
+          {
+              "slug": "fire-rat",
+              "name": "Fire Rat",
+              "reason": "A clash pair (子午冲), and Water overcomes Fire: opposite rhythms with constant pressure."
           },
           {
               "slug": "earth-ox",
               "name": "Earth Ox",
               "reason": "Earth blocks Water — their immovable stability feels like suffocation, while your constant flowing reads as flakiness to their steadfast nature."
-          },
-          {
-              "slug": "fire-dog",
-              "name": "Fire Dog",
-              "reason": "You extinguish their passionate idealism with cool pragmatism, while their moral intensity feels exhaustingly rigid to your adaptive ethics."
           }
       ]
   },

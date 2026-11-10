@@ -19,7 +19,7 @@ const content: SignContentV2 = {
       "archetype": "The Mesmerizing Flame",
       "coreStrength": "Magnetic intensity",
       "shadow": "Scorched-earth vengeance",
-      "bestMatch": "metal-rooster",
+      "bestMatch": "earth-rooster",
       "worstMatch": "water-pig",
       "luckyColor": "Crimson"
   },
@@ -38,19 +38,19 @@ const content: SignContentV2 = {
   matches: {
       "best": [
           {
-              "slug": "metal-rooster",
-              "name": "Metal Rooster",
-              "reason": "Metal provides structure Fire needs; Rooster's precision channels Snake's intensity into sustainable brilliance rather than destruction."
+              "slug": "earth-rooster",
+              "name": "Earth Rooster",
+              "reason": "Trine allies (巳酉丑), and Fire feeds Earth: shared drive with steady support."
+          },
+          {
+              "slug": "wood-rooster",
+              "name": "Wood Rooster",
+              "reason": "Trine allies (巳酉丑), and Wood feeds Fire: shared drive with steady support."
           },
           {
               "slug": "earth-ox",
               "name": "Earth Ox",
               "reason": "Fire generates Earth—your passion fuels their stability; Ox's immovable nature withstands your heat without submission or flight."
-          },
-          {
-              "slug": "wood-dragon",
-              "name": "Wood Dragon",
-              "reason": "Wood feeds Fire sustainably; Dragon matches your intensity with expansion rather than competition, creating mutual amplification."
           }
       ],
       "worst": [

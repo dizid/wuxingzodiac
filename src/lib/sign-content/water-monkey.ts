@@ -20,7 +20,7 @@ const content: SignContentV2 = {
       "coreStrength": "Strategic fluidity",
       "shadow": "Slippery evasion",
       "bestMatch": "wood-dragon",
-      "worstMatch": "fire-horse",
+      "worstMatch": "earth-tiger",
       "luckyColor": "Midnight blue"
   },
   personality: {
@@ -55,9 +55,9 @@ const content: SignContentV2 = {
       ],
       "worst": [
           {
-              "slug": "fire-horse",
-              "name": "Fire Horse",
-              "reason": "Water controls Fire — your strategic caution extinguishes their spontaneous momentum, creating mutual frustration and stagnation."
+              "slug": "earth-tiger",
+              "name": "Earth Tiger",
+              "reason": "A clash pair (寅申冲), and Earth overcomes Water: opposite rhythms with constant pressure."
           },
           {
               "slug": "fire-tiger",
@@ -65,9 +65,9 @@ const content: SignContentV2 = {
               "reason": "Their direct Yang Fire approach clashes with your indirect Water method — they see evasion where you see strategy."
           },
           {
-              "slug": "earth-ox",
-              "name": "Earth Ox",
-              "reason": "Earth blocks Water's flow — their rigid structures and demand for straightforward commitment trigger your escape instincts."
+              "slug": "earth-pig",
+              "name": "Earth Pig",
+              "reason": "A harm pair (申亥害), and Earth overcomes Water: hidden friction with constant pressure."
           }
       ]
   },

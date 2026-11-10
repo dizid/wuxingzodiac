@@ -20,7 +20,7 @@ const content: SignContentV2 = {
       "coreStrength": "Unstoppable Conviction",
       "shadow": "Burnout Stubbornness",
       "bestMatch": "earth-rooster",
-      "worstMatch": "water-ox",
+      "worstMatch": "metal-goat",
       "luckyColor": "Burnt Orange"
   },
   personality: {
@@ -55,9 +55,9 @@ const content: SignContentV2 = {
       ],
       "worst": [
           {
-              "slug": "water-ox",
-              "name": "Water Ox",
-              "reason": "Water controls Fire—their patient contemplation constantly douses your driven momentum, leading to mutual resentment."
+              "slug": "metal-goat",
+              "name": "Metal Goat",
+              "reason": "A clash pair (丑未冲), and Fire overcomes Metal: opposite rhythms with constant pressure."
           },
           {
               "slug": "water-goat",
@@ -65,9 +65,9 @@ const content: SignContentV2 = {
               "reason": "Your relentless productivity clashes with their emotional fluidity; you interpret feeling as procrastination, they see you as heartless."
           },
           {
-              "slug": "fire-horse",
-              "name": "Fire Horse",
-              "reason": "Double Fire with no grounding—explosive intensity burns through resources and relationships with nothing sustainable built."
+              "slug": "metal-horse",
+              "name": "Metal Horse",
+              "reason": "A harm pair (丑午害), and Fire overcomes Metal: hidden friction with constant pressure."
           }
       ]
   },

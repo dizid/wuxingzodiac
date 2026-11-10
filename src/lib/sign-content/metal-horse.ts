@@ -20,7 +20,7 @@ const content: SignContentV2 = {
       "coreStrength": "Disciplined velocity",
       "shadow": "Rigid independence",
       "bestMatch": "earth-dog",
-      "worstMatch": "fire-horse",
+      "worstMatch": "fire-rat",
       "luckyColor": "Titanium silver"
   },
   personality: {
@@ -55,19 +55,19 @@ const content: SignContentV2 = {
       ],
       "worst": [
           {
-              "slug": "fire-horse",
-              "name": "Fire Horse",
-              "reason": "Fire melts Metal; double Horse independence with no grounding—mutual stubbornness, nobody yields, relationship becomes a competition not partnership"
+              "slug": "fire-rat",
+              "name": "Fire Rat",
+              "reason": "A clash pair (子午冲), and Fire overcomes Metal: opposite rhythms with constant pressure."
           },
           {
-              "slug": "wood-monkey",
-              "name": "Wood Monkey",
-              "reason": "Metal cuts Wood; Monkey's changeability clashes with Horse's directional commitment—Monkey sees Horse as inflexible, Horse sees Monkey as unserious"
+              "slug": "wood-rat",
+              "name": "Wood Rat",
+              "reason": "A clash pair (子午冲), and Metal overcomes Wood: opposite rhythms with constant pressure."
           },
           {
-              "slug": "wood-rabbit",
-              "name": "Wood Rabbit",
-              "reason": "Metal controls Wood; Horse's intensity overwhelms Rabbit's gentleness—Horse frustrated by Rabbit's indirectness, Rabbit exhausted by Horse's demands"
+              "slug": "fire-ox",
+              "name": "Fire Ox",
+              "reason": "A harm pair (丑午害), and Fire overcomes Metal: hidden friction with constant pressure."
           }
       ]
   },

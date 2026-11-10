@@ -20,7 +20,7 @@ const content: SignContentV2 = {
       "coreStrength": "Expressive warmth",
       "shadow": "Emotional combustion",
       "bestMatch": "wood-rabbit",
-      "worstMatch": "water-dog",
+      "worstMatch": "metal-ox",
       "luckyColor": "Coral"
   },
   personality: {
@@ -55,9 +55,9 @@ const content: SignContentV2 = {
       ],
       "worst": [
           {
-              "slug": "water-dog",
-              "name": "Water Dog",
-              "reason": "Water controls Fire in destructive cycle; Dog's moral rigidity clashes with your emotional fluidity—constant steam and judgment"
+              "slug": "metal-ox",
+              "name": "Metal Ox",
+              "reason": "A clash pair (丑未冲), and Fire overcomes Metal: opposite rhythms with constant pressure."
           },
           {
               "slug": "water-ox",
@@ -65,9 +65,9 @@ const content: SignContentV2 = {
               "reason": "Water extinguishes your flame while Ox's emotional stoicism feels like rejection of your core nature"
           },
           {
-              "slug": "metal-rooster",
-              "name": "Metal Rooster",
-              "reason": "Your Fire attacks their Metal; Rooster's criticism ignites your defensiveness—mutual destruction through elemental conflict"
+              "slug": "metal-rat",
+              "name": "Metal Rat",
+              "reason": "A harm pair (子未害), and Fire overcomes Metal: hidden friction with constant pressure."
           }
       ]
   },

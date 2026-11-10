@@ -19,8 +19,8 @@ const content: SignContentV2 = {
       "archetype": "The Celestial Blaze",
       "coreStrength": "Magnetic charisma",
       "shadow": "Consuming intensity",
-      "bestMatch": "wood-horse",
-      "worstMatch": "water-pig",
+      "bestMatch": "earth-rat",
+      "worstMatch": "metal-dog",
       "luckyColor": "Crimson"
   },
   personality: {
@@ -30,7 +30,7 @@ const content: SignContentV2 = {
     body: "Your intensity doesn't just burn—it scorches everything in proximity. When challenged, you don't debate; you immolate. Your temper erupts with volcanic force, spewing damage you can't take back. Fire's destructive cycle means you control Metal—you melt boundaries, incinerate structure, reduce careful planning to ash. In conflict, you go nuclear, deploying emotional firepower wildly disproportionate to the offense.\n\nYou confuse exhaustion with weakness, pushing until you collapse. Fire cannot burn indefinitely without fuel, but you refuse to acknowledge limits until you've depleted yourself completely. This manifests as burnout masked as breakthrough, intensity mistaken for depth. You abandon projects the moment the initial flame dims, leaving behind a trail of half-consumed ambitions.\n\nYour need for constant stimulation makes you unreliable. When passion fades—and it always does—you vanish, seeking the next source of ignition. People become fuel for your fire rather than individuals with their own needs. You promise forever in moments of intensity, then ghost when the heat dissipates. This isn't malicious—Fire simply cannot sustain itself on yesterday's passion.",
   },
   relationships: {
-    body: "You love like a wildfire—all-consuming, thrilling, potentially devastating. When you're in, you're completely in, offering a level of passion and presence that feels transcendent. Your partners get the full force of your attention, your desire, your belief in the relationship's destiny. This intensity creates powerful bonds quickly, but sustainability requires more than combustion.\n\nYou need partners who can withstand heat without getting burned. Watery types either extinguish your fire or get evaporated by it—the constant emotional processing drains your flame. Earth signs can provide grounding, but you often perceive their stability as stagnation. Wood feeds your fire beautifully, particularly Wood Horse's equally wild energy or Wood Tiger's adventurous spirit.\n\nYour relationships fail when intensity becomes intimidation. You demand that partners match your passion level constantly, creating exhaustion. You interpret normal relationship rhythms—periods of quiet, individual space, mundane routine—as rejection or decline. Learning that love can glow steadily rather than always blazing transforms your connections from spectacular burnouts to sustainable warmth.",
+    body: "You love like a wildfire—all-consuming, thrilling, potentially devastating. When you're in, you're completely in, offering a level of passion and presence that feels transcendent. Your partners get the full force of your attention, your desire, your belief in the relationship's destiny. This intensity creates powerful bonds quickly, but sustainability requires more than combustion.\n\nYou need partners who can withstand heat without getting burned. Watery types either extinguish your fire or get evaporated by it—the constant emotional processing drains your flame. Earth signs can provide grounding, but you often perceive their stability as stagnation. Wood feeds your fire beautifully, particularly a Wood Rat, who is also your trine ally.\n\nYour relationships fail when intensity becomes intimidation. You demand that partners match your passion level constantly, creating exhaustion. You interpret normal relationship rhythms—periods of quiet, individual space, mundane routine—as rejection or decline. Learning that love can glow steadily rather than always blazing transforms your connections from spectacular burnouts to sustainable warmth.",
   },
   elementBalance: {
     body: "Balance Fire by deliberately cultivating Earth—commit to completing one project before starting three new ones. Earth is Fire's natural output in the generative cycle; channel your combustion into concrete results rather than dispersed heat. Set arbitrary timelines for sustaining effort past the initial excitement phase.\n\nPractice controlled burns. Schedule intense bursts of activity followed by mandatory rest periods. Fire needs oxygen to burn; rest isn't weakness, it's fuel management. Engage with Water element through reflection without letting it extinguish you—journaling, quiet mornings, activities that require stillness without demanding complete emotional submersion.\n\nSurround yourself with Wood—people, environments, activities that feed your flame sustainably rather than explosive accelerants. Avoid Metal's rigid structure that makes you want to melt everything, and recognize when your Fire is controlling Metal destructively—when you're burning through boundaries that actually serve you.",
@@ -38,26 +38,26 @@ const content: SignContentV2 = {
   matches: {
       "best": [
           {
-              "slug": "wood-horse",
-              "name": "Wood Horse",
-              "reason": "Wood feeds Fire perfectly—their adventurous growth energy fuels your blaze without getting consumed"
+              "slug": "earth-rat",
+              "name": "Earth Rat",
+              "reason": "Trine allies (申子辰), and Fire feeds Earth: shared drive with steady support."
           },
           {
-              "slug": "wood-tiger",
-              "name": "Wood Tiger",
-              "reason": "Mutual intensity and courage—Wood's expansion meets Fire's transformation in exhilarating synergy"
+              "slug": "wood-rat",
+              "name": "Wood Rat",
+              "reason": "Trine allies (申子辰), and Wood feeds Fire: shared drive with steady support."
           },
           {
-              "slug": "earth-rooster",
-              "name": "Earth Rooster",
-              "reason": "Fire generates Earth—your passion creates their stability, their grounding contains your flame productively"
+              "slug": "fire-rat",
+              "name": "Fire Rat",
+              "reason": "Trine allies (申子辰), and both Fire: shared drive with easy understanding."
           }
       ],
       "worst": [
           {
-              "slug": "water-pig",
-              "name": "Water Pig",
-              "reason": "Water controls Fire directly—their emotional depth and need for peace extinguishes your essential nature"
+              "slug": "metal-dog",
+              "name": "Metal Dog",
+              "reason": "A clash pair (辰戌冲), and Fire overcomes Metal: opposite rhythms with constant pressure."
           },
           {
               "slug": "water-dog",
@@ -65,9 +65,9 @@ const content: SignContentV2 = {
               "reason": "Constant conflict between your explosive intensity and their need for emotional security and loyalty rituals"
           },
           {
-              "slug": "metal-rooster",
-              "name": "Metal Rooster",
-              "reason": "Fire melts Metal—your passionate chaos destroys their rigid structure, creating mutual frustration"
+              "slug": "metal-rabbit",
+              "name": "Metal Rabbit",
+              "reason": "A harm pair (卯辰害), and Fire overcomes Metal: hidden friction with constant pressure."
           }
       ]
   },

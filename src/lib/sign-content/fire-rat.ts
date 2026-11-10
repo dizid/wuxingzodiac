@@ -20,7 +20,7 @@ const content: SignContentV2 = {
       "coreStrength": "Charismatic hustle",
       "shadow": "Impulsive burnout",
       "bestMatch": "wood-dragon",
-      "worstMatch": "water-pig",
+      "worstMatch": "metal-horse",
       "luckyColor": "Crimson"
   },
   personality: {
@@ -55,19 +55,19 @@ const content: SignContentV2 = {
       ],
       "worst": [
           {
-              "slug": "water-pig",
-              "name": "Water Pig",
-              "reason": "Water controls Fire in the cycle—their emotional depth and need for harmony directly extinguishes your passionate intensity, leaving both frustrated"
+              "slug": "metal-horse",
+              "name": "Metal Horse",
+              "reason": "A clash pair (子午冲), and Fire overcomes Metal: opposite rhythms with constant pressure."
           },
           {
-              "slug": "water-rat",
-              "name": "Water Rat",
-              "reason": "Same animal, opposing elements—they're strategic and patient where you're impulsive and bold, each thinking the other is doing Rat wrong"
+              "slug": "water-horse",
+              "name": "Water Horse",
+              "reason": "A clash pair (子午冲), and Water overcomes Fire: opposite rhythms with constant pressure."
           },
           {
-              "slug": "metal-rooster",
-              "name": "Metal Rooster",
-              "reason": "Your Fire melts their Metal structure—you see their systems as restrictive, they see your spontaneity as reckless, constant elemental warfare"
+              "slug": "metal-goat",
+              "name": "Metal Goat",
+              "reason": "A harm pair (子未害), and Fire overcomes Metal: hidden friction with constant pressure."
           }
       ]
   },

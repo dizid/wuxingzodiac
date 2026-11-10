@@ -20,7 +20,7 @@ const content: SignContentV2 = {
       "coreStrength": "Disciplined conviction",
       "shadow": "Merciless rigidity",
       "bestMatch": "earth-horse",
-      "worstMatch": "fire-rabbit",
+      "worstMatch": "wood-monkey",
       "luckyColor": "Gunmetal gray"
   },
   personality: {
@@ -55,19 +55,19 @@ const content: SignContentV2 = {
       ],
       "worst": [
           {
-              "slug": "fire-rabbit",
-              "name": "Fire Rabbit",
-              "reason": "Fire melts Metal while Rabbit's diplomatic flexibility enrages your need for clear positions and strength"
-          },
-          {
-              "slug": "fire-goat",
-              "name": "Fire Goat",
-              "reason": "Fire undermines your structure while Goat's emotional needs and scattered energy trigger your harshest enforcement"
-          },
-          {
               "slug": "wood-monkey",
               "name": "Wood Monkey",
               "reason": "Metal cuts Wood—you instinctively control Monkey's creativity; their playful chaos violates every protocol you've built"
+          },
+          {
+              "slug": "fire-monkey",
+              "name": "Fire Monkey",
+              "reason": "A clash pair (寅申冲), and Fire overcomes Metal: opposite rhythms with constant pressure."
+          },
+          {
+              "slug": "fire-snake",
+              "name": "Fire Snake",
+              "reason": "A harm pair (寅巳害), and Fire overcomes Metal: hidden friction with constant pressure."
           }
       ]
   },

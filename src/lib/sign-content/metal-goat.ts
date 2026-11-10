@@ -20,7 +20,7 @@ const content: SignContentV2 = {
       "coreStrength": "Disciplined creativity",
       "shadow": "Perfectionist rigidity",
       "bestMatch": "earth-rabbit",
-      "worstMatch": "fire-horse",
+      "worstMatch": "fire-ox",
       "luckyColor": "Platinum silver"
   },
   personality: {
@@ -55,19 +55,19 @@ const content: SignContentV2 = {
       ],
       "worst": [
           {
-              "slug": "fire-horse",
-              "name": "Fire Horse",
-              "reason": "Fire melts Metal and Horse's chaos disrupts your need for order; they experience your precision as controlling, you experience their freedom as reckless"
+              "slug": "fire-ox",
+              "name": "Fire Ox",
+              "reason": "A clash pair (丑未冲), and Fire overcomes Metal: opposite rhythms with constant pressure."
           },
           {
-              "slug": "fire-monkey",
-              "name": "Fire Monkey",
-              "reason": "Fire destroys Metal structure while Monkey's tricks mock your seriousness; constant conflict between refinement and rebellion"
+              "slug": "wood-ox",
+              "name": "Wood Ox",
+              "reason": "A clash pair (丑未冲), and Metal overcomes Wood: opposite rhythms with constant pressure."
           },
           {
-              "slug": "wood-tiger",
-              "name": "Wood Tiger",
-              "reason": "Metal controls Wood harshly and Tiger resists all restriction; you prune their growth, they experience you as suffocating"
+              "slug": "fire-rat",
+              "name": "Fire Rat",
+              "reason": "A harm pair (子未害), and Fire overcomes Metal: hidden friction with constant pressure."
           }
       ]
   },

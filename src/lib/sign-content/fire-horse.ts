@@ -20,7 +20,7 @@ const content: SignContentV2 = {
       "coreStrength": "Fearless authenticity",
       "shadow": "Explosive volatility",
       "bestMatch": "earth-goat",
-      "worstMatch": "water-pig",
+      "worstMatch": "metal-rat",
       "luckyColor": "Crimson"
   },
   personality: {
@@ -55,9 +55,9 @@ const content: SignContentV2 = {
       ],
       "worst": [
           {
-              "slug": "water-pig",
-              "name": "Water Pig",
-              "reason": "Water extinguishes Fire — their need for ease and comfort directly opposes your intensity and drive"
+              "slug": "metal-rat",
+              "name": "Metal Rat",
+              "reason": "A clash pair (子午冲), and Fire overcomes Metal: opposite rhythms with constant pressure."
           },
           {
               "slug": "water-rat",
@@ -65,9 +65,9 @@ const content: SignContentV2 = {
               "reason": "Water controls Fire — their calculated caution frustrates your instinctive action, creating constant friction"
           },
           {
-              "slug": "metal-rooster",
-              "name": "Metal Rooster",
-              "reason": "Fire melts Metal, Metal contains Fire — mutual destruction as your chaos clashes with their rigid order"
+              "slug": "metal-ox",
+              "name": "Metal Ox",
+              "reason": "A harm pair (丑午害), and Fire overcomes Metal: hidden friction with constant pressure."
           }
       ]
   },

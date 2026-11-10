@@ -20,7 +20,7 @@ const content: SignContentV2 = {
       "coreStrength": "Patient cultivation",
       "shadow": "Anxious immobility",
       "bestMatch": "fire-rabbit",
-      "worstMatch": "wood-monkey",
+      "worstMatch": "water-ox",
       "luckyColor": "Terracotta"
   },
   personality: {
@@ -55,19 +55,19 @@ const content: SignContentV2 = {
       ],
       "worst": [
           {
-              "slug": "wood-monkey",
-              "name": "Wood Monkey",
-              "reason": "Wood controls Earth—their chaotic innovation destabilizes your need for steady cultivation, exhausting clash of tempos"
+              "slug": "water-ox",
+              "name": "Water Ox",
+              "reason": "A clash pair (丑未冲), and Earth overcomes Water: opposite rhythms with constant pressure."
           },
           {
-              "slug": "wood-tiger",
-              "name": "Wood Tiger",
-              "reason": "Wood depletes Earth—their aggressive expansion drains your resources, their impatience tramples your careful building"
+              "slug": "wood-ox",
+              "name": "Wood Ox",
+              "reason": "A clash pair (丑未冲), and Wood overcomes Earth: opposite rhythms with constant pressure."
           },
           {
-              "slug": "water-rooster",
-              "name": "Water Rooster",
-              "reason": "Earth controls Water but their critical precision attacks your sensitive nature, mutual frustration over different standards"
+              "slug": "water-rat",
+              "name": "Water Rat",
+              "reason": "A harm pair (子未害), and Earth overcomes Water: hidden friction with constant pressure."
           }
       ]
   },

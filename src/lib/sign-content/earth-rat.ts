@@ -20,7 +20,7 @@ const content: SignContentV2 = {
       "coreStrength": "Pragmatic accumulation",
       "shadow": "Stagnant hoarding",
       "bestMatch": "metal-monkey",
-      "worstMatch": "wood-rabbit",
+      "worstMatch": "water-horse",
       "luckyColor": "Terracotta"
   },
   personality: {
@@ -55,19 +55,19 @@ const content: SignContentV2 = {
       ],
       "worst": [
           {
-              "slug": "wood-rabbit",
-              "name": "Wood Rabbit",
-              "reason": "Wood controls Earth in the destructive cycle—their need for growth and change constantly destabilizes your foundations"
-          },
-          {
-              "slug": "wood-tiger",
-              "name": "Wood Tiger",
-              "reason": "Wood breaks up Earth; their impulsive risk-taking undermines your careful accumulation strategies"
-          },
-          {
               "slug": "water-horse",
               "name": "Water Horse",
               "reason": "Earth controls Water but exhausts itself trying; their restless freedom clashes with your need for stable structure"
+          },
+          {
+              "slug": "wood-horse",
+              "name": "Wood Horse",
+              "reason": "A clash pair (子午冲), and Wood overcomes Earth: opposite rhythms with constant pressure."
+          },
+          {
+              "slug": "water-goat",
+              "name": "Water Goat",
+              "reason": "A harm pair (子未害), and Earth overcomes Water: hidden friction with constant pressure."
           }
       ]
   },

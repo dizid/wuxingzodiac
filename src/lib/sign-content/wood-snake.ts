@@ -19,8 +19,8 @@ const content: SignContentV2 = {
       "archetype": "The Thoughtful Philosopher",
       "coreStrength": "Strategic wisdom",
       "shadow": "Paralysis by analysis",
-      "bestMatch": "fire-horse",
-      "worstMatch": "metal-rooster",
+      "bestMatch": "water-rooster",
+      "worstMatch": "metal-pig",
       "luckyColor": "Emerald green"
   },
   personality: {
@@ -38,36 +38,36 @@ const content: SignContentV2 = {
   matches: {
       "best": [
           {
-              "slug": "fire-horse",
-              "name": "Fire Horse",
-              "reason": "Wood feeds Fire — your vision fuels their action, their momentum prevents your stagnation"
+              "slug": "water-rooster",
+              "name": "Water Rooster",
+              "reason": "Trine allies (巳酉丑), and Water feeds Wood: shared drive with steady support."
           },
           {
-              "slug": "earth-ox",
-              "name": "Earth Ox",
-              "reason": "Wood controls Earth productively — you provide vision, they provide the structure to manifest it"
+              "slug": "water-ox",
+              "name": "Water Ox",
+              "reason": "Trine allies (巳酉丑), and Water feeds Wood: shared drive with steady support."
           },
           {
-              "slug": "water-rat",
-              "name": "Water Rat",
-              "reason": "Water nourishes Wood — their adaptability and social intelligence support your growth without overwhelming you"
+              "slug": "fire-rooster",
+              "name": "Fire Rooster",
+              "reason": "Trine allies (巳酉丑), and Wood feeds Fire: shared drive with steady support."
           }
       ],
       "worst": [
           {
-              "slug": "metal-rooster",
-              "name": "Metal Rooster",
-              "reason": "Metal cuts Wood — their precision and criticism chop down your expansive thinking before it can develop"
+              "slug": "metal-pig",
+              "name": "Metal Pig",
+              "reason": "A clash pair (巳亥冲), and Metal overcomes Wood: opposite rhythms with constant pressure."
           },
           {
-              "slug": "metal-monkey",
-              "name": "Metal Monkey",
-              "reason": "Metal restricts Wood — their sharp cleverness turns your contemplation into competitive analysis"
+              "slug": "earth-pig",
+              "name": "Earth Pig",
+              "reason": "A clash pair (巳亥冲), and Wood overcomes Earth: opposite rhythms with constant pressure."
           },
           {
-              "slug": "wood-tiger",
-              "name": "Wood Tiger",
-              "reason": "Double Wood with conflicting expression — you philosophize about action while they demand immediate movement"
+              "slug": "metal-tiger",
+              "name": "Metal Tiger",
+              "reason": "A harm pair (寅巳害), and Metal overcomes Wood: hidden friction with constant pressure."
           }
       ]
   },

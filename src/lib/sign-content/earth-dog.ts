@@ -19,8 +19,8 @@ const content: SignContentV2 = {
       "archetype": "The Unwavering Sentinel",
       "coreStrength": "Dependable protection",
       "shadow": "Rigid stubbornness",
-      "bestMatch": "metal-monkey",
-      "worstMatch": "wood-rabbit",
+      "bestMatch": "metal-tiger",
+      "worstMatch": "water-dragon",
       "luckyColor": "Terracotta"
   },
   personality: {
@@ -38,26 +38,26 @@ const content: SignContentV2 = {
   matches: {
       "best": [
           {
-              "slug": "metal-monkey",
-              "name": "Metal Monkey",
-              "reason": "Earth generates Metal—your stability gives their cleverness sustainable structure and purpose"
+              "slug": "metal-tiger",
+              "name": "Metal Tiger",
+              "reason": "Trine allies (寅午戌), and Earth feeds Metal: shared drive with steady support."
           },
           {
-              "slug": "metal-ox",
-              "name": "Metal Ox",
-              "reason": "Shared Earth-Metal synergy creates unshakeable foundations with precision and endurance"
+              "slug": "metal-horse",
+              "name": "Metal Horse",
+              "reason": "Trine allies (寅午戌), and Earth feeds Metal: shared drive with steady support."
           },
           {
-              "slug": "fire-horse",
-              "name": "Fire Horse",
-              "reason": "Fire generates Earth—their passionate momentum feeds your protective capacity without overwhelming it"
+              "slug": "metal-rabbit",
+              "name": "Metal Rabbit",
+              "reason": "Secret friends (卯戌合), and Earth feeds Metal: quiet loyalty with steady support."
           }
       ],
       "worst": [
           {
-              "slug": "wood-rabbit",
-              "name": "Wood Rabbit",
-              "reason": "Earth controls Wood—you smother their need for gentle growth with heavy-handed stability"
+              "slug": "water-dragon",
+              "name": "Water Dragon",
+              "reason": "A clash pair (辰戌冲), and Earth overcomes Water: opposite rhythms with constant pressure."
           },
           {
               "slug": "wood-dragon",

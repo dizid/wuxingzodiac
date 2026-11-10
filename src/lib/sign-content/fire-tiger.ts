@@ -20,7 +20,7 @@ const content: SignContentV2 = {
       "coreStrength": "Audacious courage",
       "shadow": "Reckless combustion",
       "bestMatch": "wood-horse",
-      "worstMatch": "water-pig",
+      "worstMatch": "metal-monkey",
       "luckyColor": "Crimson red"
   },
   personality: {
@@ -55,9 +55,9 @@ const content: SignContentV2 = {
       ],
       "worst": [
           {
-              "slug": "water-pig",
-              "name": "Water Pig",
-              "reason": "Water controls Fire harshly; their yielding nature frustrates your directness while your intensity terrifies their need for peace"
+              "slug": "metal-monkey",
+              "name": "Metal Monkey",
+              "reason": "A clash pair (寅申冲), and Fire overcomes Metal: opposite rhythms with constant pressure."
           },
           {
               "slug": "water-monkey",

@@ -20,7 +20,7 @@ const content: SignContentV2 = {
       "coreStrength": "Unwavering principles",
       "shadow": "Harsh inflexibility",
       "bestMatch": "earth-horse",
-      "worstMatch": "fire-rabbit",
+      "worstMatch": "wood-dragon",
       "luckyColor": "Steel gray"
   },
   personality: {
@@ -55,19 +55,19 @@ const content: SignContentV2 = {
       ],
       "worst": [
           {
-              "slug": "fire-rabbit",
-              "name": "Fire Rabbit",
-              "reason": "Fire melts Metal's structure; Rabbit's diplomatic avoidance and need for harmony clash with your insistence on direct confrontation and hard truths."
-          },
-          {
               "slug": "wood-dragon",
               "name": "Wood Dragon",
               "reason": "Metal controls Wood destructively; you'll constantly cut down Dragon's expansive visions, creating resentment and stifling their natural growth."
           },
           {
-              "slug": "fire-goat",
-              "name": "Fire Goat",
-              "reason": "Fire melts Metal while Goat's emotional fluidity and changing needs frustrate your requirement for consistency and clear commitment."
+              "slug": "fire-dragon",
+              "name": "Fire Dragon",
+              "reason": "A clash pair (辰戌冲), and Fire overcomes Metal: opposite rhythms with constant pressure."
+          },
+          {
+              "slug": "fire-rooster",
+              "name": "Fire Rooster",
+              "reason": "A harm pair (酉戌害), and Fire overcomes Metal: hidden friction with constant pressure."
           }
       ]
   },

@@ -19,8 +19,8 @@ const content: SignContentV2 = {
       "archetype": "The Resourceful Pioneer",
       "coreStrength": "Adaptive innovation",
       "shadow": "Scattered overreach",
-      "bestMatch": "earth-ox",
-      "worstMatch": "metal-monkey",
+      "bestMatch": "water-dragon",
+      "worstMatch": "metal-horse",
       "luckyColor": "Forest green"
   },
   personality: {
@@ -38,36 +38,36 @@ const content: SignContentV2 = {
   matches: {
       "best": [
           {
-              "slug": "earth-ox",
-              "name": "Earth Ox",
-              "reason": "Earth stabilizes Wood's expansion while Ox provides the patient follow-through Rat lacks—complementary productivity cycle."
+              "slug": "water-dragon",
+              "name": "Water Dragon",
+              "reason": "Trine allies (申子辰), and Water feeds Wood: shared drive with steady support."
           },
           {
-              "slug": "fire-tiger",
-              "name": "Fire Tiger",
-              "reason": "Wood feeds Fire naturally; both are Yang pioneers who amplify each other's bold vision and action."
+              "slug": "water-monkey",
+              "name": "Water Monkey",
+              "reason": "Trine allies (申子辰), and Water feeds Wood: shared drive with steady support."
           },
           {
-              "slug": "earth-dragon",
-              "name": "Earth Dragon",
-              "reason": "Earth grounds both signs' expansive tendencies while Dragon matches Rat's ambition with grounded execution."
+              "slug": "water-ox",
+              "name": "Water Ox",
+              "reason": "Secret friends (子丑合), and Water feeds Wood: quiet loyalty with steady support."
           }
       ],
       "worst": [
           {
-              "slug": "metal-monkey",
-              "name": "Metal Monkey",
-              "reason": "Metal cuts Wood while both compete for cleverest-in-room status—destructive cycle plus ego clash."
+              "slug": "metal-horse",
+              "name": "Metal Horse",
+              "reason": "A clash pair (子午冲), and Metal overcomes Wood: opposite rhythms with constant pressure."
           },
           {
-              "slug": "metal-rooster",
-              "name": "Metal Rooster",
-              "reason": "Metal chops Wood's flexible growth into rigid standards; Rooster's criticism kills Rat's experimental spirit."
+              "slug": "earth-horse",
+              "name": "Earth Horse",
+              "reason": "A clash pair (子午冲), and Wood overcomes Earth: opposite rhythms with constant pressure."
           },
           {
-              "slug": "wood-horse",
-              "name": "Wood Horse",
-              "reason": "Excess Wood without grounding—both scatter in different directions, no stabilizing element to consolidate growth."
+              "slug": "metal-goat",
+              "name": "Metal Goat",
+              "reason": "A harm pair (子未害), and Metal overcomes Wood: hidden friction with constant pressure."
           }
       ]
   },

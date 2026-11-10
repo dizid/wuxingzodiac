@@ -20,7 +20,7 @@ const content: SignContentV2 = {
       "coreStrength": "Emotional depth",
       "shadow": "Absorbing toxicity",
       "bestMatch": "wood-rabbit",
-      "worstMatch": "fire-horse",
+      "worstMatch": "earth-ox",
       "luckyColor": "Deep indigo"
   },
   personality: {
@@ -55,19 +55,19 @@ const content: SignContentV2 = {
       ],
       "worst": [
           {
-              "slug": "fire-horse",
-              "name": "Fire Horse",
-              "reason": "Water controls Fire—your need for depth clashes with their restless independence; you drown their flame, they evaporate your peace."
-          },
-          {
               "slug": "earth-ox",
               "name": "Earth Ox",
               "reason": "Earth controls Water—their rigidity dams your flow; you feel contained and judged, they see you as scattered and impractical."
           },
           {
-              "slug": "fire-rooster",
-              "name": "Fire Rooster",
-              "reason": "Water destroys Fire—your indirect style frustrates their blunt precision; they scorch your sensitivity, you dampen their enthusiasm."
+              "slug": "fire-ox",
+              "name": "Fire Ox",
+              "reason": "A clash pair (丑未冲), and Water overcomes Fire: opposite rhythms with constant pressure."
+          },
+          {
+              "slug": "earth-rat",
+              "name": "Earth Rat",
+              "reason": "A harm pair (子未害), and Earth overcomes Water: hidden friction with constant pressure."
           }
       ]
   },
