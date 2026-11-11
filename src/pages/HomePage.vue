@@ -41,7 +41,7 @@ const howItWorks = [
         <RouterLink
           to="/zodiac"
           class="btn-element text-lg px-8 py-3"
-          style="background: linear-gradient(135deg, var(--color-ash-700), var(--color-ash-600));"
+          style="--btn-from: var(--color-ash-700); --btn-to: var(--color-ash-600); --btn-text: #ffffff; --btn-glow-rgb: 148, 163, 184;"
         >
           Browse All Signs
         </RouterLink>
@@ -111,7 +111,7 @@ const howItWorks = [
             target="_blank"
             rel="noopener noreferrer"
             class="btn-element px-6 py-3"
-            style="background: linear-gradient(135deg, var(--color-ash-700), var(--color-ash-600));"
+            style="--btn-from: var(--color-ash-700); --btn-to: var(--color-ash-600); --btn-text: #ffffff; --btn-glow-rgb: 148, 163, 184;"
           >
             Visit firehorse.info
           </a>

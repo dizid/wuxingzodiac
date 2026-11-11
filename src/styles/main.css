@@ -112,6 +112,23 @@
   --el-900: #0f172a;
   --el-950: #020617;
   --el-glow-rgb: 148, 163, 184;
+
+  /* Main buttons on pages without an element theme (/reading, home, directory, blog):
+     warm gold with dark text. The slate default above made the $9.90 'Get your reading'
+     button look greyed out / disabled. Contrast #1c1917 on #f59e0b = 8.1:1. */
+  --btn-from: #f59e0b;
+  --btn-to: #fbbf24;
+  --btn-text: #1c1917;
+  --btn-glow-rgb: 245, 158, 11;
+}
+
+/* Any element theme (on <html> or on a section) keeps its own element-coloured buttons.
+   Must stay after :root (same specificity, later rule wins). */
+[data-element] {
+  --btn-from: var(--el-600);
+  --btn-to: var(--el-500);
+  --btn-text: #ffffff;
+  --btn-glow-rgb: var(--el-glow-rgb);
 }
 
 [data-element="wood"] {
@@ -275,8 +292,8 @@ body {
    ============================================ */
 
 .btn-element {
-  background: linear-gradient(135deg, var(--el-600), var(--el-500));
-  color: white;
+  background: linear-gradient(135deg, var(--btn-from), var(--btn-to));
+  color: var(--btn-text);
   font-weight: 600;
   padding: 0.75rem 1.5rem;
   border-radius: 0.75rem;
@@ -304,8 +321,8 @@ body {
 .btn-element:hover {
   transform: translateY(-2px);
   box-shadow:
-    0 0 20px rgba(var(--el-glow-rgb), 0.5),
-    0 0 40px rgba(var(--el-glow-rgb), 0.25);
+    0 0 20px rgba(var(--btn-glow-rgb), 0.5),
+    0 0 40px rgba(var(--btn-glow-rgb), 0.25);
 }
 
 .btn-element:hover::before {
