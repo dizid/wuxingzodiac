@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router'
 import { signProfiles, getProfilesByElement } from '@/lib/sign-content/profiles'
 import { zodiacElements, zodiacAnimals } from '@/lib/zodiac-data'
 import { usePageSeo } from '@/composables/useSignSeo'
+import ReadingCTA from '@/components/readings/ReadingCTA.vue'
 import type { ZodiacElement, ZodiacAnimal } from '@/types'
 
 usePageSeo(
@@ -139,6 +140,11 @@ function formatYearsPreview(years: number[]): string {
         <div class="text-ash-400 text-sm italic mb-2">{{ profile.tagline }}</div>
         <div class="text-ash-600 text-xs">{{ formatYearsPreview(profile.years) }}</div>
       </RouterLink>
+    </div>
+
+    <!-- Personal reading (compact), as on the sign and animal pages -->
+    <div class="mt-10 max-w-3xl mx-auto">
+      <ReadingCTA variant="compact" placement="directory" />
     </div>
   </div>
 </template>

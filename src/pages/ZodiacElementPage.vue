@@ -4,6 +4,7 @@ import { useRoute, RouterLink } from 'vue-router'
 import { getProfilesByElement } from '@/lib/sign-content/profiles'
 import { zodiacElements, zodiacAnimals } from '@/lib/zodiac-data'
 import { usePageSeo } from '@/composables/useSignSeo'
+import ReadingCTA from '@/components/readings/ReadingCTA.vue'
 import type { ZodiacElement } from '@/types'
 
 const route = useRoute()
@@ -183,6 +184,11 @@ function capitalize(s: string): string {
           {{ profile.years.join(', ') }}
         </div>
       </RouterLink>
+    </div>
+
+    <!-- Personal reading (compact), as on the sign and animal pages -->
+    <div class="mt-10 max-w-3xl mx-auto">
+      <ReadingCTA variant="compact" placement="element_page" />
     </div>
 
     <!-- Back link -->
