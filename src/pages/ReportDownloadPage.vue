@@ -28,7 +28,9 @@ const signName = ref('')
 const productName = ref('Elemental Blueprint')
 const maskedEmail = ref('')
 const retryCount = ref(0)
-const MAX_RETRIES = 3
+// Stripe sends the buyer here at once; the order row only exists after the webhook. 3 tries
+// (~9 s) showed 'Something Went Wrong' to buyers who had just paid; now ~2 minutes.
+const MAX_RETRIES = 40
 
 // Personalized readings take ~1–3 minutes to write, then they're emailed
 const GENERATING_POLL_MS = 4000
@@ -73,6 +75,13 @@ async function checkOrderStatus() {
         state.value = 'race-condition'
         retryCount.value++
         schedule(checkOrderStatus, 3000)
+        return
+      }
+      // A paid reading (session_id from Stripe) whose order still isn't visible: show the calm
+      // 'taking longer, it arrives by email' state, not an error, right after payment
+      if (res.status === 404 && route.query.session_id) {
+        state.value = 'generating'
+        slowGeneration.value = true
         return
       }
 

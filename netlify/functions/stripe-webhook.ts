@@ -69,8 +69,15 @@ export default async (req: Request, _context: Context) => {
     const amountCents = session.amount_total ?? 0
     const currency = session.currency || 'usd'
 
-    if (!signSlug || !email) {
-      console.error('Missing metadata or email in checkout session:', session.id)
+    // The Stripe account is shared with other apps (e.g. Foreground), so their checkouts
+    // arrive here too. Every WuXing checkout sets sign_slug (create-checkout.ts); anything
+    // without it isn't ours: acknowledge it. A 400 made Stripe retry it for days and can get
+    // this endpoint disabled, after which WuXing buyers would pay and get nothing.
+    if (!signSlug) {
+      return jsonResponse({ received: true, ignored: 'not a WuXing checkout' }, 200)
+    }
+    if (!email) {
+      console.error('Missing email in WuXing checkout session:', session.id)
       return jsonResponse({ error: 'Missing required session data' }, 400)
     }
 
