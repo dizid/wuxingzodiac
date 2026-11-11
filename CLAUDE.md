@@ -103,7 +103,7 @@ Router guards in `router/index.ts` validate all dynamic params against known slu
 
 - Personalized PDF reading via Stripe Checkout (see Personalized Readings below)
 - Fourthwall merch (`SignMerchCTA`, `/shop`)
-- Promoten/PlugAff inbound affiliate tracking (`index.html`, `netlify.toml` CSP, `create-checkout.ts` cookie → Stripe metadata)
+- Promoten/PlugAff affiliate tracking: script tag and CSP entries removed 2026-11-11 (Promoten archived 2026-10-09). `create-checkout.ts` still copies a legacy `plugaff_ref` cookie into Stripe metadata (empty without the script; left as is to keep the payment code unchanged)
 - No outbound affiliate links or ads (Amazon Associates removed 2026-10-13). Keep monetization non-intrusive.
 
 ### API Layer
