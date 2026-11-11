@@ -4,6 +4,8 @@ import { useRoute, RouterLink } from 'vue-router'
 import { getProfilesByAnimal } from '@/lib/sign-content/profiles'
 import { zodiacAnimals } from '@/lib/zodiac-data'
 import { usePageSeo } from '@/composables/useSignSeo'
+import { TRINES, partners, pairChars, relationBetween, type Relation } from '@/lib/branch-relations'
+import ReadingCTA from '@/components/readings/ReadingCTA.vue'
 import type { ZodiacAnimal, ZodiacElement } from '@/types'
 
 const route = useRoute()
@@ -14,6 +16,45 @@ const animalData = computed(() => zodiacAnimals.find(a => a.animal === animal.va
 
 // Get all 5 element variants for this animal
 const variants = computed(() => getProfilesByAnimal(animal.value))
+
+// Traditional relations to the other animals (same data as the relations blog post,
+// whose tests check them against the reading engine and the compatibility tool)
+const animalName = (other: ZodiacAnimal) => zodiacAnimals.find(a => a.animal === other)?.name ?? other
+
+const trine = computed(() => TRINES.find(t => t.animals.includes(animal.value)))
+const relations = computed(() => {
+  const pair = (relation: 'secret-friend' | 'clash' | 'harm', suffix: string) => {
+    const other = partners(animal.value, relation)[0]!
+    return { animal: other, chars: pairChars(animal.value, other) + suffix }
+  }
+  return {
+    allies: partners(animal.value, 'trine'),
+    secretFriend: pair('secret-friend', '合'),
+    clash: pair('clash', '冲'),
+    harm: pair('harm', '害'),
+  }
+})
+
+// How the 2026 and 2027 year animals relate to this animal (fixed dates, no clock:
+// the prerendered HTML and the browser always show the same text)
+const YEARS: { year: number; label: string; dates: string; animal: ZodiacAnimal }[] = [
+  { year: 2026, label: 'Fire Horse', dates: '17 February 2026 to 5 February 2027', animal: 'horse' },
+  { year: 2027, label: 'Fire Goat', dates: 'from 6 February 2027', animal: 'goat' },
+]
+function yearRelation(yearAnimal: ZodiacAnimal): string {
+  const you = animalName(animal.value)
+  const them = animalName(yearAnimal)
+  const relation: Relation = relationBetween(yearAnimal, animal.value)
+  const phrases: Record<Relation, string> = {
+    same: `the ${you}'s own zodiac year`,
+    trine: `the ${them} and the ${you} are trine allies`,
+    'secret-friend': `the ${them} is the ${you}'s secret friend`,
+    clash: `the ${you} clashes with the ${them}`,
+    harm: `the ${you} and the ${them} are a harm pair`,
+    neutral: `the ${you} and the ${them} have no special relation (neutral)`,
+  }
+  return phrases[relation]
+}
 
 // SEO meta tags
 watchEffect(() => {
@@ -88,6 +129,64 @@ const animalDescriptions: Record<ZodiacAnimal, string> = {
           Years: {{ profile.years.join(', ') }}
         </div>
       </RouterLink>
+    </div>
+
+    <!-- Friends and frictions: traditional animal relations -->
+    <section v-if="animalData && trine" class="glass rounded-2xl p-6 md:p-8 mt-12 max-w-3xl mx-auto">
+      <h2 class="font-display text-2xl font-bold text-ash-200 mb-3">
+        {{ animalData.name }}: Friends and Frictions
+      </h2>
+      <p class="text-ash-400 mb-5 leading-relaxed">
+        Chinese astrology links the twelve animals in four ways. These are traditional ideas, offered for fun and reflection.
+      </p>
+      <ul class="space-y-3 text-ash-300 leading-relaxed">
+        <li>
+          <strong class="text-ash-100">Trine allies (三合):</strong>
+          the
+          <RouterLink :to="`/zodiac/animal/${relations.allies[0]}`" class="text-ash-200 font-semibold hover:underline">{{ animalName(relations.allies[0]!) }}</RouterLink>
+          and the
+          <RouterLink :to="`/zodiac/animal/${relations.allies[1]}`" class="text-ash-200 font-semibold hover:underline">{{ animalName(relations.allies[1]!) }}</RouterLink>,
+          the {{ trine.element }} trine ({{ trine.chars }})
+        </li>
+        <li>
+          <strong class="text-ash-100">Secret friend (六合):</strong>
+          the
+          <RouterLink :to="`/zodiac/animal/${relations.secretFriend.animal}`" class="text-ash-200 font-semibold hover:underline">{{ animalName(relations.secretFriend.animal) }}</RouterLink>
+          ({{ relations.secretFriend.chars }})
+        </li>
+        <li>
+          <strong class="text-ash-100">Clash (冲):</strong>
+          the
+          <RouterLink :to="`/zodiac/animal/${relations.clash.animal}`" class="text-ash-200 font-semibold hover:underline">{{ animalName(relations.clash.animal) }}</RouterLink>
+          ({{ relations.clash.chars }})
+        </li>
+        <li>
+          <strong class="text-ash-100">Harm (害):</strong>
+          the
+          <RouterLink :to="`/zodiac/animal/${relations.harm.animal}`" class="text-ash-200 font-semibold hover:underline">{{ animalName(relations.harm.animal) }}</RouterLink>
+          ({{ relations.harm.chars }})
+        </li>
+      </ul>
+      <p class="text-ash-400 text-sm mt-5 leading-relaxed">
+        The other six animals are neutral. Where these pairs come from:
+        <RouterLink to="/blog/chinese-zodiac-trines-secret-friends-clashes" class="text-ash-200 font-semibold hover:underline">Trines, Secret Friends and Clashes</RouterLink>.
+        Your element changes the picture too: check a pair with the
+        <RouterLink to="/compatibility" class="text-ash-200 font-semibold hover:underline">compatibility tool</RouterLink>.
+      </p>
+
+      <h3 class="font-display text-xl font-bold text-ash-200 mt-8 mb-3">
+        The {{ animalData.name }} in 2026 and 2027
+      </h3>
+      <ul class="space-y-2 text-ash-300 leading-relaxed">
+        <li v-for="y in YEARS" :key="y.year">
+          <strong class="text-ash-100">{{ y.year }}, the {{ y.label }} year</strong> ({{ y.dates }}): {{ yearRelation(y.animal) }}.
+        </li>
+      </ul>
+    </section>
+
+    <!-- Personal reading (compact), as on the sign pages -->
+    <div class="mt-10 max-w-3xl mx-auto">
+      <ReadingCTA variant="compact" placement="animal_page" />
     </div>
 
     <!-- Back link -->
