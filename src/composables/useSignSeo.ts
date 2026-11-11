@@ -1,6 +1,7 @@
 import { useHead } from '@unhead/vue'
 import { computed, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
 import type { SignProfile, SignContentV2 } from '@/types'
+import { getProfileBySlug } from '@/lib/sign-content/profiles'
 
 const SITE_NAME = 'Wu Xing Zodiac'
 const SITE_URL = 'https://wuxingzodiac.me'
@@ -37,8 +38,10 @@ function buildFaqEntities(
   const elLabel = elementLabel(profile.element)
 
   // Best-match answer: prefer content data, fall back to generic phrasing
+  // bestMatch is a slug ('water-dragon'): use the sign's own name ('Water Dragon')
   const bestMatchName = content?.atAGlance?.bestMatch
-    ? cap(content.atAGlance.bestMatch.replace(/-/g, ' '))
+    ? getProfileBySlug(content.atAGlance.bestMatch)?.name
+      ?? content.atAGlance.bestMatch.split('-').map(cap).join(' ')
     : `signs with complementary elements`
 
   const compatibilityAnswer = content?.atAGlance?.bestMatch

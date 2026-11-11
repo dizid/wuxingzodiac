@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getProfileBySlug } from '@/lib/sign-content/profiles'
-import { loadSignContent } from '@/lib/sign-content'
+import { loadSignContent, getLoadedSignContent } from '@/lib/sign-content'
 import { getVisualData } from '@/lib/sign-visual-data'
 import { useElementTheme } from '@/composables/useElementTheme'
 import { useSignSeoReactive } from '@/composables/useSignSeo'
@@ -28,8 +28,10 @@ const route = useRoute()
 const router = useRouter()
 const slug = computed(() => route.params.slug as string)
 const profile = computed(() => getProfileBySlug(slug.value))
-const content = ref<SignContentV2 | null>(null)
-const loading = ref(true)
+// The sign route preloads the text (router beforeEnter), so the first render,
+// in the prerender and in the browser, already has it: no skeleton, no redraw
+const content = ref<SignContentV2 | null>(getLoadedSignContent(slug.value))
+const loading = ref(content.value === null)
 const error = ref(false)
 
 // Visual data (element percentages + trait scores)
@@ -41,6 +43,14 @@ useElementTheme(elementRef)
 
 // Load full sign content
 async function loadContent(signSlug: string) {
+  // Already loaded (e.g. a sibling sign visited before): show it at once
+  const loaded = getLoadedSignContent(signSlug)
+  if (loaded) {
+    content.value = loaded
+    loading.value = false
+    error.value = false
+    return
+  }
   loading.value = true
   error.value = false
   content.value = null
@@ -54,7 +64,8 @@ async function loadContent(signSlug: string) {
 }
 
 onMounted(() => {
-  loadContent(slug.value)
+  // Only when the route's preload failed (offline, stale deploy)
+  if (!content.value) loadContent(slug.value)
 })
 
 // SEO meta tags, OG, JSON-LD — reactive, called once in setup, auto-updates

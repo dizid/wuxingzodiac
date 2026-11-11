@@ -28,7 +28,33 @@ export async function loadSignContent(slug: string): Promise<SignContentV2> {
     throw new Error(`Unknown sign slug: ${slug}`)
   }
   const module = await loader()
+  loadedContent.set(slug, module.default)
   return module.default
+}
+
+// Content already loaded in this page session (or this prerender run), by slug.
+// The sign route awaits preloadSignContent() before the page renders, so the
+// page can read its text synchronously: the prerendered HTML then holds the
+// full sign text (AI crawlers don't run JavaScript), and the browser loads the
+// same chunk before hydrating, so it reuses that HTML instead of redrawing it.
+const loadedContent = new Map<string, SignContentV2>()
+
+/** The sign's content if it's already loaded, else null (never starts a load). */
+export function getLoadedSignContent(slug: string): SignContentV2 | null {
+  return loadedContent.get(slug) ?? null
+}
+
+/**
+ * Load a sign's content ahead of rendering. Never throws: if the chunk fails
+ * (offline, stale deploy), the page loads it itself and shows its retry state.
+ */
+export async function preloadSignContent(slug: string): Promise<void> {
+  if (loadedContent.has(slug)) return
+  try {
+    await loadSignContent(slug)
+  } catch {
+    // handled by the page (see above)
+  }
 }
 
 // Re-export profiles and helpers for convenience

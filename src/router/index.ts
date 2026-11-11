@@ -1,4 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router'
+import { preloadSignContent } from '@/lib/sign-content'
 
 const VALID_ANIMALS = ['rat', 'ox', 'tiger', 'rabbit', 'dragon', 'snake', 'horse', 'goat', 'monkey', 'rooster', 'dog', 'pig'] as const
 const VALID_ELEMENTS = ['wood', 'fire', 'earth', 'metal', 'water'] as const
@@ -42,10 +43,13 @@ export const routes: RouteRecordRaw[] = [
     path: '/zodiac/:slug',
     name: 'zodiac-sign',
     component: () => import('@/pages/ZodiacSignPage.vue'),
-    beforeEnter: (to) => {
+    beforeEnter: async (to) => {
       if (!VALID_SIGN_SLUGS.includes(to.params.slug as string)) {
         return { name: 'not-found', params: { pathMatch: to.path.split('/').slice(1) } }
       }
+      // Sign text ready before the page renders, so it's in the prerendered
+      // HTML and hydration reuses it (see preloadSignContent)
+      await preloadSignContent(to.params.slug as string)
     },
   },
   {
