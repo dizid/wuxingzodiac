@@ -65,7 +65,12 @@ export default async (req: Request, _context: Context) => {
       },
       body: JSON.stringify({
         email_address: email,
-        type: 'regular',
+        // Double opt-in: Buttondown emails a confirm link and only sends newsletters after
+        // the click. 'regular' skipped that (Buttondown: only for consent given elsewhere),
+        // so anyone could subscribe someone else's address, and with the waitlist's 'add'
+        // collision mode a person who had unsubscribed was silently re-subscribed. With
+        // 'unactivated', Buttondown sends a fresh confirmation instead (T-0558).
+        type: 'unactivated',
         ...(withTags && tags.length > 0 ? { tags } : {}),
         ...(Object.keys(metadata).length > 0 ? { metadata } : {}),
       }),
@@ -106,8 +111,8 @@ export default async (req: Request, _context: Context) => {
     }
 
     const message = isWaitlist
-      ? "You're on the list! We'll email you when the reading launches."
-      : "You're in! Watch your inbox."
+      ? "Almost there! Tap the link in the email we just sent to join the list."
+      : "Almost there! Tap the link in the email we just sent to confirm."
     return new Response(JSON.stringify({ ok: true, message }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }

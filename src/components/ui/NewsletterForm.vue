@@ -58,7 +58,7 @@ async function handleSubmit() {
     }
 
     submitted.value = true
-    successMsg.value = data.message || "You're in! Watch your inbox."
+    successMsg.value = data.message || "Almost there! Tap the link in the email we just sent to confirm."
     trackNewsletterSignup(props.sourcePage)
   } catch {
     errorMsg.value = 'Something went wrong. Please try again.'

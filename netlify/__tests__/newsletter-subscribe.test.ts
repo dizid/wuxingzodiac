@@ -49,11 +49,11 @@ describe('newsletter-subscribe function', () => {
     const res = await subscribe(post({ email: 'anna@example.com', sign: 'metal-horse', tags: ['reading-waitlist'] }), context)
 
     expect(res.status).toBe(200)
-    expect((await res.json()).message).toBe("You're on the list! We'll email you when the reading launches.")
+    expect((await res.json()).message).toBe("Almost there! Tap the link in the email we just sent to join the list.")
     const { body, headers } = sentToButtondown(fetchMock)
     expect(body).toEqual({
       email_address: 'anna@example.com',
-      type: 'regular',
+      type: 'unactivated',
       tags: ['metal-horse', 'reading-waitlist'],
       metadata: { zodiac_sign: 'metal-horse', reading_waitlist: 'yes' },
     })
@@ -65,18 +65,18 @@ describe('newsletter-subscribe function', () => {
     await subscribe(post({ email: 'anna@example.com', tags: ['vip', 'reading-waitlist ', 42] }), context)
 
     const { body, headers } = sentToButtondown(fetchMock)
-    expect(body).toEqual({ email_address: 'anna@example.com', type: 'regular' })
+    expect(body).toEqual({ email_address: 'anna@example.com', type: 'unactivated' })
     expect(headers['X-Buttondown-Collision-Behavior']).toBeUndefined()
   })
 
-  it('regular newsletter signup is unchanged', async () => {
+  it('newsletter signup asks Buttondown for double opt-in (unactivated, confirm email; T-0558)', async () => {
     const res = await subscribe(post({ email: 'anna@example.com', sign: 'fire-horse' }), context)
 
-    expect((await res.json()).message).toBe("You're in! Watch your inbox.")
+    expect((await res.json()).message).toBe("Almost there! Tap the link in the email we just sent to confirm.")
     const { body, headers } = sentToButtondown(fetchMock)
     expect(body).toEqual({
       email_address: 'anna@example.com',
-      type: 'regular',
+      type: 'unactivated',
       tags: ['fire-horse'],
       metadata: { zodiac_sign: 'fire-horse' },
     })
