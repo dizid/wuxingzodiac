@@ -36,6 +36,11 @@ const MAX_RETRIES = 40
 const GENERATING_POLL_MS = 4000
 const MAX_GENERATING_MS = 10 * 60 * 1000
 let generatingSince = 0
+// A buyer may wait up to 10 minutes here: one server hiccup (5xx) or network
+// blip shouldn't end that wait with an error, so retry a few times first
+const MAX_SERVER_RETRIES = 3
+const SERVER_RETRY_MS = 4000
+let serverRetries = 0
 let pollTimer: ReturnType<typeof setTimeout> | undefined
 // Stop polling after MAX_GENERATING_MS — the email still arrives when ready
 const slowGeneration = ref(false)
@@ -74,6 +79,12 @@ async function checkOrderStatus() {
     if (!res.ok) {
       const data = await res.json().catch(() => ({}))
 
+      if (res.status >= 500 && serverRetries < MAX_SERVER_RETRIES) {
+        serverRetries++
+        schedule(checkOrderStatus, SERVER_RETRY_MS)
+        return
+      }
+
       // Handle race condition: payment confirmed but webhook not yet processed
       if (res.status === 404 && retryCount.value < MAX_RETRIES) {
         state.value = 'race-condition'
@@ -81,9 +92,10 @@ async function checkOrderStatus() {
         schedule(checkOrderStatus, 3000)
         return
       }
-      // A paid reading (session_id from Stripe) whose order still isn't visible: show the calm
-      // 'taking longer, it arrives by email' state, not an error, right after payment
-      if (res.status === 404 && route.query.session_id) {
+      // A paid reading (session_id from Stripe) whose order still isn't visible, or whose
+      // payment is still settling (402, e.g. a bank debit): show the calm 'taking longer,
+      // it arrives by email' state, not an error, right after payment
+      if ((res.status === 404 || res.status === 402) && route.query.session_id) {
         state.value = 'generating'
         slowGeneration.value = true
         return
@@ -92,6 +104,7 @@ async function checkOrderStatus() {
       throw new Error(data.error || 'Failed to retrieve your report')
     }
 
+    serverRetries = 0
     const data = await res.json()
     signName.value = data.signName || 'Your Sign'
     productName.value = data.productName || 'Elemental Blueprint'
@@ -126,6 +139,12 @@ async function checkOrderStatus() {
 
     trackEvent('blueprint_download_ready', { session: sessionId, product: productName.value })
   } catch (e) {
+    // fetch() itself failed (offline for a moment): try again before giving up
+    if (e instanceof TypeError && serverRetries < MAX_SERVER_RETRIES) {
+      serverRetries++
+      schedule(checkOrderStatus, SERVER_RETRY_MS)
+      return
+    }
     state.value = 'error'
     errorMessage.value = e instanceof Error ? e.message : 'Something went wrong. Please try again.'
   }
