@@ -18,7 +18,7 @@ usePageSeo(
 
       <div class="space-y-6 text-ash-300 leading-relaxed">
         <p>
-          Wu Xing Zodiac is the most comprehensive guide to Chinese astrology on the web, covering all
+          Wu Xing Zodiac is a guide to the Chinese zodiac that covers all
           <strong class="text-ash-100">60 unique element-animal combinations</strong> that make up the sexagenary cycle.
           While most zodiac sites stop at the 12 animals, we go deeper — exploring how the Five Elements
           (Wood, Fire, Earth, Metal, and Water) fundamentally transform each animal sign's personality,

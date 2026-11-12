@@ -43,6 +43,10 @@ const slowGeneration = ref(false)
 // "Blueprint" for legacy static reports, "Reading" for personalized ones
 const productShort = computed(() => (productName.value === 'Elemental Blueprint' ? 'Blueprint' : 'Reading'))
 const inbox = computed(() => maskedEmail.value || 'your email')
+// Support address (Chief T-0490, Nov 12 2026); the mail opens with the session ID filled in.
+const supportMailto = computed(
+  () => `mailto:marc@dizid.com?subject=${encodeURIComponent(`Wu Xing reading, session ${getSessionId()}`)}`,
+)
 
 // session_id: personalized readings (Stripe success_url); session: legacy Blueprint links
 function getSessionId(): string {
@@ -276,7 +280,9 @@ onBeforeUnmount(() => {
           Try Again
         </button>
         <p class="text-ash-500 text-sm mt-4">
-          If the problem persists, please contact support with your session ID.
+          If the problem persists, email
+          <a :href="supportMailto" class="text-fire-400 hover:text-fire-300 underline">marc@dizid.com</a>
+          with your session ID.
         </p>
       </template>
 

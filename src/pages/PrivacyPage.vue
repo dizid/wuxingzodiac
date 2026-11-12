@@ -30,7 +30,7 @@ usePageSeo(
           <p class="mb-3">We collect minimal data to operate this site:</p>
           <ul class="list-disc list-inside space-y-2 text-ash-400">
             <li><strong class="text-ash-200">Analytics data:</strong> We use Google Analytics 4 (GA4) to understand site usage. This includes anonymous page views, session duration, and general location data. No personally identifiable information is collected through analytics.</li>
-            <li><strong class="text-ash-200">Email address:</strong> If you subscribe to our newsletter via Buttondown, your email is stored by Buttondown for email delivery purposes only. If you purchase a personal reading, your email is collected by Stripe for payment processing and receipt delivery.</li>
+            <li><strong class="text-ash-200">Email address:</strong> If you subscribe to our newsletter via Buttondown, your email is stored by Buttondown for email delivery purposes only. If you purchase a personal reading, your email is collected by Stripe for payment processing and receipt delivery, and kept in our order records so we can deliver your reading.</li>
             <li><strong class="text-ash-200">Reading details:</strong> If you buy a personal reading, we collect the first name and birth date you enter (and the recipient name and gift message, if it is a gift). These are kept with your order at Stripe and used only to write your reading. The finished PDF is emailed to you; we don't keep a copy.</li>
             <li><strong class="text-ash-200">Payment information:</strong> All payment processing is handled by Stripe. We never store, see, or have access to your credit card details.</li>
           </ul>
@@ -72,15 +72,17 @@ usePageSeo(
           <h2 class="font-display text-xl font-bold text-ash-100 mb-3">Your Rights</h2>
           <p>
             You can unsubscribe from our newsletter at any time using the link in any email. If you wish to
-            request deletion of any data associated with a purchase, please contact us and we will process your
-            request in accordance with applicable laws.
+            request deletion of any data associated with a purchase, email
+            <a href="mailto:marc@dizid.com" class="text-fire-400 hover:text-fire-300 underline">marc@dizid.com</a>
+            and we will process your request in accordance with applicable laws.
           </p>
         </section>
 
         <section>
           <h2 class="font-display text-xl font-bold text-ash-100 mb-3">Contact</h2>
           <p>
-            For questions about this privacy policy, please reach out via the contact information on our site.
+            Questions or data requests: email
+            <a href="mailto:marc@dizid.com" class="text-fire-400 hover:text-fire-300 underline">marc@dizid.com</a>.
           </p>
         </section>
       </div>

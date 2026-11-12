@@ -6,11 +6,12 @@ import { getProfileBySlug } from '@/lib/sign-content/profiles'
 const SITE_NAME = 'Wu Xing Zodiac'
 const SITE_URL = 'https://wuxingzodiac.me'
 
-// Shared author Person schema used across all sign pages.
-// Keep this neutral: no expert, BaZi, birth-chart or Four Pillars claims.
-const EDITORIAL_PERSON = {
-  '@type': 'Person',
-  name: 'Wu Xing Zodiac Editorial Team',
+// Shared author schema used across all sign pages: the site itself, as an
+// Organization (there is no editorial team; T-0495). Keep this neutral: no
+// expert, BaZi, birth-chart or Four Pillars claims.
+const EDITORIAL_AUTHOR = {
+  '@type': 'Organization',
+  name: SITE_NAME,
   url: `${SITE_URL}/about`,
   description:
     'WuXing Zodiac: Chinese zodiac and five-elements (Wu Xing) guides for self-reflection.',
@@ -98,8 +99,8 @@ function buildSignGraph(
       image,
       url,
       author: {
-        '@type': 'Person',
-        name: 'Wu Xing Zodiac Editorial Team',
+        '@type': 'Organization',
+        name: SITE_NAME,
       },
       publisher: {
         '@type': 'Organization',
@@ -111,8 +112,8 @@ function buildSignGraph(
         '@id': url,
       },
     },
-    // Author / Person schema
-    EDITORIAL_PERSON,
+    // Author schema (the site, as an Organization)
+    EDITORIAL_AUTHOR,
     // Breadcrumb navigation
     {
       '@type': 'BreadcrumbList',

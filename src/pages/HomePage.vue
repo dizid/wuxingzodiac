@@ -163,7 +163,7 @@ const howItWorks = [
           Stay in the Loop
         </h2>
         <p class="text-ash-300 text-lg mb-8 max-w-2xl mx-auto">
-          Get zodiac insights, compatibility tips, and 2026 Fire Horse updates delivered to your inbox.
+          Leave your email and we'll write when there's a new zodiac guide or offer.
         </p>
         <NewsletterForm />
       </div>

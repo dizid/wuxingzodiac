@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<{
 }>(), {
   sourcePage: 'homepage',
   buttonLabel: 'Subscribe',
-  successDetail: 'Watch your inbox for zodiac insights.',
+  successDetail: "We'll write when there's a new zodiac guide or offer.",
   privacyNote: 'We respect your privacy. Unsubscribe anytime.',
 })
 
