@@ -22,6 +22,7 @@ import { CHINESE_VS_WESTERN_POST } from './posts/chinese-zodiac-vs-western-zodia
 import { CNY_2027_POST } from './posts/chinese-new-year-2027-date-animal-traditions'
 import { GREAT_RACE_POST } from './posts/chinese-zodiac-great-race-why-rat-is-first'
 import { REGIONAL_ZODIACS_POST } from './posts/vietnamese-japanese-korean-zodiac-differences'
+import { BAZI_POST } from './posts/bazi-four-pillars-explained'
 
 export const CODE_BLOG_POSTS: BlogPost[] = [
   {
@@ -97,6 +98,7 @@ export const CODE_BLOG_POSTS: BlogPost[] = [
   CNY_2027_POST,
   GREAT_RACE_POST,
   REGIONAL_ZODIACS_POST,
+  BAZI_POST,
 ]
 
 /**
