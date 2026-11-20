@@ -93,6 +93,8 @@ Sign slugs follow `{element}-{animal}` format: `fire-horse`, `water-rat`, `wood-
 
 Router guards in `router/index.ts` validate all dynamic params against known slugs/animals/elements. Invalid slugs redirect to the 404 page. Compatibility pair URLs enforce alphabetical slug order for canonical URLs.
 
+Unknown URLs get `dist/404.html` (the catch-all route, prerendered as `/404`) with a real 404 status. `netlify.toml` keeps a 200 SPA fallback only for `/compatibility/*` (reverse-order pair links) and `/blog/*` (posts added after the last build). Don't re-add a site-wide `/*` fallback (soft 404s); a new route needs a prerendered page (`includedRoutes` in `vite.config.ts`) or its own scoped fallback.
+
 ### Compatibility System
 
 - Pre-computed 60x60 matrix in `lib/compatibility-matrix.ts` — all client-side, no API calls
