@@ -18,7 +18,7 @@ interface ResendAttachment {
   content: string // base64
 }
 
-interface ResendEmail {
+export interface ResendEmail {
   from: string
   to: string[]
   subject: string
@@ -28,7 +28,7 @@ interface ResendEmail {
   attachments?: ResendAttachment[]
 }
 
-async function sendEmail(email: ResendEmail): Promise<void> {
+export async function sendEmail(email: ResendEmail): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) throw new Error('RESEND_API_KEY is not set')
 

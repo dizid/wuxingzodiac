@@ -28,9 +28,9 @@ function readBlogSnapshotSlugs(): string[] {
 
 export default defineConfig({
   plugins: [vue(), tailwindcss(), ...(isDev ? [netlify()] : [])],
-  // Expose the READING_LIVE feature flag (build-time env var, see src/lib/reading-offer.ts)
-  // to client code next to the usual VITE_* vars.
-  envPrefix: ['VITE_', 'READING_LIVE'],
+  // Expose the READING_LIVE and ELEMENT_VIDEO_LIVE feature flags (build-time env vars, see
+  // src/lib/reading-offer.ts and src/lib/element-video/offer.ts) next to the usual VITE_* vars.
+  envPrefix: ['VITE_', 'READING_LIVE', 'ELEMENT_VIDEO_LIVE'],
   // Build time, so pre-built pages and their first browser render agree on the
   // reading's zodiac year (src/composables/useReadingYear.ts)
   define: {

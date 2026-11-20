@@ -2,6 +2,8 @@ import type { Context } from "@netlify/functions"
 import Stripe from 'stripe'
 import { neon } from '@neondatabase/serverless'
 import { getProductLabel, READING_PRODUCT } from '../../src/lib/readings/types'
+import { ELEMENT_VIDEO_PRODUCT } from '../../src/lib/element-video/offer'
+import { queueElementVideo } from '../../src/lib/element-video/server/fulfil'
 
 // Events that can complete a purchase. async_payment_succeeded only fires for
 // delayed payment methods (e.g. SEPA debit), where "completed" arrives unpaid.
@@ -62,6 +64,17 @@ export default async (req: Request, _context: Context) => {
 
   try {
     const session = event.data.object as Stripe.Checkout.Session
+
+    // "Step into your element" video (element-video-checkout.ts): no order row,
+    // state lives in Blobs. Unpaid (delayed payment) waits for async_payment_succeeded.
+    if (session.metadata?.product === ELEMENT_VIDEO_PRODUCT) {
+      if (session.payment_status === 'paid') {
+        // Throws if the background function can't be reached, so Stripe retries
+        await queueElementVideo(session.id, new URL(req.url).origin)
+      }
+      return jsonResponse({ received: true }, 200)
+    }
+
     const signSlug = session.metadata?.sign_slug
     const email = session.customer_details?.email || session.metadata?.email
     const isPaid = session.payment_status === 'paid'

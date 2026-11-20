@@ -11,6 +11,13 @@
 [functions."generate-reading-background"]
   external_node_modules = ["@sparticuz/chromium-min", "playwright-core"]
 
+# "Step into your element" video: Genie 4 frames -> MP4 with the ffmpeg binary from
+# ffmpeg-static (~80 MB, ~29 MB zipped). Shipped as node_modules so the binary sits
+# next to the package's index.js (src/lib/element-video/server/media.ts finds it, and
+# copies it to /tmp with +x if the zip lost the executable bit).
+[functions."element-video-background"]
+  external_node_modules = ["ffmpeg-static"]
+
 [[headers]]
   for = "/*"
   [headers.values]

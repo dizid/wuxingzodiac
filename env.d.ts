@@ -4,6 +4,8 @@
 interface ImportMetaEnv {
   /** "true" switches /reading from the launch waitlist to selling the reading. Build-time, unset = off. */
   readonly READING_LIVE?: string
+  /** "true" sells the 'Step into your element' video (src/lib/element-video/offer.ts). Build-time, unset = off. */
+  readonly ELEMENT_VIDEO_LIVE?: string
 }
 
 /** Build time as ISO, set by `define` in vite.config.ts */

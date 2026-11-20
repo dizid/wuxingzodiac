@@ -57,6 +57,7 @@ artwork/
 
 # Local sample readings (scripts/generate-sample-reading.ts) — contain personal data
 scripts/sample-readings/
+scripts/sample-videos/
 
 # Build-time blog snapshot (scripts/blog-snapshot.mjs), regenerated on every build
 src/generated/
