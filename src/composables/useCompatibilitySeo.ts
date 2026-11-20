@@ -1,5 +1,6 @@
 import { useHead } from '@unhead/vue'
 import type { SignProfile, CompatibilityResult, EnhancedCompatibilityResult } from '@/types'
+import { DEFAULT_OG_IMAGE } from '@/composables/useSignSeo'
 
 const SITE_NAME = 'Wu Xing Zodiac'
 const SITE_URL = 'https://wuxingzodiac.me'
@@ -122,9 +123,13 @@ export function useCompatibilitySeo(
       { property: 'og:url', content: url },
       { property: 'og:type', content: 'article' },
       { property: 'og:site_name', content: SITE_NAME },
+      // Pair pages are the most-shared pages (share buttons); without an image
+      // the large-image card renders as a bare text link
+      { property: 'og:image', content: DEFAULT_OG_IMAGE },
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: title },
       { name: 'twitter:description', content: description },
+      { name: 'twitter:image', content: DEFAULT_OG_IMAGE },
     ],
     link: [
       { rel: 'canonical', href: url },
@@ -139,6 +144,7 @@ export function useCompatibilitySeo(
               '@type': 'Article',
               headline: `${first.name} & ${second.name} Compatibility`,
               description,
+              image: DEFAULT_OG_IMAGE,
               url,
               publisher: {
                 '@type': 'Organization',

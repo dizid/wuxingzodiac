@@ -5,6 +5,8 @@ import { getProfileBySlug } from '@/lib/sign-content/profiles'
 
 const SITE_NAME = 'Wu Xing Zodiac'
 const SITE_URL = 'https://wuxingzodiac.me'
+/** Site-wide 1200x630 share image, for pages without their own (calculator, blog, animal/element pages...). */
+export const DEFAULT_OG_IMAGE = `${SITE_URL}/og/home.png`
 
 // Shared author schema used across all sign pages: the site itself, as an
 // Organization (there is no editorial team; T-0495). Keep this neutral: no
@@ -199,9 +201,12 @@ export function usePageSeo(
         { property: 'og:url', content: url },
         { property: 'og:type', content: 'website' },
         { property: 'og:site_name', content: SITE_NAME },
-        { name: 'twitter:card', content: 'summary' },
+        // Without an image, shared links (WhatsApp, X, Facebook, LinkedIn) show a bare text card
+        { property: 'og:image', content: DEFAULT_OG_IMAGE },
+        { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: fullTitle },
         { name: 'twitter:description', content: descriptionText },
+        { name: 'twitter:image', content: DEFAULT_OG_IMAGE },
       ],
       link: [
         { rel: 'canonical', href: url },
@@ -305,11 +310,11 @@ export function useHomeSeo() {
       { property: 'og:url', content: SITE_URL },
       { property: 'og:type', content: 'website' },
       { property: 'og:site_name', content: SITE_NAME },
-      { property: 'og:image', content: `${SITE_URL}/og/home.png` },
+      { property: 'og:image', content: DEFAULT_OG_IMAGE },
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: title },
       { name: 'twitter:description', content: description },
-      { name: 'twitter:image', content: `${SITE_URL}/og/home.png` },
+      { name: 'twitter:image', content: DEFAULT_OG_IMAGE },
     ],
     link: [
       { rel: 'canonical', href: SITE_URL },

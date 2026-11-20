@@ -50,8 +50,19 @@
   status = 301
   force = true
 
-# SPA fallback: pre-rendered pages serve static HTML, unknown routes get index.html (shows 404 page)
+# SPA fallback, only where a valid page may have no prerendered file (static files
+# win, these rules are not forced):
+# - /compatibility/<b>/<a>: reverse-order pair links; the router redirects to the
+#   alphabetical page that is prerendered
+# - /blog/<slug>: a post added to the database after the last build renders in the browser
+# Every other unknown URL gets dist/404.html with a real 404 status (Netlify's default),
+# so Google no longer sees junk URLs as copies of the home page (soft 404).
 [[redirects]]
-  from = "/*"
+  from = "/compatibility/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/blog/*"
   to = "/index.html"
   status = 200

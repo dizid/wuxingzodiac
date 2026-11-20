@@ -95,6 +95,11 @@ export default defineConfig({
         allPaths.push(`/blog/${slug}`)
       }
 
+      // The 404 page (catch-all route) as dist/404.html: Netlify serves it with a
+      // real 404 status for unknown URLs (netlify.toml keeps a 200 fallback only for
+      // /compatibility/* and /blog/*)
+      allPaths.push('/404')
+
       return allPaths
     },
     // Stamp each prerendered page with its route; src/main.ts only hydrates when it
@@ -108,8 +113,9 @@ export default defineConfig({
     onFinished() {
       generateSitemap({
         hostname: 'https://wuxingzodiac.me',
-        // Private post-purchase page (noindex), still pre-rendered but not listed
-        exclude: ['/report/download'],
+        // Private post-purchase page (noindex), still pre-rendered but not listed;
+        // the 404 page is only served for unknown URLs
+        exclude: ['/report/download', '/404'],
       })
     },
   },

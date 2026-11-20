@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { useHead } from '@unhead/vue'
 
-// Unknown URLs (and invalid sign/element slugs) get this page with status 200
-// (SPA fallback): its own title and noindex keep Google from indexing it as a
-// copy of the home page (soft 404).
+// Unknown URLs get this page prerendered as dist/404.html, served by Netlify with a
+// 404 status. Invalid slugs under /compatibility and /blog (200 SPA fallback) and
+// invalid sign/element slugs reached in the browser render it client-side: its own
+// title and noindex keep Google from indexing those as copies of the home page.
 useHead({
   title: 'Page not found | Wu Xing Zodiac',
   meta: [{ name: 'robots', content: 'noindex' }],

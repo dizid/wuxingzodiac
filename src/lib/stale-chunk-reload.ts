@@ -1,8 +1,8 @@
 import type { Router } from 'vue-router'
 
 // After a new deploy, the old hashed JS files are gone from the server. A visitor who
-// already had WuXing Zodiac open then asks for a page file that no longer exists (Netlify's
-// SPA fallback answers with HTML), the import fails, and a tap on a link silently does
+// already had WuXing Zodiac open then asks for a page file that no longer exists (Netlify
+// answers with the 404 page), the import fails, and a tap on a link silently does
 // nothing. Fix: load the target page fully once, which fetches the new HTML and files.
 // A short guard stops a reload loop if a file is missing for another reason.
 

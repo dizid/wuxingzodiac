@@ -20,15 +20,8 @@ import {
 const siteUrl = 'https://wuxingzodiac.me'
 const pageDescription = `An ${READING_PAGE_COUNT}-page personalized PDF based on your birth-year Chinese zodiac sign and the five elements, written to you by name. ${READING_PRICE}, by email.`
 
+// usePageSeo includes the site share image (social posts link here)
 usePageSeo('WuXing Personal Reading', pageDescription, '/reading')
-
-// Social posts link here, so give link previews an image
-useHead({
-  meta: [
-    { property: 'og:image', content: `${siteUrl}/og/home.png` },
-    { name: 'twitter:image', content: `${siteUrl}/og/home.png` },
-  ],
-})
 
 const { trackEvent } = useAnalytics()
 

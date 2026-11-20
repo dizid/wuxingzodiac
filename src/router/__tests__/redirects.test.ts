@@ -28,17 +28,28 @@ function readRedirects(): RedirectRule[] {
 
 describe('netlify.toml redirects', () => {
   const rules = readRedirects()
-  const spaFallbackIndex = rules.findIndex(rule => rule.from === '/*')
+  const SCOPED_FALLBACKS = ['/compatibility/*', '/blog/*']
+  const firstFallbackIndex = Math.min(
+    ...SCOPED_FALLBACKS.map(from => rules.findIndex(rule => rule.from === from)),
+  )
 
-  it('keeps the SPA fallback', () => {
-    expect(spaFallbackIndex).toBeGreaterThanOrEqual(0)
-    expect(rules[spaFallbackIndex]).toMatchObject({ to: '/index.html', status: '200' })
+  // Unknown URLs must reach Netlify's dist/404.html (real 404 status), not a copy of
+  // the home page with status 200 (soft 404)
+  it('has no site-wide SPA fallback', () => {
+    expect(rules.some(rule => rule.from === '/*')).toBe(false)
   })
 
-  it.each(['/shop', '/shop/*'])('%s 301-redirects to /reading, before the SPA fallback', (from) => {
+  it.each(SCOPED_FALLBACKS)('keeps the unforced SPA fallback for %s', (from) => {
+    const rule = rules.find(r => r.from === from)
+    expect(rule).toMatchObject({ to: '/index.html', status: '200' })
+    // Forced would shadow the 1,830 prerendered pair pages and the prerendered posts
+    expect(rule?.force).toBeUndefined()
+  })
+
+  it.each(['/shop', '/shop/*'])('%s 301-redirects to /reading, before the SPA fallbacks', (from) => {
     const index = rules.findIndex(rule => rule.from === from)
     expect(index).toBeGreaterThanOrEqual(0)
-    expect(index).toBeLessThan(spaFallbackIndex)
+    expect(index).toBeLessThan(firstFallbackIndex)
     expect(rules[index]).toMatchObject({ to: '/reading', status: '301', force: 'true' })
   })
 })
