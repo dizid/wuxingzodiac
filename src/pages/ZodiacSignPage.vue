@@ -21,6 +21,7 @@ import WuXingCycleDiagram from '@/components/zodiac/WuXingCycleDiagram.vue'
 import SignMatchesV2 from '@/components/zodiac/SignMatchesV2.vue'
 import SignSiblingNav from '@/components/zodiac/SignSiblingNav.vue'
 import ReadingCTA from '@/components/readings/ReadingCTA.vue'
+import ElementVideoCTA from '@/components/zodiac/ElementVideoCTA.vue'
 import SignMerchCTA from '@/components/merch/SignMerchCTA.vue'
 import PageCTA from '@/components/ui/PageCTA.vue'
 
@@ -160,6 +161,9 @@ function goToElement(element: string) {
 
           <!-- Personal reading (compact), in the old Blueprint upsell spot -->
           <ReadingCTA variant="compact" placement="sign_end" />
+
+          <!-- Step into your element video (renders only while ELEMENT_VIDEO_LIVE) -->
+          <ElementVideoCTA :sign-slug="slug" :sign-name="profile.name" :element="profile.element" />
 
           <!-- Sibling Navigation (same animal/element) -->
           <SignSiblingNav

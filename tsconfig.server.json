@@ -10,6 +10,7 @@
     "netlify/functions/element-video-checkout.ts",
     "netlify/functions/element-video-file.ts",
     "scripts/generate-sample-element-video.ts",
+    "scripts/check-element-video-functions.ts",
     "netlify/functions/create-checkout.ts",
     "netlify/functions/stripe-webhook.ts",
     "netlify/functions/download-report.ts",

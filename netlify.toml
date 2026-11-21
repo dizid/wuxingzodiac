@@ -12,11 +12,14 @@
   external_node_modules = ["@sparticuz/chromium-min", "playwright-core"]
 
 # "Step into your element" video: Genie 4 frames -> MP4 with the ffmpeg binary from
-# ffmpeg-static (~80 MB, ~29 MB zipped). Shipped as node_modules so the binary sits
-# next to the package's index.js (src/lib/element-video/server/media.ts finds it, and
-# copies it to /tmp with +x if the zip lost the executable bit).
+# ffmpeg-static (~80 MB; the function zip is ~33 MB, under Lambda's 50 MB). The package
+# is shipped unbundled, but its binary is not a traced file, so it must be listed in
+# included_files (checked Nov 21 2026: without it the zip has only index.js). The zip
+# keeps the executable bit; src/lib/element-video/server/media.ts copies it to /tmp
+# with +x if a deploy ever loses it.
 [functions."element-video-background"]
   external_node_modules = ["ffmpeg-static"]
+  included_files = ["node_modules/ffmpeg-static/ffmpeg"]
 
 [[headers]]
   for = "/*"

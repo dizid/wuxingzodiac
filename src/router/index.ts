@@ -111,6 +111,16 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/ReportDownloadPage.vue'),
   },
   {
+    path: '/element-video',
+    name: 'element-video',
+    component: () => import('@/pages/ElementVideoPage.vue'),
+  },
+  {
+    path: '/element-video/ready',
+    name: 'element-video-ready',
+    component: () => import('@/pages/ElementVideoReadyPage.vue'),
+  },
+  {
     path: '/about',
     name: 'about',
     component: () => import('@/pages/AboutPage.vue'),

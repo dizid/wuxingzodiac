@@ -113,9 +113,15 @@ export default defineConfig({
     onFinished() {
       generateSitemap({
         hostname: 'https://wuxingzodiac.me',
-        // Private post-purchase page (noindex), still pre-rendered but not listed;
-        // the 404 page is only served for unknown URLs
-        exclude: ['/report/download', '/404'],
+        // Private post-purchase pages (noindex), still pre-rendered but not listed;
+        // the 404 page is only served for unknown URLs. The element video page is
+        // listed only while it's on sale (ELEMENT_VIDEO_LIVE, else it's noindex).
+        exclude: [
+          '/report/download',
+          '/element-video/ready',
+          '/404',
+          ...(process.env.ELEMENT_VIDEO_LIVE === 'true' ? [] : ['/element-video']),
+        ],
       })
     },
   },

@@ -169,8 +169,8 @@ export async function claimAttempt(
   const token = randomUUID()
   const written = await updateJson<VideoJob>(store, jobKey(sessionId), (current) => {
     if (!canStartAttempt(current, now)) return null
-    // A capped job's attempt didn't run, so it isn't counted again
-    const attempts = (current?.attempts ?? 0) + (current?.status === 'capped' ? 0 : 1)
+    // Every claim counts; markCapped gives the attempt back when no money was spent
+    const attempts = (current?.attempts ?? 0) + 1
     return {
       status: 'pending',
       sign: details.sign,
