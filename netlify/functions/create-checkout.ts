@@ -18,6 +18,29 @@ function isReadingLive(): boolean {
   return process.env.READING_LIVE === 'true'
 }
 
+// Affiliate refs are short codes; anything else is dropped. Stripe refuses the whole
+// checkout if a metadata value is over 500 characters. (The PlugAff/Promoten tracker
+// script was removed Nov 11 2026; this only reads refs left in older visitors' cookies.)
+const AFFILIATE_REF_PATTERN = /^[A-Za-z0-9._-]{1,64}$/
+
+/**
+ * PlugAff affiliate ref from the visitor's cookie, or '' when missing or malformed.
+ * Never throws: a broken cookie value (e.g. a stray '%') used to crash checkout.
+ */
+function readAffiliateRef(cookieHeader: string | null): string {
+  for (const part of (cookieHeader || '').split(';')) {
+    const [key, ...valueParts] = part.trim().split('=')
+    if (key !== 'plugaff_ref') continue
+    try {
+      const value = decodeURIComponent(valueParts.join('='))
+      return AFFILIATE_REF_PATTERN.test(value) ? value : ''
+    } catch {
+      return ''
+    }
+  }
+  return ''
+}
+
 export default async (req: Request, _context: Context) => {
   if (req.method !== 'POST') {
     return jsonResponse({ error: 'Method not allowed' }, 405)
@@ -27,14 +50,7 @@ export default async (req: Request, _context: Context) => {
     return jsonResponse({ error: 'The personal reading is not on sale yet.' }, 410)
   }
 
-  // Read PlugAff affiliate ref from cookie
-  const cookies = Object.fromEntries(
-    (req.headers.get('cookie') || '').split(';').map(c => {
-      const [k, ...v] = c.trim().split('=')
-      return [k, decodeURIComponent(v.join('='))]
-    })
-  )
-  const plugaffRef = cookies['plugaff_ref'] || ''
+  const plugaffRef = readAffiliateRef(req.headers.get('cookie'))
 
   try {
     // Body: { readingType, names[], birthDates[], email, isGift, recipientName?, giftMessage? }

@@ -118,8 +118,10 @@ export default async (req: Request, _context: Context) => {
       totalPages: Math.ceil(total / PAGE_SIZE)
     }, 200)
   } catch (error) {
+    // The database error stays in the function log: it can name the database host or query
     const message = error instanceof Error ? error.message : 'Unknown error'
-    return new Response(JSON.stringify({ error: 'Failed to fetch blog posts', detail: message }), {
+    console.error('Blog posts error:', message)
+    return new Response(JSON.stringify({ error: 'Failed to fetch blog posts' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     })

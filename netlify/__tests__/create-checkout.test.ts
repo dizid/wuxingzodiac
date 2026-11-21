@@ -117,6 +117,44 @@ describe('create-checkout function', () => {
       expect(metadata.plugaff_app).toBe('wuxingzodiac')
     })
 
+    describe('affiliate cookie (plugaff_ref)', () => {
+      function postWithCookie(cookie: string) {
+        return new Request('http://localhost/api/create-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', cookie },
+          body: JSON.stringify(validReading),
+        })
+      }
+
+      beforeEach(() => {
+        createSession.mockResolvedValue({ url: 'https://checkout.stripe.com/c/pay/cs_test_123' })
+      })
+
+      it('passes a normal ref code to Stripe', async () => {
+        const res = await createCheckout(postWithCookie('_ga=GA1.1.123.456; plugaff_ref=anna_2026'), context)
+
+        expect(res.status).toBe(200)
+        expect(createSession.mock.calls[0]![0].metadata.plugaff_ref).toBe('anna_2026')
+      })
+
+      it('still starts the checkout when a cookie holds a broken % sequence', async () => {
+        const res = await createCheckout(postWithCookie('other=%E0%A4%A; plugaff_ref=%zz'), context)
+
+        expect(res.status).toBe(200)
+        expect(createSession.mock.calls[0]![0].metadata.plugaff_ref).toBe('')
+      })
+
+      it('drops an overlong or odd ref instead of sending it to Stripe (500-char metadata cap)', async () => {
+        for (const ref of ['x'.repeat(600), '<script>', 'a%20b']) {
+          createSession.mockClear()
+          const res = await createCheckout(postWithCookie(`plugaff_ref=${ref}`), context)
+
+          expect(res.status).toBe(200)
+          expect(createSession.mock.calls[0]![0].metadata.plugaff_ref).toBe('')
+        }
+      })
+    })
+
     it('keeps a plain delivery note above the pay button, without policy wording', async () => {
       createSession.mockResolvedValue({ url: 'https://checkout.stripe.com/c/pay/cs_test_123' })
 

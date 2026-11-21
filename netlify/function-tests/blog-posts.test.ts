@@ -33,12 +33,19 @@ const databaseRows = [
 ]
 
 const queries: string[] = []
+/** Set to an Error to make the next database query fail */
+let nextQueryError: Error | null = null
 
 // Tagged-template stand-in for neon(): answers by the query's shape
 vi.mock('@neondatabase/serverless', () => ({
   neon: () => async (strings: TemplateStringsArray, ...values: unknown[]) => {
     const text = strings.join('?')
     queries.push(text)
+    if (nextQueryError) {
+      const error = nextQueryError
+      nextQueryError = null
+      throw error
+    }
     if (text.includes('WHERE slug =')) return databaseRows.filter(row => row.slug === values[0])
     return databaseRows.map(({ content: _content, ...row }) => row)
   },
@@ -63,6 +70,7 @@ const codeSlugsNewestFirst = [...CODE_BLOG_POSTS]
 
 beforeEach(() => {
   queries.length = 0
+  nextQueryError = null
 })
 
 describe('blog-posts function', () => {
@@ -121,6 +129,17 @@ describe('blog-posts function', () => {
   it('answers 404 for an unknown slug', async () => {
     const { status } = await get('?slug=no-such-post')
     expect(status).toBe(404)
+  })
+
+  it('keeps database error text out of the public 500 answer', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    nextQueryError = new Error('connect ECONNREFUSED ep-secret-host.us-east-2.aws.neon.tech')
+
+    const { status, body } = await get('?page=1')
+
+    expect(status).toBe(500)
+    expect(body).toEqual({ error: 'Failed to fetch blog posts' })
+    vi.restoreAllMocks()
   })
 
   it('only allows GET', async () => {

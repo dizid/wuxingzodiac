@@ -102,6 +102,31 @@ describe('newsletter-subscribe function', () => {
     expect(retry.metadata).toEqual({ reading_waitlist: 'yes' })
   })
 
+  it('drops a sign that is not one of the 60 sign slugs, so no stray tag is created', async () => {
+    for (const sign of ['vip-customers', 'Fire-Horse', '', 42, { slug: 'fire-horse' }, ['fire-horse']]) {
+      fetchMock.mockClear()
+      const res = await subscribe(post({ email: 'anna@example.com', sign }), context)
+
+      expect(res.status).toBe(200)
+      expect(sentToButtondown(fetchMock).body).toEqual({ email_address: 'anna@example.com', type: 'unactivated' })
+    }
+  })
+
+  it('answers 400 (not 500) for a missing or broken JSON body, without calling Buttondown', async () => {
+    const broken = new Request('http://localhost/api/newsletter/subscribe', { method: 'POST', body: '{not json' })
+    const res = await subscribe(broken, context)
+
+    expect(res.status).toBe(400)
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('refuses an email address longer than 254 characters', async () => {
+    const res = await subscribe(post({ email: `${'a'.repeat(250)}@example.com` }), context)
+
+    expect(res.status).toBe(400)
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
   it('honeypot submissions never reach Buttondown', async () => {
     const res = await subscribe(post({ email: 'bot@example.com', honeypot: 'gotcha', tags: ['reading-waitlist'] }), context)
 

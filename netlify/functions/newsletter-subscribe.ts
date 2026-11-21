@@ -1,5 +1,7 @@
 import type { Context } from "@netlify/functions"
 import 'dotenv/config'
+// Relative import: the `@/` alias only works in Vite, not in the functions bundle
+import { getAllSignSlugs } from '../../src/lib/zodiac-data'
 
 // Launch waitlist for the personal reading (READING_WAITLIST_TAG in src/lib/reading-offer.ts)
 const WAITLIST_TAG = 'reading-waitlist'
@@ -7,6 +9,13 @@ const WAITLIST_TAG = 'reading-waitlist'
 // Extra tags a signup form may ask for, on top of the visitor's sign.
 // Anything else is ignored so visitors can't create arbitrary Buttondown tags.
 const ALLOWED_EXTRA_TAGS = [WAITLIST_TAG]
+
+// The sign also becomes a Buttondown tag, so only the 60 real sign slugs
+// ('fire-horse', ...) are accepted; anything else is dropped and the signup still works.
+const SIGN_SLUGS = new Set(getAllSignSlugs())
+
+// Longest valid email address (RFC 5321)
+const MAX_EMAIL_LENGTH = 254
 
 export default async (req: Request, _context: Context) => {
   if (req.method !== 'POST') {
@@ -17,7 +26,10 @@ export default async (req: Request, _context: Context) => {
   }
 
   try {
-    const { email, honeypot, sign, tags: requestedTags } = await req.json()
+    // A missing or broken JSON body falls through to the email check below (400)
+    const body: unknown = await req.json().catch(() => null)
+    const fields = (body && typeof body === 'object' ? body : {}) as Record<string, unknown>
+    const { email, honeypot, sign: requestedSign, tags: requestedTags } = fields
 
     // Spam bot check — honeypot field should be empty
     if (honeypot) {
@@ -28,7 +40,7 @@ export default async (req: Request, _context: Context) => {
       })
     }
 
-    if (!email || typeof email !== 'string' || !email.includes('@')) {
+    if (!email || typeof email !== 'string' || !email.includes('@') || email.length > MAX_EMAIL_LENGTH) {
       return new Response(JSON.stringify({ error: 'Please enter a valid email address.' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
@@ -48,6 +60,7 @@ export default async (req: Request, _context: Context) => {
       ? requestedTags.filter((tag): tag is string => typeof tag === 'string' && ALLOWED_EXTRA_TAGS.includes(tag))
       : []
     const isWaitlist = extraTags.includes(WAITLIST_TAG)
+    const sign = typeof requestedSign === 'string' && SIGN_SLUGS.has(requestedSign) ? requestedSign : null
     const tags = [...(sign ? [sign] : []), ...extraTags]
     const metadata: Record<string, string> = {
       ...(sign ? { zodiac_sign: sign } : {}),

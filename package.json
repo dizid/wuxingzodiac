@@ -49,5 +49,8 @@
     "vite-ssg-sitemap": "^0.10.0",
     "vitest": "^4.0.18",
     "vue-tsc": "^3.2.4"
+  },
+  "overrides": {
+    "@unhead/dom": "^2.1.18"
   }
 }
