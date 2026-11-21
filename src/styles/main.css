@@ -508,3 +508,27 @@ body {
 }
 .page-enter-from { opacity: 0; transform: translateY(10px); }
 .page-leave-to { opacity: 0; transform: translateY(-10px); }
+
+/* ============================================
+   REDUCED MOTION
+   Visitors who set "reduce motion" on their phone/OS get the same colours,
+   but no endless shimmer on gradient text and no slide between pages.
+   Loading spinners/pulses (Tailwind animate-*) stay: they show progress.
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .element-text,
+  .multi-element-text {
+    animation: none;
+  }
+
+  .page-enter-active,
+  .page-leave-active {
+    transition: none;
+  }
+
+  .page-enter-from,
+  .page-leave-to {
+    transform: none;
+  }
+}
