@@ -4,7 +4,8 @@ import { useRoute, RouterLink } from 'vue-router'
 import { useHead } from '@unhead/vue'
 import { useAnalytics } from '@/composables/useAnalytics'
 import ReadingCTA from '@/components/readings/ReadingCTA.vue'
-import { formatBlogDate, getSnapshotPost } from '@/lib/blog-snapshot'
+import { formatBlogDate, getSnapshotPost, getSnapshotPosts } from '@/lib/blog-snapshot'
+import { relatedPostsFor } from '@/lib/related-posts'
 import type { BlogPost } from '@/types'
 
 const { trackBlogRead } = useAnalytics()
@@ -80,27 +81,46 @@ async function fetchPost(quiet = false) {
   if (!quiet) loading.value = true
   error.value = null
 
+  const slug = route.params.slug as string
+  // The reader opened another post (Related guides) before this answer came back:
+  // that post's own fetch owns the screen now, so this one changes nothing
+  const isStale = () => route.params.slug !== slug
+
   try {
-    const slug = route.params.slug as string
     const response = await fetch(`/api/blog/posts?slug=${encodeURIComponent(slug)}`)
 
     if (!response.ok) {
       if (response.status === 404) {
-        post.value = null
+        if (!isStale()) post.value = null
         throw new Error('Post not found')
       }
       throw new Error('Failed to fetch post')
     }
 
-    post.value = await response.json()
+    const freshPost: BlogPost = await response.json()
+    if (!isStale()) post.value = freshPost
   } catch (err) {
-    if (!quiet || !post.value) {
+    if (!isStale() && (!quiet || !post.value)) {
       error.value = err instanceof Error ? err.message : 'An error occurred'
     }
   } finally {
-    loading.value = false
+    if (!isStale()) loading.value = false
   }
 }
+
+// Another post opened from this page (Related guides) reuses this page: show that post
+// from the snapshot right away, then refresh it like on a first visit
+watch(
+  () => route.params.slug,
+  (newSlug, oldSlug) => {
+    if (typeof newSlug !== 'string' || newSlug === oldSlug) return
+    const nextSnapshotPost = getSnapshotPost(newSlug)
+    post.value = nextSnapshotPost
+    loading.value = !nextSnapshotPost
+    error.value = null
+    fetchPost(Boolean(nextSnapshotPost))
+  },
+)
 
 // Track one blog read per post shown (the quiet refresh doesn't count it twice)
 let trackedSlug: string | null = null
@@ -113,6 +133,10 @@ function trackRead(shownPost: BlogPost | null) {
 watch(post, trackRead)
 
 const formatDate = formatBlogDate
+
+// "Related guides" under the post, from the build-time post list, so the links are in
+// the prerendered HTML too and every post is linked from other posts (not only /blog)
+const relatedPosts = computed(() => (post.value ? relatedPostsFor(post.value, getSnapshotPosts()) : []))
 
 onMounted(() => {
   trackRead(post.value)
@@ -208,6 +232,33 @@ onMounted(() => {
         <div class="mt-8">
           <ReadingCTA placement="blog_post_end" />
         </div>
+
+        <!-- Related guides: 3 hand-picked posts on the same topic -->
+        <section
+          v-if="relatedPosts.length"
+          class="glass rounded-xl p-6 md:p-8 mt-8"
+          aria-labelledby="related-guides-heading"
+        >
+          <h2
+            id="related-guides-heading"
+            class="text-xl font-display font-bold text-ash-100 mb-4"
+          >
+            Related guides
+          </h2>
+          <ul class="space-y-3">
+            <li
+              v-for="related in relatedPosts"
+              :key="related.slug"
+            >
+              <RouterLink
+                :to="`/blog/${related.slug}`"
+                class="text-ash-200 underline underline-offset-2 hover:text-ash-100 transition-colors"
+              >
+                {{ related.title }}
+              </RouterLink>
+            </li>
+          </ul>
+        </section>
       </article>
     </div>
   </div>
