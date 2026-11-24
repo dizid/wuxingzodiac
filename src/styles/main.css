@@ -220,6 +220,13 @@
    BASE STYLES
    ============================================ */
 
+/* Keyboard focus (Shift+Tab), the skip link and scrollIntoView stop below the sticky 64px top
+   bar (NavBar, h-16) instead of under it; 4.5rem = the bar + 8px room. Mouse/touch scrolling
+   and route changes (window.scrollTo) are not affected. */
+html {
+  scroll-padding-top: 4.5rem;
+}
+
 body {
   font-family: var(--font-body);
   background: var(--color-ash-950);

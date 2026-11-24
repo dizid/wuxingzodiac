@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onBeforeUnmount } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { useUserSign } from '@/composables/useUserSign'
 
 const route = useRoute()
 const mobileMenuOpen = ref(false)
 const { userSign } = useUserSign()
+const navEl = ref<HTMLElement | null>(null)
+const menuButton = ref<HTMLButtonElement | null>(null)
 
 const baseNavItems = [
   { label: 'Home', to: '/' },
@@ -33,10 +35,45 @@ function isActive(to: string): boolean {
 function closeMobileMenu() {
   mobileMenuOpen.value = false
 }
+
+// Keyboard use of the open phone menu (listener only while it is open):
+// - Escape closes it and puts focus back on the menu button
+// - Tab/Shift+Tab out of the nav closes it, so the open menu doesn't cover the page link that
+//   now has focus. Taps are not affected (they don't send Tab).
+function onMenuKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape') {
+    closeMobileMenu()
+    menuButton.value?.focus()
+  } else if (event.key === 'Tab') {
+    // Focus moves after keydown: check where it landed on the next task
+    setTimeout(() => {
+      const active = document.activeElement
+      if (active && active !== document.body && !navEl.value?.contains(active)) closeMobileMenu()
+    })
+  }
+}
+
+watch(mobileMenuOpen, (open) => {
+  if (open) document.addEventListener('keydown', onMenuKeydown)
+  else document.removeEventListener('keydown', onMenuKeydown)
+})
+onBeforeUnmount(() => document.removeEventListener('keydown', onMenuKeydown))
+
+// Any page change closes the menu (Back button, links on the page under the open menu)
+watch(() => route.fullPath, closeMobileMenu)
+
+// When the menu closed because keyboard focus left it, the page moves up by the menu's height:
+// keep the focused page link in view below the sticky bar (html scroll-padding-top)
+function onMenuClosed() {
+  const active = document.activeElement
+  if (active instanceof HTMLElement && active !== document.body && !navEl.value?.contains(active)) {
+    active.scrollIntoView({ block: 'nearest' })
+  }
+}
 </script>
 
 <template>
-  <nav class="sticky top-0 z-50 glass-strong">
+  <nav ref="navEl" class="sticky top-0 z-50 glass-strong">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-16 items-center justify-between">
         <!-- Logo -->
@@ -68,9 +105,11 @@ function closeMobileMenu() {
         <!-- Mobile: cart + hamburger -->
         <div class="md:hidden flex items-center gap-1">
         <button
+          ref="menuButton"
           class="flex flex-col justify-center items-center w-10 h-10 rounded-lg hover:bg-ash-800/50 transition-colors"
           :aria-label="mobileMenuOpen ? 'Close menu' : 'Open menu'"
           :aria-expanded="mobileMenuOpen"
+          aria-controls="mobile-menu"
           @click="mobileMenuOpen = !mobileMenuOpen"
         >
           <span
@@ -98,8 +137,11 @@ function closeMobileMenu() {
       leave-active-class="transition-all duration-200 ease-in"
       leave-from-class="opacity-100 translate-y-0"
       leave-to-class="opacity-0 -translate-y-2"
+      @after-leave="onMenuClosed"
     >
-      <div v-if="mobileMenuOpen" class="md:hidden glass-strong border-t border-ash-800/50">
+      <!-- mobile-menu-panel: scrolls when taller than the screen (sideways phones; the bar is
+           sticky, so a taller menu could never be scrolled to its last links) -->
+      <div v-if="mobileMenuOpen" id="mobile-menu" class="mobile-menu-panel md:hidden glass-strong border-t border-ash-800/50">
         <div class="px-4 py-3 space-y-1">
           <RouterLink
             v-for="item in navItems"
@@ -118,3 +160,14 @@ function closeMobileMenu() {
     </transition>
   </nav>
 </template>
+
+<style scoped>
+/* Screen height minus the 64px bar; 100vh first for browsers without dvh. Same look when the
+   menu fits; scrolls inside (not the page behind) when it doesn't. */
+.mobile-menu-panel {
+  max-height: calc(100vh - 4rem);
+  max-height: calc(100dvh - 4rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+</style>
