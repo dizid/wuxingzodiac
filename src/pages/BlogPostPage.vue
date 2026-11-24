@@ -16,12 +16,19 @@ const snapshotPost = getSnapshotPost(route.params.slug as string)
 const post = ref<BlogPost | null>(snapshotPost)
 const loading = ref(!snapshotPost)
 const error = ref<string | null>(null)
+// The API answered 404: no published post has this slug
+const POST_NOT_FOUND = 'Post not found'
 
 const headData = computed(() => {
   if (!post.value) {
     return {
       title: 'Blog Post | Wu Xing Zodiac',
-      meta: [{ name: 'description', content: 'Read this article on Wu Xing Zodiac blog.' }]
+      meta: [
+        { name: 'description', content: 'Read this article on Wu Xing Zodiac blog.' },
+        // Netlify answers every /blog/<slug> with 200 (a post published after the build
+        // still has to load), so a missing post tells search engines not to index it here
+        ...(error.value === POST_NOT_FOUND ? [{ name: 'robots', content: 'noindex' }] : []),
+      ],
     }
   }
 
@@ -92,7 +99,7 @@ async function fetchPost(quiet = false) {
     if (!response.ok) {
       if (response.status === 404) {
         if (!isStale()) post.value = null
-        throw new Error('Post not found')
+        throw new Error(POST_NOT_FOUND)
       }
       throw new Error('Failed to fetch post')
     }
@@ -167,7 +174,19 @@ onMounted(() => {
         <p class="mt-4 text-ash-400">Loading post...</p>
       </div>
 
-      <!-- Error State -->
+      <!-- Not found (no such slug in the database): a real page, not a retry loop -->
+      <div
+        v-else-if="error === POST_NOT_FOUND"
+        class="glass rounded-xl p-8 text-center max-w-md mx-auto"
+      >
+        <h1 class="text-2xl font-display font-bold text-ash-200 mb-2">Post Not Found</h1>
+        <p class="text-ash-400 mb-6">This guide doesn't exist or has moved.</p>
+        <RouterLink to="/blog" class="btn-element inline-block">
+          Browse all guides
+        </RouterLink>
+      </div>
+
+      <!-- Error State (network or server error: worth another try) -->
       <div
         v-else-if="error"
         class="text-center py-20"
@@ -198,7 +217,9 @@ onMounted(() => {
 
           <!-- Post Header -->
           <header class="mb-8">
-            <h1 class="text-4xl md:text-5xl font-display font-bold multi-element-text mb-4">
+            <!-- One size down below 360px: at 36px a long word ("Compatibility:") is wider
+                 than the card on 320px phones and the gradient text gets cut off -->
+            <h1 class="text-4xl max-[359px]:text-3xl md:text-5xl font-display font-bold multi-element-text mb-4">
               {{ post.title }}
             </h1>
 

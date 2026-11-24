@@ -260,6 +260,8 @@ const markerId = (name: string) => `${uid}-${name}`
       Wu Xing Cycle
     </h3>
 
+    <!-- max-w-full + h-auto: the 320px diagram shrinks to fit the card on phones (it stuck
+         out of the card on 320-390px screens); the tooltip follows the mouse, not the scale -->
     <div class="flex justify-center relative">
       <svg
         :width="svgDisplaySize"
@@ -267,7 +269,7 @@ const markerId = (name: string) => `${uid}-${name}`
         viewBox="0 0 320 320"
         :aria-label="`Wu Xing five-element cycle diagram. Active element: ${ELEMENT_LABELS[activeElement]}.`"
         role="img"
-        class="overflow-visible"
+        class="overflow-visible max-w-full h-auto"
       >
         <defs>
           <!-- Generating cycle arrowhead (green) -->

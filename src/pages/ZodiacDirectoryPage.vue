@@ -123,14 +123,14 @@ function formatYearsPreview(years: number[]): string {
       </span>
     </div>
 
-    <!-- Sign Grid -->
+    <!-- Sign Grid (p-4 below 360px: with p-5, "Rooster"/"Monkey" touched the card edge) -->
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <RouterLink
         v-for="profile in filteredProfiles"
         :key="profile.slug"
         :to="`/zodiac/${profile.slug}`"
         :data-element="profile.element"
-        class="glass rounded-xl p-5 transition-transform hover:scale-[1.03] block group"
+        class="glass rounded-xl p-5 max-[359px]:p-4 transition-transform hover:scale-[1.03] block group"
       >
         <div class="flex items-center gap-2 mb-2">
           <span class="text-xl">{{ elementEmoji[profile.element] }}</span>

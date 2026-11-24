@@ -146,7 +146,9 @@ onMounted(() => {
       Element Composition
     </h3>
 
-    <!-- SVG scales via CSS width; viewBox stays 300x300 -->
+    <!-- SVG scales via CSS width; viewBox stays 300x300. max-w-full + h-auto shrink it
+         to the card on small phones (a fixed 300px chart spilled out of the card and cut
+         off the Water/Fire labels at the screen edge on 320px screens) -->
     <div class="flex justify-center">
       <svg
         :width="svgSize"
@@ -154,7 +156,7 @@ onMounted(() => {
         viewBox="0 0 300 300"
         role="img"
         :aria-label="ariaLabel"
-        class="overflow-visible"
+        class="overflow-visible max-w-full h-auto"
       >
         <title>Element Composition Pentagon Chart</title>
 

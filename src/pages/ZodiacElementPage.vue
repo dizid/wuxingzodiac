@@ -146,16 +146,17 @@ function capitalize(s: string): string {
           <div class="text-ash-500 text-xs mt-1">{{ elementInfo.overcomesLabel }}</div>
         </div>
       </div>
-      <div class="grid grid-cols-3 gap-4">
-        <div class="bg-ash-900/50 rounded-xl p-4 text-center">
+      <!-- Tighter below 360px: "Summer" and "Direction" stuck out of these small boxes -->
+      <div class="grid grid-cols-3 gap-4 max-[359px]:gap-2">
+        <div class="bg-ash-900/50 rounded-xl p-4 max-[359px]:px-1 text-center">
           <div class="text-ash-500 text-xs mb-1">Color</div>
           <div class="text-ash-200 text-sm font-medium">{{ elementInfo.color }}</div>
         </div>
-        <div class="bg-ash-900/50 rounded-xl p-4 text-center">
+        <div class="bg-ash-900/50 rounded-xl p-4 max-[359px]:px-1 text-center">
           <div class="text-ash-500 text-xs mb-1">Season</div>
           <div class="text-ash-200 text-sm font-medium">{{ elementInfo.season }}</div>
         </div>
-        <div class="bg-ash-900/50 rounded-xl p-4 text-center">
+        <div class="bg-ash-900/50 rounded-xl p-4 max-[359px]:px-1 text-center">
           <div class="text-ash-500 text-xs mb-1">Direction</div>
           <div class="text-ash-200 text-sm font-medium">{{ elementInfo.direction }}</div>
         </div>

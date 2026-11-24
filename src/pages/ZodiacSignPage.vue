@@ -100,7 +100,8 @@ function goToElement(element: string) {
 
     <!-- Content -->
     <template v-if="profile">
-      <main class="max-w-3xl mx-auto px-4 py-8 space-y-8">
+      <!-- A div, not <main>: App.vue already wraps every page in the one <main> -->
+      <div class="max-w-3xl mx-auto px-4 py-8 space-y-8">
         <!-- Loading state -->
         <div v-if="loading" class="space-y-4">
           <div v-for="i in 3" :key="i" class="glass rounded-xl p-6 animate-pulse">
@@ -177,7 +178,7 @@ function goToElement(element: string) {
             :secondary="{ label: 'Find Your Sign', to: '/calculator' }"
           />
         </template>
-      </main>
+      </div>
     </template>
 
   </div>

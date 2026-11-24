@@ -47,6 +47,8 @@ const slowGeneration = ref(false)
 
 // "Blueprint" for legacy static reports, "Reading" for personalized ones
 const productShort = computed(() => (productName.value === 'Elemental Blueprint' ? 'Blueprint' : 'Reading'))
+// Shown in a span with wrap-break-word: a long domain without hyphens
+// ("j•••@studentmail.universiteitvanamsterdam.nl") is one unbreakable word otherwise
 const inbox = computed(() => maskedEmail.value || 'your email')
 // Support address (Chief T-0490, Nov 12 2026); the mail opens with the session ID filled in.
 const supportMailto = computed(
@@ -235,7 +237,7 @@ onBeforeUnmount(() => {
         </h1>
         <p class="text-ash-300 mb-2">
           We're writing your <span class="font-semibold text-ash-100">{{ signName }}</span> reading and designing the PDF.
-          It will be emailed to <span class="font-semibold text-ash-100">{{ inbox }}</span>.
+          It will be emailed to <span class="font-semibold text-ash-100 wrap-break-word">{{ inbox }}</span>.
         </p>
         <p v-if="slowGeneration" class="text-ash-400 mb-6">
           This is taking longer than usual. You can close this page &mdash; your reading will arrive by email as soon as it's ready.
@@ -254,7 +256,7 @@ onBeforeUnmount(() => {
         </h1>
         <p class="text-ash-300 mb-4">
           We've emailed your {{ productName }} (<span class="font-semibold text-ash-100">{{ signName }}</span>)
-          to <span class="font-semibold text-ash-100">{{ inbox }}</span> as a PDF.
+          to <span class="font-semibold text-ash-100 wrap-break-word">{{ inbox }}</span> as a PDF.
         </p>
         <p class="text-ash-500 text-sm">
           Not there in a minute? Check your spam or promotions folder. Keep the email &mdash; it's your only copy.
