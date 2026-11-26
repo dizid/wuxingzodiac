@@ -14,6 +14,30 @@ function jsonResponse(body: Record<string, unknown>, status: number) {
   })
 }
 
+function stripeWebhookSecrets(): string[] {
+  return [...new Set(
+    [process.env.STRIPE_WEBHOOK_SECRET, process.env.STRIPE_WEBHOOK_SECRET_DIZID]
+      .map((s) => s?.trim())
+      .filter((s): s is string => Boolean(s))
+  )]
+}
+
+function constructStripeEvent(stripe: Stripe, body: string, signature: string): Stripe.Event {
+  const secrets = stripeWebhookSecrets()
+  if (!secrets.length) {
+    throw new Error('STRIPE_WEBHOOK_SECRET is not set')
+  }
+  let lastError: unknown
+  for (const secret of secrets) {
+    try {
+      return stripe.webhooks.constructEvent(body, signature, secret)
+    } catch (e) {
+      lastError = e
+    }
+  }
+  throw lastError
+}
+
 /**
  * Kick off the background generator for a paid reading. Safe to repeat on
  * Stripe retries: the generator atomically claims the order, so delivered
@@ -48,7 +72,7 @@ export default async (req: Request, _context: Context) => {
 
   try {
     const body = await req.text()
-    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!)
+    event = constructStripeEvent(stripe, body, sig)
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error'
     console.error('Webhook signature verification failed:', message)
