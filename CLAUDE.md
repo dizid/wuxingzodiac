@@ -119,7 +119,7 @@ Netlify Functions in `netlify/functions/`:
 - `create-checkout.ts` — Validates reading intake, creates Stripe Checkout session (all inputs in metadata)
 - `stripe-webhook.ts` — Records order in `report_orders`, queues reading generation, GA4 purchase event
 - `generate-reading-background.ts` — Background function: Claude text → Playwright PDF → emailed via Resend (nothing stored)
-- `download-report.ts` — Status for `/report/download?session_id=` (reading: generating/delivered/failed) + legacy Blueprint PDF download (`?session=`)
+- `download-report.ts` — Status for `/report/download?session_id=` (reading: generating/delivered/failed) + legacy Blueprint PDF download (`?session=`). Since T-0651 (2026-11-27) the PDF needs `&token=` from the `action=check` answer (`downloadToken`, HMAC-SHA256 keyed with `DATABASE_URL`, valid 1 hour; 403 without it), so the session id alone no longer downloads; the page gets a fresh token every time it opens. Only 1 legacy order exists (paid 2026-10-04, 30-day window closed). Tests: `netlify/__tests__/download-report.test.ts`
 
 Do NOT use `netlify dev`; the Vite plugin (`@netlify/vite-plugin`) handles function emulation.
 

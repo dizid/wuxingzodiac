@@ -3,10 +3,48 @@ import { neon } from '@neondatabase/serverless'
 import { getStore } from '@netlify/blobs'
 import { READING_TYPES } from '../../src/lib/readings/types'
 import { MAX_READING_ATTEMPTS } from '../../src/lib/readings/server/orders'
+import { createHmac, timingSafeEqual } from 'node:crypto'
 
 // Legacy Blueprint downloads: max downloads per order and expiry window (30 days, matches UI promise)
 const MAX_DOWNLOADS = 5
 const EXPIRY_MS = 30 * 24 * 60 * 60 * 1000
+
+// Short-lived download token (T-0651, Security Guy 25 Nov): the Stripe session id
+// in the link only opens the status check; the PDF itself needs a token that the
+// check hands out, signed with a server-only secret (DATABASE_URL, never sent to
+// the browser) and valid for 1 hour. The download page asks for it each time it
+// opens, so the page links in customers' emails keep working.
+export const DOWNLOAD_TOKEN_TTL_MS = 60 * 60 * 1000
+
+function downloadTokenKey(): string {
+  return process.env.DATABASE_URL || ''
+}
+
+function tokenSignature(sessionId: string, expiresAt: number, key: string): string {
+  return createHmac('sha256', key).update(`download-report:${sessionId}:${expiresAt}`).digest('base64url')
+}
+
+/** "<expiresAt ms>.<HMAC-SHA256 of session id + expiry>" */
+export function signDownloadToken(sessionId: string, expiresAt: number, key = downloadTokenKey()): string {
+  return `${expiresAt}.${tokenSignature(sessionId, expiresAt, key)}`
+}
+
+/** True only for an unexpired token made by signDownloadToken for this session id */
+export function verifyDownloadToken(
+  sessionId: string,
+  token: string | null,
+  now = Date.now(),
+  key = downloadTokenKey(),
+): boolean {
+  if (!key || !token) return false
+  const [expiryPart, signature = ''] = token.split('.')
+  const expiresAt = Number(expiryPart)
+  // Expired, or further ahead than any token we hand out
+  if (!Number.isSafeInteger(expiresAt) || expiresAt < now || expiresAt > now + DOWNLOAD_TOKEN_TTL_MS) return false
+  const expected = Buffer.from(tokenSignature(sessionId, expiresAt, key))
+  const given = Buffer.from(signature)
+  return given.length === expected.length && timingSafeEqual(given, expected)
+}
 
 function jsonResponse(body: Record<string, unknown>, status: number) {
   return new Response(JSON.stringify(body), {
@@ -39,7 +77,8 @@ function readingState(status: string, attempts: number): 'generating' | 'deliver
 /**
  * GET /api/download-report?session_id=…&action=check
  *  - Personalized readings: delivery status only (the PDF is emailed, never stored)
- *  - Legacy Blueprint orders (?session=…): status check, then PDF download
+ *  - Legacy Blueprint orders (?session=…): status check (hands out a 1-hour
+ *    download token), then PDF download with &token=… (403 without a valid one)
  */
 export default async (req: Request, _context: Context) => {
   if (req.method !== 'GET') {
@@ -110,7 +149,13 @@ export default async (req: Request, _context: Context) => {
         signName,
         signSlug: order.sign_slug,
         downloadsRemaining: MAX_DOWNLOADS - order.download_count,
+        downloadToken: signDownloadToken(sessionId, Date.now() + DOWNLOAD_TOKEN_TTL_MS),
       }, 200)
+    }
+
+    // The PDF needs the short-lived token from the check above, not just the session id
+    if (!verifyDownloadToken(sessionId, url.searchParams.get('token'))) {
+      return jsonResponse({ error: 'This download link has expired. Reload this page to get a new one.' }, 403)
     }
 
     // Download mode — fetch and stream the PDF

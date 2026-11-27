@@ -136,7 +136,8 @@ async function checkOrderStatus() {
     }
 
     // Store the download URL for the actual PDF fetch
-    downloadUrl.value = `/api/download-report?session_id=${encodeURIComponent(sessionId)}`
+    // The PDF needs the short-lived token the check hands out (T-0651)
+    downloadUrl.value = `/api/download-report?session_id=${encodeURIComponent(sessionId)}&token=${encodeURIComponent(data.downloadToken || '')}`
     state.value = 'ready'
 
     trackEvent('blueprint_download_ready', { session: sessionId, product: productName.value })
@@ -160,7 +161,11 @@ async function handleDownload() {
   try {
     // Step 2: Fetch actual PDF bytes and trigger browser download
     const res = await fetch(downloadUrl.value)
-    if (!res.ok) throw new Error('Download failed')
+    if (!res.ok) {
+      // e.g. the token expired because the page was open for over an hour
+      const data = await res.json().catch(() => ({}))
+      throw new Error(data.error || 'Download failed')
+    }
 
     const blob = await res.blob()
     const url = URL.createObjectURL(blob)

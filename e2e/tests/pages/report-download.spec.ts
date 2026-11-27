@@ -4,7 +4,7 @@ import { waitForApp } from '../../helpers/test-app'
 import { validSession } from '../../fixtures/stripe-sessions'
 
 // The report download page calls /api/download-report with ?action=check
-// and then the same URL without action for the PDF bytes.
+// and then the same URL without action, plus the check's &token=, for the PDF bytes.
 
 test.describe('ReportDownloadPage (/report/download)', () => {
   // ── 1. Loading state shows on mount ──────────────────────────────────────
