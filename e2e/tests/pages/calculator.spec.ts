@@ -106,22 +106,22 @@ test.describe('CalculatorPage', () => {
   test('calculates Metal Horse for June 15, 1990', async ({ page }) => {
     await fillAndSubmit(page, 1990, 6, 15)
 
-    // Result card should appear
-    await expect(page.locator('text=Metal Horse')).toBeVisible()
+    // Result heading should appear (the sign name also shows in the badge and the reading offer)
+    await expect(page.locator('h2', { hasText: /Metal Horse/ })).toBeVisible()
   })
 
   // ── 8. Lunar boundary: 1990/Jan/26 → Earth Snake (before Lunar New Year) ─
   test('calculates Earth Snake for January 26, 1990 (before Lunar New Year)', async ({ page }) => {
     // Lunar New Year 1990 was January 27 — Jan 26 is still Earth Snake year
     await fillAndSubmit(page, 1990, 1, 26)
-    await expect(page.locator('text=Earth Snake')).toBeVisible()
+    await expect(page.locator('h2', { hasText: /Earth Snake/ })).toBeVisible()
   })
 
   // ── 9. Lunar boundary: 1990/Jan/27 → Metal Horse (on/after Lunar New Year) ─
   test('calculates Metal Horse for January 27, 1990 (on Lunar New Year)', async ({ page }) => {
     // January 27, 1990 is the first day of the Metal Horse year
     await fillAndSubmit(page, 1990, 1, 27)
-    await expect(page.locator('text=Metal Horse')).toBeVisible()
+    await expect(page.locator('h2', { hasText: /Metal Horse/ })).toBeVisible()
   })
 
   // ── 10. Result card shows sign info ──────────────────────────────────────
@@ -131,22 +131,23 @@ test.describe('CalculatorPage', () => {
     // Sign name heading
     await expect(page.locator('h2', { hasText: /Metal Horse/ })).toBeVisible()
 
-    // Chinese name
-    await expect(page.locator('text=庚午')).toBeVisible()
+    // Chinese name (the sign badge shows it too)
+    await expect(page.getByText('庚午', { exact: true }).first()).toBeVisible()
 
     // Tagline — whatever the actual tagline is, ensure the italic text is present
     const tagline = page.locator('div.italic')
     await expect(tagline.first()).toBeVisible()
 
     // Years section
-    await expect(page.locator('text=1990')).toBeVisible()
+    await expect(page.getByText('Years: 1930, 1990, 2050')).toBeVisible()
   })
 
   // ── 11. CTA links work after calculation ─────────────────────────────────
   test('View Full Profile and Check Compatibility CTAs appear after calculation', async ({ page }) => {
     await fillAndSubmit(page, 1990, 6, 15)
 
-    const profileLink = page.locator('a[href="/zodiac/metal-horse"]')
+    // The nav's "My Sign" link points to the same profile, so pick the result's own CTA
+    const profileLink = page.locator('a[href="/zodiac/metal-horse"]', { hasText: 'View Full Profile' })
     await expect(profileLink).toBeVisible()
     await expect(profileLink).toContainText('View Full Profile')
 

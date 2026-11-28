@@ -84,9 +84,9 @@ test.describe('Calculator → Result → Profile flow', () => {
     // Click "Check Compatibility" from the result CTA
     const compatLink = page.locator('a[href*="compatibility"]').filter({ hasText: /Check Compatibility/i }).first()
     await compatLink.click()
-    await waitForApp(page)
 
-    await expect(page.url()).toContain('/compatibility')
+    // In-app navigation: wait for the URL instead of reading it right after the click
+    await expect(page).toHaveURL(/\/compatibility\?sign=metal-horse$/)
   })
 
   test('4. Calculator → Result → Click share button → "Link Copied!" feedback', async ({ page }) => {
@@ -114,7 +114,7 @@ test.describe('Calculator → Result → Profile flow', () => {
     await expect(page.locator('button', { hasText: /Link Copied!/i })).toBeVisible()
   })
 
-  test('5. Lunar boundary: Enter 1990/Jan/26 → Result is Metal Horse (not Earth Snake)', async ({ page }) => {
+  test('5. Lunar boundary: Enter 1990/Jan/26 → Result is Earth Snake (not Metal Horse)', async ({ page }) => {
     // Chinese New Year 1990 was Jan 27. Jan 26 1990 is still Earth Snake year.
     await goto(page, '/calculator')
 
