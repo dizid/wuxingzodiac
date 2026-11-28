@@ -169,11 +169,16 @@ test.describe('Personal reading purchase flow', () => {
   })
 
   test('6. Download error recovery (mock error → click retry → mock success)', async ({ page }) => {
-    // First call returns 500 error
+    // The page retries a server error 3 times (4 s apart) before it shows the error:
+    // a fake clock skips those waits
+    await page.clock.install()
+    // First call + 3 automatic retries return 500; after "Try Again" one more 500
+    // (must be retried again, not shown as an error), then success
+    const failingCalls = 4
     let callCount = 0
     await page.route('**/api/download-report**', async (route: Route) => {
       callCount++
-      if (callCount === 1) {
+      if (callCount <= failingCalls + 1) {
         await route.fulfill({
           status: 500,
           contentType: 'application/json',
@@ -190,8 +195,13 @@ test.describe('Personal reading purchase flow', () => {
 
     await goto(page, '/report/download?session=cs_test_error')
 
-    // Error state appears after the failed request
-    await expect(page.locator('h1', { hasText: /Something Went Wrong/i })).toBeVisible({ timeout: 10_000 })
+    // Move the clock one retry at a time until the automatic retries are used up
+    const errorHeading = page.locator('h1', { hasText: /Something Went Wrong/i })
+    await expect(async () => {
+      await page.clock.runFor(4000)
+      await expect(errorHeading).toBeVisible({ timeout: 100 })
+    }).toPass({ timeout: 15_000, intervals: [50] })
+    expect(callCount).toBe(failingCalls)
     await expect(page.locator('text=Internal server error')).toBeVisible()
 
     // Click "Try Again" button
@@ -199,8 +209,13 @@ test.describe('Personal reading purchase flow', () => {
     await expect(retryBtn).toBeVisible()
     await retryBtn.click()
 
-    // Second call succeeds — should show ready state
-    await expect(page.locator('h1', { hasText: /Your Blueprint is Ready/i })).toBeVisible({ timeout: 10_000 })
+    // The 500 right after "Try Again" is retried automatically, then the check succeeds
+    const readyHeading = page.locator('h1', { hasText: /Your Blueprint is Ready/i })
+    await expect(async () => {
+      await page.clock.runFor(4000)
+      await expect(readyHeading).toBeVisible({ timeout: 100 })
+    }).toPass({ timeout: 15_000, intervals: [50] })
+    expect(callCount).toBe(failingCalls + 2)
   })
 
   test('7. Sign page and result page link to /reading, where the order button is', async ({ page }) => {

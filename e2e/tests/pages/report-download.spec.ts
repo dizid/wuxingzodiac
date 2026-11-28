@@ -45,16 +45,24 @@ test.describe('ReportDownloadPage (/report/download)', () => {
 
   // ── 3. Order not found → retries → then shows error after max retries ─────
   test('repeated 404 responses exhaust retries and show error state', async ({ page }) => {
+    // The page waits ~2 minutes for the webhook (MAX_RETRIES=40, 3 s apart):
+    // a fake clock skips those waits so the test stays fast
+    await page.clock.install()
     await mockAllApis(page)
-    // Fail 4 times (> MAX_RETRIES=3) so retries exhaust
-    await mockDownloadReport(page, { failCount: 4 })
+    // Always 404: the order never shows up
+    await mockDownloadReport(page, { failCount: 1000 })
 
+    // Legacy ?session= link: after the retries it ends in an error (a paid ?session_id= reading
+    // shows the calm "arrives by email" state instead)
     await page.goto('/report/download?session=cs_test_abc123')
     await waitForApp(page)
 
-    // After retries are exhausted, error state renders
-    await expect(page.locator('body')).toContainText(/something went wrong/i, { timeout: 20_000 })
-    await expect(page.locator('body')).toContainText(/order not found|failed/i)
+    // Move the clock one retry at a time until the retries run out and the error state renders
+    await expect(async () => {
+      await page.clock.runFor(3000)
+      await expect(page.locator('body')).toContainText(/something went wrong/i, { timeout: 100 })
+    }).toPass({ timeout: 30_000, intervals: [50] })
+    await expect(page.locator('body')).toContainText(/order not found/i)
   })
 
   // ── 4. Race condition state message shows during retries ──────────────────

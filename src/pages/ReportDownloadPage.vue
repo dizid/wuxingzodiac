@@ -188,6 +188,8 @@ async function handleDownload() {
 function handleRetry() {
   state.value = 'loading'
   retryCount.value = 0
+  // "Try Again" gets the same automatic retries for a server hiccup as the first visit
+  serverRetries = 0
   generatingSince = 0
   slowGeneration.value = false
   errorMessage.value = ''
